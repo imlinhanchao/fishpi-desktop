@@ -1,0 +1,14 @@
+.DS_Store
+dist/electron/*
+dist/web/*
+build/*
+!build/icons
+!build/setup.iss
+node_modules/
+npm-debug.log
+npm-debug.log.*
+thumbs.db
+!.gitkeep
+*.bin
+host
+*.asar

@@ -1,0 +1,265 @@
+:root {
+    --plyr-audio-control-color: #aca49a;
+    --plyr-audio-controls-background: rgba(35, 36, 37, 0.78);
+    --plyr-color-main: #d23f31;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    background: transparent;
+    color: #cecac3;
+    font: 1em/1.8 PingFang SC, Lantinghei SC, Segoe UI, Microsoft Yahei,Roboto, Helvetica Neue,Helvetica,Arial,sans-serif;
+    -webkit-app-region: drag;
+    overflow: hidden;
+}
+
+input, select, textarea, button {
+    font: inherit;
+}
+
+.no-border input.ivu-input{
+    border-color: transparent;
+    box-shadow: none;
+    background: transparent;
+    font-size: .8em;
+    height: auto;
+}
+  
+.ivu-layout.ivu-layout-has-sider {
+    height: inherit;
+}
+
+.ivu-layout-sider, .ivu-layout {
+    overflow: auto;
+}
+
+.ivu-layout {
+    background-color: transparent;
+}
+
+.collapsed-menu.ivu-menu-vertical .ivu-menu-submenu-title-icon {
+	float: none;
+	top: 15px;
+    left: 4px;
+    transition: all .2s;
+}
+
+.collapsed-menu.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item {
+    padding-left: 12px !important;
+    text-align: center;
+}
+
+.ivu-menu-opened.ivu-menu-submenu .ivu-menu-submenu-title-icon {
+	left: 8px;
+}
+
+.ivu-select-dropdown {
+    z-index: 901
+}
+
+a {
+    color: inherit
+}
+
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.39);
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+
+.ivu-timeline-item-tail {
+    border-left: 2px solid #78bfdb
+}
+
+.ivu-timeline-item-head {
+    background-color: #f5f7f9;
+}
+
+.ivu-layout-header {
+    background-color: #FFF;
+}
+
+i.fa-help {
+    color: green;
+    float:right;
+    margin-right: 5px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.ivu-poptip-confirm .ivu-poptip-body .ivu-icon{
+    left: 20px;
+}
+
+:focus {
+    outline: none;
+}
+
+.ivu-btn-text:focus {
+    box-shadow: none;
+}
+.no-drag {
+    -webkit-app-region: no-drag
+}
+
+.drag {
+    -webkit-app-region: drag
+}
+
+.ivu-alert-info .ivu-alert-icon, .ivu-anchor-link-active>.ivu-anchor-link-title {
+    color: #2d8cf0;
+}
+
+.ivu-modal-content {
+    background-color: #131415;
+}
+
+.ivu-modal-header-inner {
+    color: #aca49a;
+}
+
+.ivu-select-selection, .ivu-select-dropdown {
+    background-color: #181a1b;
+    color: #aca49a;
+    border-color: #393e40;
+}
+.ivu-modal-header {
+    border-bottom-color: #393e40;
+}
+.ivu-modal-footer {
+    border-top-color: #393e40;
+}
+.ivu-select-item {
+    color: #aca49a;
+}
+.ivu-input-number-handler-wrap {
+    background-color: #181a1b;
+    border-color: #393e40;
+}
+.ivu-input, .ivu-input-number, input {
+    border-color: #393e40;
+    color: #aca49a;
+    background-color: #181a1b;
+    background-image: none;
+}
+
+.ivu-input-group-append .ivu-btn, .ivu-input-group-prepend .ivu-btn {
+    border-color: transparent;
+    background-color: transparent;
+    color: inherit;
+}
+
+.ivu-btn.disabled, .ivu-btn.disabled.active, .ivu-btn.disabled:active, .ivu-btn.disabled:focus, .ivu-btn.disabled:hover, .ivu-btn[disabled], .ivu-btn[disabled].active, .ivu-btn[disabled]:active, .ivu-btn[disabled]:focus, .ivu-btn[disabled]:hover, fieldset[disabled] .ivu-btn, fieldset[disabled] .ivu-btn.active, fieldset[disabled] .ivu-btn:active, fieldset[disabled] .ivu-btn:focus, fieldset[disabled] .ivu-btn:hover {
+    color: #c6c1ba;
+    background-color: #1d1f20;
+    border-color: #393e40;
+}
+
+.ivu-input-group-append .ivu-btn, .ivu-input-group-prepend .ivu-btn {
+    border-color: transparent;
+    background-color: transparent;
+    color: inherit;
+}
+
+.ivu-input-group-append, .ivu-input-group-prepend {
+    color: #aca49a;
+    background-color: #1c1e1f;
+    border-color: #393e40;
+}
+
+.ivu-input-group-append {
+    border-left-color: initial;
+}
+
+.ivu-btn-text {
+    color: #aca49a;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.ivu-form-item-error .ivu-input-group-append, .ivu-form-item-error .ivu-input-group-prepend {
+    background-color: rgb(24, 26, 27);
+}
+
+.ivu-alert-desc {
+    color: rgb(172, 164, 154);
+}
+
+.ivu-alert-with-desc .ivu-alert-message {
+    color: rgb(205, 201, 195);
+}
+
+.ivu-alert-error {
+    border-color: rgb(136, 40, 0);
+    background-color: rgb(66, 24, 0);
+}
+
+.ivu-alert-success {
+    border-color: rgb(26, 118, 63);
+    background-color: rgb(0, 62, 31);
+}
+
+.ivu-alert-info {
+    border-color: rgb(0, 74, 127);
+    background-color: rgb(28, 31, 32);
+}
+
+.ivu-alert-warning {
+    border-color: rgb(142, 99, 0);
+    background-color: rgb(66, 50, 0);
+}
+
+.ivu-tabs {
+    color: #e3e5e8;
+}
+
+.ivu-poptip-inner {
+    background: #131415;
+}
+
+.ivu-poptip-popper[x-placement^="top"] .ivu-poptip-arrow:after {
+    border-top-color: #131415;
+}
+
+.ivu-poptip-popper[x-placement^="bottom"] .ivu-poptip-arrow:after {
+    border-bottom-color: #131415;
+}
+
+.ivu-poptip-popper[x-placement^="left"] .ivu-poptip-arrow:after {
+    border-left-color: #131415;
+}
+
+.ivu-poptip-popper[x-placement^="right"] .ivu-poptip-arrow:after {
+    border-right-color: #131415;
+}
+
+.ivu-poptip-confirm .ivu-poptip-footer .ivu-btn-primary {
+    background: #ed4014;
+    color: #FFF;
+}
+
+.ivu-message-notice-content {
+    background: #303436;
+}
+.ivu-btn-text:hover {
+    background: transparent;
+}
+
+.ivu-poptip-title-inner {
+    color:#aca49a;
+}
+
+.ivu-form .ivu-form-item-label {
+    color: #c6c1ba
+}
