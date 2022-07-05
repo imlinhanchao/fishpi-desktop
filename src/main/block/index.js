@@ -5,8 +5,7 @@ let setting;
 let tray;
 let create = (app) => {
     let win = windows.create(app);
-    console.dir(TrayModel);
-    (new TrayModel(app, win)).create();
+    new TrayModel(app, win).create();
     return win;
 }
 

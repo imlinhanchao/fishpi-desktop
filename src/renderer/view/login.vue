@@ -1,16 +1,8 @@
 <style lang="less" scoped>
-.layout {
-    background: --main-background-color;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 40px);
-    margin: auto;
-    flex-direction: column;
-}
 .layout-form {
     padding: 20px 0.5em;
-    width: 70%;
+    width: 95%;
+    margin: auto;
     i {
         width: 15px;
     }
@@ -77,7 +69,7 @@
         <FormItem prop="mfacode">
             <Input ref="mfacode"
                 type="text"
-                v-model="login.mfacode"
+                v-model="login.mfaCode"
                 placeholder="两步验证码"
                 @on-keyup.enter="submit('loginForm')"
             >
@@ -119,7 +111,7 @@
             login: {
                 username: localStorage.getItem('username') || '',
                 passwd: localStorage.getItem('passwd') || '',
-                mfacode: '',
+                mfaCode: '',
             },
             isPasswdShow: false,
             ruleValidate: {
@@ -147,7 +139,7 @@
                 if (!valid) return;
                 try {
                     this.login_loading = true;
-                    let rsp = await this.$root.pwl.login(this.login);
+                    let rsp = await this.$fishpi.login(this.login);
                     this.login_loading = false;
                     if (!rsp) return;
                     if (rsp.code != 0) {
@@ -157,14 +149,14 @@
                     localStorage.setItem('token', rsp.Key);
                     localStorage.setItem('username', this.login.username);
                     localStorage.setItem('passwd', this.login.passwd);
-                    this.$router.push('/chat');
+                    this.$router.push('/');
                 } catch (err) {
                     this.$Message.error(err.message);
                 }
             });
         },
         register() {
-            window.open(`https://${this.$root.config.domain}/register`);
+            window.open(`https://fishpi.cn/register?r=imlinhanchao`);
         }
     }
   }

@@ -53,7 +53,6 @@ class TrayModel {
     }
 
     create() {
-        console.log(this.icon)
         this.tray = new Tray(this.icon);
         this.tray.setContextMenu(this.menu);
         this.tray.on('double-click', () => {

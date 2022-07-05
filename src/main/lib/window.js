@@ -3,35 +3,31 @@ import {
 } from 'electron'
 
 class Windows {
-    constructor(app, {
-        parent=null, frame=true, resizable=true,
-        size={}, skipbar=false, url='', quitEvent, show=false,
-        transparent=true
+    constructor(app, options={
+        parent:null, frame:true, resizable:true,
+        width:400, height: 600, skipbar:false, url:'', 
+        quitEvent: null, show:false,
+        transparent:true
     }) {
 
         this.that = new BrowserWindow({
-            parent: parent,
-            width: size.width,
-            height: size.height,
-            minWidth: size.width * .7,
-            minHeight: size.height * .7,
-            transparent: transparent,
-            frame: frame,
-            resizable: resizable,
-            skipTaskbar: skipbar,
+            minWidth: options.width * .7,
+            minHeight: options.height * .7,
+            transparent: options.transparent,
             webPreferences: {
                 nodeIntegration: true,
                 webSecurity: false,
                 contextIsolation: false,
             },
+            ...options
         });
 
         this.app = app;
-        this.setMenu(null);
+        this.that.setMenu(null);
 
         const winURL = process.env.NODE_ENV === 'development' ?
-            `http://localhost:9080/#${url}` :
-            `file://${__dirname}/index.html#${url}`
+            `http://localhost:9080/#${options.url}` :
+            `file://${__dirname}/index.html#${options.url}`
 
         this.loadURL(winURL)
 
@@ -41,7 +37,7 @@ class Windows {
 
         this.on('closed', (event) => {
             this.that = null;
-            quitEvent && quitEvent(event)
+            options.quitEvent && options.quitEvent(event)
         })
     
         this.on('enter-html-full-screen', () => {
@@ -53,7 +49,7 @@ class Windows {
         })
     
 
-        show ? this.show() : this.hide()
+        options.show ? this.show() : this.hide()
     }
 
     get widows ()       { return this.that; }
@@ -70,6 +66,8 @@ class Windows {
     flashFrame()        { return this.that.flashFrame(...arguments); }
     setAlwaysOnTop()    { return this.that.setAlwaysOnTop(...arguments); }
     setOpacity()        { return this.that.setOpacity(...arguments); }
+    setSize()           { return this.that.setSize(...arguments); }
+    getSize()           { return this.that.getSize(...arguments); }
 }
 
 export default Windows

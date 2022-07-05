@@ -1,8 +1,9 @@
 :root {
     --main-background-color: #232425;
+    --main-active-color: #d23f31;
 
 
-    --liveness-active-color: #d23f31;
+    --liveness-active-color: var(--main-active-color);
     --liveness-normal-color: #57a3f3;
 }
 

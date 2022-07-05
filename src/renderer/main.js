@@ -1,11 +1,10 @@
 import ipc from './ipc'
 import Setting from './setting'
-import fs from 'fs';
-import path from 'path';
 
 import Vue from 'vue'
 import axios from 'axios'
 import VueWorker from 'vue-worker'
+import FishPi from 'fishpi';
 
 import App from './App'
 import router from './router'
@@ -26,37 +25,47 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 Vue.config.devtools = true;
-Vue.$ipc = ipc;
+
+Vue.prototype.$ipc = ipc;
+Vue.prototype.$fishpi = new FishPi();
 
 router.beforeEach((to, from, next) => {
-  console.dir(to);
-  if(!to.meta.notitle) document.title = '摸鱼派 - ' + to.meta.title;
+  if(!to.meta.notitle && to.meta.title) {
+    if(window.$VueApp) window.$VueApp.title = to.meta.title;
+  }
+  else {
+    if(window.$VueApp) window.$VueApp.title = '';
+  }
   next();
 });
 
 /* eslint-disable no-new */
-new Vue({
+window.$VueApp = new Vue({
   components: { App },
   router,
   store,
   template: '<App/>',
   mounted() {
+    this.title = document.title;
+    this.$fishpi.setToken(this.token);
   },
   data: {
     token: localStorage.getItem('token') || '',
     setting: new Setting(),
-    ipc,
+    title: '摸鱼派桌面客户端',
+    liveness: 10,
   },
   methods: {
-  },
-  computed: {
-    title() {
-        return document.title;
-    },
-    isLogin() {
-      return !!this.token
+    async isLogin() {
+      if(!this.token) return false;
+      let info = await this.$fishpi.account.info();
+      console.dir(info)
+      return info.code == 0;
     }
   },
   watch: {
+    title(val) {
+      document.title = val;
+    }
   }
 }).$mount('#app')

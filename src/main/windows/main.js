@@ -14,7 +14,9 @@ class Main extends Page
             },
             show: true,
             frame: false,
-            size: { width: 400, height: 600 }
+            width: 400, 
+            height: 600, 
+            minWidth: 350
         }, options);
         return super.create(options);
     }
@@ -25,13 +27,21 @@ class Main extends Page
                 this.app.quit()
             },
             opacity(event, args) {
-                if(this.win) this.win.setOpacity(args.enable ? args.value / 100 : 1)
+                if(!this.win) return;
+                this.win.setOpacity(args.enable ? args.value / 100 : 1)
             },
             min() {
-                if(this.win) this.win.hide()
+                if(!this.win) return;
+                this.win.hide()
             },
             top(event, args) {
-                if(this.win) this.win.setAlwaysOnTop(args, 'floating')
+                if(!this.win) return;
+                this.win.setAlwaysOnTop(args, 'floating')
+            },
+            resize(event, args) {
+                if(!this.win) return;
+                let size = this.win.getSize();
+                this.win.setSize(args.width || size[0], args.height || size[1]);
             }
         }
     }

@@ -20,15 +20,16 @@
             overflow:hidden;
             text-overflow:ellipsis;
             white-space:nowrap;
-            max-width: calc(100vw - 210px);
+            max-width: calc(100vw - 170px);
             display: inline-block;
             -webkit-app-region: drag;
         }
     }
     .control {
         -webkit-app-region: no-drag;
+        padding-right: 5px;
         i {
-            font-size: 1.5em;
+            font-size: 1em;
         }
     }
 }
@@ -43,9 +44,9 @@
 }
 .cirle-empty {
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 10px;
+    width: 1em;
+    height: 1em;
+    border-radius: .5em;
     border: 2px dashed #aca49a;
     vertical-align: middle;
 }
@@ -54,7 +55,7 @@
 <template>
 <header class="drag header" :title="'已摸鱼' + liveness + '%'">
     <h1 class="drag"> <img src='../assets/icon.png' />
-    <span id="win-title" class="drag">{{ $root.title || '摸鱼派'}}</span></h1>
+    <span id="win-title" class="drag">{{ '摸鱼派 - ' + $root.title || '摸鱼派'}}</span></h1>
     <span class="control no-drag">
         <Button type="text" @click="handleMin"><Icon custom="fa fa-minus"></Icon></Button>
         <Button type="text" @click="handleOpacity" class="win-opacity-btn" :class="{ 'win-checked': opacity.enable }"><span class="cirle-empty"></span></Button>
@@ -99,23 +100,23 @@
     },
     methods: {
         handleClose() {
-            this.$root.ipc.send(`${this.page}-event`, { call: 'close' });
+            this.$ipc.send(`${this.page}-event`, { call: 'close' });
         },
 
         handleMin() {
-            this.$root.ipc.send(`${this.page}-event`, { call: 'min' });
+            this.$ipc.send(`${this.page}-event`, { call: 'min' });
         },
         
         handleTop() {
             this.wintop = !this.wintop;
-            this.$root.ipc.send(`${this.page}-event`, { 
+            this.$ipc.send(`${this.page}-event`, { 
                 call: 'top', args: this.wintop 
             });
         },
         
         handleOpacity() {
             this.opacity.enable = !this.opacity.enable;
-            this.$root.ipc.send(`${this.page}-event`, { 
+            this.$ipc.send(`${this.page}-event`, { 
                 call: 'opacity', args: this.opacity 
             })
         },

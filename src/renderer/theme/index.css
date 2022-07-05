@@ -186,6 +186,7 @@ i.fa-help {
     color: #aca49a;
     background-color: transparent;
     border-color: transparent;
+    padding: 0 0.5em;
 }
 
 .ivu-form-item-error .ivu-input-group-append, .ivu-form-item-error .ivu-input-group-prepend {
