@@ -1,9 +1,28 @@
 :root {
-    --main-background-color: #232425;
-    --main-active-color: #d23f31;
+    --global-text-color: #cecac3;
+    --global-background-color: #232425;
+    --global-active-color: #d23f31;
 
+    --main-chatroom-background-color: rgba(255, 255, 255, .03);
+    --main-chatroom-sidebar-background-color: rgba(255, 255, 255, .05);
+    --main-chatroom-message-background-color: #F6F8FA;
+    --main-chatroom-message-color: #232425;
+    --main-chatroom-user-message-background-color: #515a6e;
+    --main-chatroom-user-message-color: #F6F8FA;
+    --main-chatroom-plusone-background-color: #d23f31;
+    --main-chatroom-plusone-color: #FFF;
+
+    --main-redpacket-readed-background-color: #fecd41;
+    --main-redpacket-background-color: #f90;
+    --main-redpacket-message-color: #FFF;
+    
 
     --liveness-active-color: var(--main-active-color);
     --liveness-normal-color: #57a3f3;
+
+    --plyr-audio-control-color: #aca49a;
+    --plyr-audio-controls-background: rgba(35, 36, 37, 0.78);
+    --plyr-color-main: #d23f31;
+
 }
 

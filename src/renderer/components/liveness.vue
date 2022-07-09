@@ -1,7 +1,7 @@
 <style lang="less" scoped>
 footer {
     -webkit-app-region: no-drag;
-    background: var(--main-background-color);
+    background: var(--global-background-color);
 }
 .liveness {
     background: #57a3f3;

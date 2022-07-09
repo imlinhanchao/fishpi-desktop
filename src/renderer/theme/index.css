@@ -1,16 +1,10 @@
-:root {
-    --plyr-audio-control-color: #aca49a;
-    --plyr-audio-controls-background: rgba(35, 36, 37, 0.78);
-    --plyr-color-main: #d23f31;
-}
-
 html {
     height: 100%;
 }
 
 body {
     background: transparent;
-    color: #cecac3;
+    color: var(--global-text-color);
     font: 1em/1.8 PingFang SC, Lantinghei SC, Segoe UI, Microsoft Yahei,Roboto, Helvetica Neue,Helvetica,Arial,sans-serif;
     -webkit-app-region: drag;
     overflow: hidden;
@@ -152,6 +146,7 @@ i.fa-help {
     color: #aca49a;
     background-color: #181a1b;
     background-image: none;
+    border-radius: 0;
 }
 
 .ivu-input-group-append .ivu-btn, .ivu-input-group-prepend .ivu-btn {
@@ -264,3 +259,4 @@ i.fa-help {
 .ivu-form .ivu-form-item-label {
     color: #c6c1ba
 }
+

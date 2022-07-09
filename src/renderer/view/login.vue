@@ -11,7 +11,7 @@
     text-align: center;
     font-size: 2.5em;
     font-weight: lighter;
-    color: #f0f0f0;
+    color: var(--global-text-color);
     a { 
         color: inherit;
         vertical-align: middle;
@@ -30,6 +30,9 @@
     .register-btn { 
         margin-left: 5px;
     }
+}
+.layout {
+    height: auto;
 }
 </style>
 
@@ -87,10 +90,11 @@
 <script>
   export default {
     name: 'home',
-    component: {
+    components: {
     },
     mounted () {
-
+        if (this.$root.isLogin()) return this.$router.push('/');
+        this.$ipc.send('main-event', { call: 'resize', args: { width: 400 } })
     },
     data () {
         const validatePasswd = (rule, value, callback) => {
@@ -139,14 +143,7 @@
                 if (!valid) return;
                 try {
                     this.login_loading = true;
-                    let rsp = await this.$fishpi.login(this.login);
-                    this.login_loading = false;
-                    if (!rsp) return;
-                    if (rsp.code != 0) {
-                        this.$Message.error(rsp.msg);
-                        return;
-                    }
-                    localStorage.setItem('token', rsp.Key);
+                    this.$root.token = await this.$store.dispatch('fishpi/login', this.login);
                     localStorage.setItem('username', this.login.username);
                     localStorage.setItem('passwd', this.login.passwd);
                     this.$router.push('/');

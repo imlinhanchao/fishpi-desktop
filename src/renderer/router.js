@@ -16,12 +16,21 @@ export default new Router({
                     },
                     component: () => import('./view/login')
                 }, {
-                    path: 'chatroom',
+                    path: '',
                     meta: {
-                        title: '聊天室',
-                        name: 'chatroom'
+                        title: '首页',
+                        name: 'home'
                     },
-                    component: () => import('./view/home')
+                    component: () => import('./view/home'),
+                    children: [{
+                        path: 'chatroom',
+                        meta: {
+                            title: '聊天室',
+                            name: 'chatroom'
+                        },
+                        component: () => import('./view/chatroom')
+                    }
+                ],
                 }
             ],
         },

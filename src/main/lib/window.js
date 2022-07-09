@@ -68,6 +68,7 @@ class Windows {
     setOpacity()        { return this.that.setOpacity(...arguments); }
     setSize()           { return this.that.setSize(...arguments); }
     getSize()           { return this.that.getSize(...arguments); }
+    setMenu()           { return this.that.setMenu(...arguments); }
 }
 
 export default Windows

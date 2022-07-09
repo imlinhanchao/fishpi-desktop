@@ -1,0 +1,256 @@
+<template>
+<section class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}" @contextmenu="menuShow">
+    <div class="msg-avatar-box">
+        <Avatar class="msg-avatar" :src="item.userAvatarURL" />
+    </div>
+    <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
+        <div class="msg-user" :title="item.userName">{{item.userNickname || item.userName}}</div>
+        <div class="redpacket-item" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'"
+            :class="{'redpacket-empty': emptyRedpacket || readRedpacket }" 
+            v-if="isRedpacket">
+            <div class="arrow"/>
+            <div class="redpacket-content">
+                <svg class="redpacket-icon">
+                    <use xlink:href="#redPacketIcon"></use>
+                </svg>
+                <div class="redpacket-msg">{{item.content.msg}}</div>
+            </div>
+        </div>
+        <div class="msg-contain" v-if="!isRedpacket">
+            <div class="arrow" v-if="isImgOnly"/>
+            <div class="msg-content md-style" :data-html="item.content" v-html="formatContent" v-if="isImgOnly"/>
+            <span class="msg-img" v-if="!isImgOnly" v-html="formatContent"></span>
+            <span class="plus-one" @click="doubleMsg" v-if="double">+1</span>
+        </div>
+        <div class="db-users" v-if="item.dbUser && item.dbUser.length">
+            <span class="db-user" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickame || db.userName">
+                <Avatar class="db-avatar" :src="db.userAvatarURL" />
+            </span>
+            <span class="db-word">也这么说</span>
+        </div>
+    </div>
+</section>
+</template>
+
+<script>
+  export default {
+    name: 'chatroom-item',
+    components: {
+    },
+    props: {
+        item: {
+            required: true
+        },
+        double: {
+            type: Boolean,
+            default: false
+        },
+    },
+    mounted () {
+    },
+    data () {
+        return {
+        }
+    },
+    watch: {
+    },
+    filters: {
+    },
+    computed: {
+        emptyRedpacket() {
+            return this.item.content.got == this.item.content.count;
+        },
+        readRedpacket() {
+            return this.item.content.whos && this.item.content.whos.find(w => w.userName == this.current.userName)
+        },
+        isRedpacket() {
+            return this.item.content.msgType == 'redPacket'
+        },
+        formatContent() {
+            return this.item.content.replace && this.item.content
+                .replace(/(<a )/g, '$1target="_blank" ')
+                .replace(/(<iframe[^>]*?src="(https:)*\/\/music.163.com\/outchain\/player\?type=\d&amp;id=(\d+)[^"]*?">\s*<\/iframe>)/, '<div class="netease-music"><div class="netease-cover" data-id="$3"></div>$1</div>')
+                .replace(/(<img )/g, '$1data-action="preview" ');
+        },
+        isImgOnly() {
+            return this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)
+        },
+        current() {
+            return this.$store.getters['fishpi/account'];
+        },
+        isCurrent() {
+            return this.item.userName == this.current.userName;
+        },
+     },
+    methods: {
+        doubleMsg() {
+
+        },
+        menuShow() {
+            
+        }
+    }
+  }
+</script>
+<style lang="less" scoped>
+.msg-item{
+    display: flex;
+    flex-direction: row;
+    margin: 5px 0;
+
+    .msg-avatar-box {
+        position: relative;
+        .msg-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 35px;
+            margin-top: 1.5em;
+            cursor: pointer;
+        }
+    }
+
+    .msg-item-contain{
+        display: flex;
+        flex-direction: column;
+        width: 85%;
+        position: relative;
+
+        .redpacket-item {
+            display: flex;
+            flex-direction: row;
+            cursor: pointer;
+            user-select: none;
+            &.redpacket-empty {
+                .redpacket-content {
+                    background: var(--main-redpacket-readed-background-color);
+                }
+                .arrow {
+                    border-right-color: var(--main-redpacket-readed-background-color);
+                }
+            }
+            .arrow {
+                border-right-color: var(--main-redpacket-background-color);
+            }
+            .redpacket-content{
+                display: inline-flex;
+                align-items: center;
+                background: var(--main-redpacket-background-color);
+                border-radius: 5px;
+                padding-right: 10px;
+                .redpacket-icon {
+                    width: 64px;
+                    height: 64px;
+                }
+                .redpacket-msg {
+                    color: var(--main-redpacket-message-color);
+                }
+            }
+        }
+
+        .msg-user{
+            margin-left: 1em;
+            font-size: .8em;
+        }
+
+        .arrow{
+            border: 5px solid transparent;
+            border-right: 5px solid var(--main-redpacket-message-color);
+            width: 0;
+            margin-top: 15px;
+            height: 0;
+        }
+    }
+    .msg-contain{
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        width: 100%;
+
+        .msg-content{
+            background-color: var(--main-redpacket-message-color);
+            border-radius: 5px;
+            padding: 8px 15px;
+            color: var(--main-chatroom-message-color);
+            word-break: break-word;
+            max-width: calc(100% - 45px);
+            overflow: auto;
+        }
+
+        .msg-img {
+            padding: 5px 10px;
+            display: inline-block;
+            font-size: 0;
+            max-width: 90%;
+        }
+        .plus-one {
+            font-size: .8em;
+            margin: auto 5px;
+            font-weight: bolder;
+            color: var(--main-chatroom-plusone-color);
+            height: 25px;
+            width: 25px;
+            background: var(--main-chatroom-plusone-background-color);
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-family: mononoki,Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        }
+        .db-users {
+            padding: 5px 0 5px 10px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-wrap: wrap;
+            .db-user {
+                padding: 2px;
+            }
+            .db-avatar {
+                width: 25px;
+                height: 25px;
+            }
+            .db-word {
+                display: inline-block;
+                padding-left: 5px;
+            }
+        }
+    }
+    &.msg-current {
+        flex-direction: row-reverse;
+        .msg-contain {
+            flex-direction: row-reverse;
+        }
+        .arrow {
+            border-right-color: transparent;
+            border-left-color: var(--main-chatroom-user-message-background-color);
+        }
+        .msg-content {
+            background-color: var(--main-chatroom-user-message-background-color);
+            color: var(--main-chatroom-user-message-color);
+        }
+        .msg-user {
+            text-align: right;
+            margin-right: 1em;
+        }
+        .plus-one {
+            left: -1.5em;
+            right: auto;
+        }
+        .redpacket-item {
+            flex-direction: row-reverse;
+            .arrow {
+                border-right-color: transparent;
+                border-left-color: var(--main-redpacket-background-color);
+            }
+            &.redpacket-empty {
+                .arrow {
+                    border-right-color: transparent;
+                    border-left-color: var(--main-redpacket-readed-background-color);
+                }
+            }
+        }
+        .db-users {
+            justify-content: flex-end;
+        }
+    }
+}
+</style>

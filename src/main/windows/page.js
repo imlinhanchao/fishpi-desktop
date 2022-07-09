@@ -2,6 +2,7 @@ import Win from '../lib/window'
 import {
     ipcMain
 } from 'electron'
+import * as Main from '@electron/remote/main'
 
 class Page
 {
@@ -23,6 +24,7 @@ class Page
             },
             ...options
         })
+        Main.enable(this.win.webContents);
         return this.win;
     }
 }

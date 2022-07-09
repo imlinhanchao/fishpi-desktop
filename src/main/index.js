@@ -1,5 +1,6 @@
 import { app, shell } from 'electron'
 import blocks from './block'
+import * as main from '@electron/remote/main'
 
 let mainWindow
 /**
@@ -42,6 +43,8 @@ app.on('web-contents-created', (e, contents) => {
     })
   }
 })
+
+main.initialize()
 
 /**
  * Auto Updater
