@@ -13,7 +13,8 @@
         </section>
         <section class="chat-sender">
             <section class="chat-msg ivu-input-wrapper ivu-input-wrapper-default ivu-input-type-textarea">
-                <textarea 
+                <textarea data-menu="true"
+                    spellcheck="false"
                     ref="message"
                     v-model="msg" 
                     type="textarea" 
@@ -37,17 +38,12 @@
             >
                 <Icon custom="fa fa-paper-plane" />
             </Button>
-            <section class="at-list" v-if="atList.length">
-                <div class="at-item" @click="atUser(i)" :class="{ 'current-at':  currentSel == i}" v-for="(u, i) in atList"><Avatar :src="u.userAvatarURL"/> {{u.userName}}</div>
-            </section>
-            <section class="emoji-list" v-if="emojiList.length">
-                <div class="emoji-item" @click="addEmoji(i)" :class="{ 'current-at':  currentSel == i}" v-for="(u, i) in emojiList"><img :src="u.url"/></div>
-            </section>
         </section>
     </section>
 </template>
 
 <script>
+  import { position, offset } from 'caret-pos';
   export default {
     name: 'messagebox',
     components: {
@@ -62,15 +58,18 @@
         },
     },
     mounted () {
+        new BroadcastChannel('autocomplete-choose').addEventListener("message", ({ data }) => {
+            switch(data.type) {
+                case 'at': this.atUser(data.value); break;
+                case 'emoji': this.addEmoji(data.value); break;
+            }
+        }, false);
     },
     data () {
         return {
             msg: '',
             sending: false,
             emojiForm: false,
-            atList: [],
-            emojiList: [],
-            currentSel: -1,
             faceForm: false,
             lastCursor: 0,
         }
@@ -82,7 +81,7 @@
             let matEmoji = data.match(/:([^:]+?)$/);
             if (matAt) this.getAt(matAt[1]);
             else if (matEmoji) this.getEmoji(matEmoji[1]);
-            else this.emojiList = this.atList = [];
+            else this.sendAutoComplete([], 'at');
         },
         quote (val) {
             if (val == null) this.msg =  this.msg.replace(/^并说：/, '');
@@ -103,11 +102,6 @@
             }
         },
         async sendChatroom() {
-            if (this.currentSel >= 0) {
-                if (this.atList.length > 0) this.atUser(this.currentSel);
-                if (this.emojiList.length > 0) this.addEmoji(this.currentSel);
-                return;
-            }
             if (!this.msg) return;
             if (this.quote) {
                 let raw = this.quote.md || await this.$fishpi.chatroom.raw(this.quote.oId);
@@ -129,7 +123,7 @@
             return true;
         },
         clear() {
-
+            this.$emit('clear');
         },
         sendRedpacket() {
 
@@ -140,42 +134,49 @@
         msgCursor() {
             return this.$refs['message'].selectionStart
         },
+        async getCaretPos() {
+            let winPos = (await this.$ipc.sendSync('main-event', {
+                call: 'getPosition',
+            })).data
+            let msgPos = this.$root.getElementPosition(this.$refs['message']);
+            let caretPos = position(this.$refs['message']);
+            return {
+                x: msgPos.x + caretPos.left + winPos.x,
+                y: msgPos.y + caretPos.top + caretPos.height + winPos.y
+            }
+        },
+        async sendAutoComplete(list, type, direct) {
+            new BroadcastChannel('autocomplete').postMessage({ list, type, direct, caret: await this.getCaretPos() });
+        },
         async getAt(name) {
             if (!name) return;
-            let rsp = await this.$fishpi.names(name);
-            if (!rsp) return;
-            if (rsp.code != 0) {
-                this.$Message.error(rsp.msg);
-                return;
+            try {
+                let atList = await this.$fishpi.names(name);
+                let autocomplete = atList.map(a => ({ 
+                    value: a.userName, text: a.userName, img: a.userAvatarURL48
+                }))
+                this.sendAutoComplete(autocomplete, 'at');
+                this.lastCursor = this.msgCursor();
+            } catch (error) {
+                
             }
-            this.atList = rsp.data;
-            this.currentSel = -1;
-            this.lastCursor = this.msgCursor();
         },
-        selList(i) {
-            let len = this.atList.length || this.emojiList.length;
-            if (len == 0) return;
-            this.currentSel = (this.currentSel + i) % len;
-            this.$refs['message'].setSelectionRange(this.lastCursor, this.lastCursor)
-        },
-        atUser(i) {
-            let data = '@' + this.atList[i].userName + ' ';
-            this.atList = [];
-            this.currentSel = -1;
+        atUser(value) {
+            let data = '@' + value + ' ';
+            this.sendAutoComplete([], 'at');
             this.appendMsg({ regexp: /@([^\s]*?)$/, data })
         },
         getEmoji(name) {
             if (!name || name.length < 1) return;
-            this.emojiList = Object.keys(this.$fishpi.emoji.default)
+            let autocomplete = Object.keys(this.$fishpi.emoji.default)
                 .filter(e => e.startsWith(name))
-                .slice(0, 5).map(e => ({ name:e, url: this.$fishpi.emoji.default[e] }));
-            this.currentSel = -1;
+                .slice(0, 5).map(e => ({ value: e, img: this.$fishpi.emoji.default[e] }));
+            this.sendAutoComplete(autocomplete, 'emoji', 'row');
             this.lastCursor = this.msgCursor();
         },
-        addEmoji(i) {
-            let data = this.$root.emoji.get(this.emojiList[i].name);
-            this.emojiList = [];
-            this.currentSel = -1;
+        addEmoji(value) {
+            let data = `:${value}:`;
+            this.sendAutoComplete([], 'emoji');
             this.appendMsg({ regexp: /:([^:]+?)$/, data })
         },
         appendMsg({ regexp, data }){
@@ -186,7 +187,7 @@
             this.$nextTick(() => {
                 this.$refs['message'].focus();
                 this.$refs['message'].setSelectionRange(preMsg.length, preMsg.length)
-                this.emojiList = this.atList = []
+                this.sendAutoComplete([], 'at');
             });
         },
     }

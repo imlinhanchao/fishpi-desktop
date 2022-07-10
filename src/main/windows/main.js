@@ -1,5 +1,4 @@
 import Page from './page'
-import { Menu } from 'electron'
 
 class Main extends Page
 {
@@ -44,8 +43,10 @@ class Main extends Page
                 let size = this.win.getSize();
                 this.win.setSize(args.width || size[0], args.height || size[1]);
             },
-            menu (event, args) {
-
+            getPosition(event, args, callback) {
+                if(!this.win) return;
+                let [x, y] = this.win.getPosition();
+                callback({ x, y });
             }
         }
     }

@@ -11,7 +11,9 @@ class Page
         this.app = app;
         ipcMain.on(`${name}-event`, (event, args) => {
             if (!args.call || !this.events || !this.events[args.call]) return;
-            this.events[args.call].call(this, event, args.args, args.callback);
+            this.events[args.call].call(this, event, args.args, (data) => {
+                event.sender.send(`${name}-event-callback-` + args.callback, { data })
+            });
         });
     }
 

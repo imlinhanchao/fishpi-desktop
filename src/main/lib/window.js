@@ -3,12 +3,13 @@ import {
 } from 'electron'
 
 class Windows {
-    constructor(app, options={
-        parent:null, frame:true, resizable:true,
-        width:400, height: 600, skipbar:false, url:'', 
-        quitEvent: null, show:false,
-        transparent:true
-    }) {
+    constructor(app, options) {
+        options = Object.assign({
+            parent:null, frame:true, resizable:true,
+            width:400, height: 600, skipbar:false, url:'', 
+            quitEvent: null, show:false,
+            transparent:true
+        }, options);
 
         this.that = new BrowserWindow({
             minWidth: options.width * .7,
@@ -62,13 +63,15 @@ class Windows {
     loadURL()           { return this.that.loadURL(...arguments); }
     on()                { return this.that.on(...arguments); }
     show()              { return this.that.show(...arguments); }
+    showInactive()      { return this.that.showInactive(...arguments); }
     hide()              { return this.that.hide(...arguments); }
     flashFrame()        { return this.that.flashFrame(...arguments); }
     setAlwaysOnTop()    { return this.that.setAlwaysOnTop(...arguments); }
     setOpacity()        { return this.that.setOpacity(...arguments); }
     setSize()           { return this.that.setSize(...arguments); }
     getSize()           { return this.that.getSize(...arguments); }
-    setMenu()           { return this.that.setMenu(...arguments); }
+    getPosition()       { return this.that.getPosition(...arguments); }
+    setPosition()       { return this.that.setPosition(...arguments); }
 }
 
 export default Windows

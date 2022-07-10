@@ -17,9 +17,9 @@
             </div>
         </div>
         <div class="msg-contain" v-if="!isRedpacket">
-            <div class="arrow" v-if="isImgOnly"/>
-            <div class="msg-content md-style" :data-html="item.content" v-html="formatContent" v-if="isImgOnly"/>
-            <span class="msg-img" v-if="!isImgOnly" v-html="formatContent"></span>
+            <div class="arrow" v-if="!isImgOnly"/>
+            <div class="msg-content md-style" :data-html="item.content" v-html="formatContent" v-if="!isImgOnly"/>
+            <span class="msg-img" v-if="isImgOnly" v-html="formatContent"></span>
             <span class="plus-one" @click="doubleMsg" v-if="double">+1</span>
         </div>
         <div class="db-users" v-if="item.dbUser && item.dbUser.length">
@@ -73,7 +73,7 @@
                 .replace(/(<img )/g, '$1data-action="preview" ');
         },
         isImgOnly() {
-            return this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)
+            return (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
         },
         current() {
             return this.$store.getters['fishpi/account'];

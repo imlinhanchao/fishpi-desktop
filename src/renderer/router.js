@@ -35,6 +35,14 @@ export default new Router({
             ],
         },
         {
+            path: '/autocomplete',
+            name: 'autocomplete',
+            component: () => import('./view/autocomplete'),
+            meta: {
+                name: 'autocomplete'
+            }
+        },
+        {
             path: '*',
             redirect: '/'
         }

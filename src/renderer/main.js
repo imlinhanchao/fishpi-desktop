@@ -89,6 +89,29 @@ window.$VueApp = new Vue({
             this.$router.push('/login');
             this.token = ''
             this.fishpi = null
+        },
+        getElementPosition(element) {
+            let actualLeft = element.offsetLeft;
+            let current = element.offsetParent;
+                
+            while (current !== null){
+                actualLeft += current.offsetLeft;
+                current = current.offsetParent;
+            }
+                
+                
+            let actualTop = element.offsetTop;
+            current = element.offsetParent;
+                
+            while (current !== null){
+                actualTop += current.offsetTop;
+                current = current.offsetParent;
+            }
+            
+            return {
+                x: actualLeft,
+                y: actualTop,
+            }
         }
     },
     watch: {
