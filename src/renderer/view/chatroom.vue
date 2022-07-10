@@ -112,7 +112,7 @@
     }
     .sidebar {
         background-color: var(--main-chatroom-sidebar-background-color);
-        width: 12.5em;
+        width: 10em;
         padding: 0.5em;
         display: flex;
         flex-direction: column;
@@ -134,7 +134,6 @@
                     margin-right: 0.3em;
                 }
                 .online-user {
-                    max-width: 7em;
                     overflow:hidden;
                     text-overflow:ellipsis;
                     white-space:nowrap;

@@ -35,10 +35,10 @@
 }
 .win-top-btn, .win-opacity-btn {
     &.win-checked {
-        color: #57a3f3;
+        color: var(--header-btn-checked-color);
         transform: rotate(45deg);
         .cirle-empty {
-            border-color: #57a3f3
+            border-color: var(--header-btn-checked-color)
         }
     }
 }
@@ -47,7 +47,7 @@
     width: 1em;
     height: 1em;
     border-radius: .5em;
-    border: 2px dashed #aca49a;
+    border: 2px dashed var(--global-control-text-color);
     vertical-align: middle;
 }
 </style>

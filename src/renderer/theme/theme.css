@@ -1,7 +1,29 @@
 :root {
     --global-text-color: #cecac3;
-    --global-background-color: #232425;
     --global-active-color: #d23f31;
+    --global-background-color: #232425;
+    --global-popup-background-color: #131415;
+    --global-control-background-color: #181a1b;
+    --global-append-btn-background-color: #1f2020;
+    --global-control-text-color: #aca49a;
+    --global-control-border-color: #393e40;
+    --global-scroll-bar-color: rgba(0, 0, 0, 0.39);
+
+    --markdown-hr-color: #eaecef;
+    --markdown-head-border-color: #eaecef;
+    --markdown-blockquote-color: #6a737d;
+    --markdown-blockquote-border-color: #eaecef;
+    --markdown-table-cell-border-color: #dfe2e5;
+    --markdown-table-background-color: #fafbfc;
+    --markdown-table-border-color: #c6cbd1;
+    --markdown-table-even-color: #FFF;
+    --markdown-code-background-color: rgba(27,31,35,.05);
+    --markdown-kdb-background-color: #fafbfc;
+    --markdown-kdb-text-color: #24292e;
+    --markdown-kdb-border-color: #d1d5da;
+    --markdown-kdb-shadow-color: #d1d5da;
+
+    --header-btn-checked-color: #57a3f3;
 
     --main-chatroom-background-color: rgba(255, 255, 255, .03);
     --main-chatroom-sidebar-background-color: rgba(255, 255, 255, .05);
@@ -17,10 +39,10 @@
     --main-redpacket-message-color: #FFF;
     
 
-    --liveness-active-color: var(--main-active-color);
+    --liveness-active-color: var(--global-active-color);
     --liveness-normal-color: #57a3f3;
 
-    --plyr-audio-control-color: #aca49a;
+    --plyr-audio-control-color: var(--global-control-text-color);
     --plyr-audio-controls-background: rgba(35, 36, 37, 0.78);
     --plyr-color-main: #d23f31;
 

@@ -94,16 +94,16 @@
     }
     h1,h2 {
         padding-bottom: .3em;
-        border-bottom: 1px solid #eaecef
+        border-bottom: 1px solid var(--markdown-head-border-color);
     }
     
     hr {
-        background-color: #eaecef
+        background-color: var(--markdown-hr-color);
     }
     
     blockquote {
-        color: #6a737d;
-        border-left: .25em solid #eaecef;
+        color: var(--markdown-blockquote-color);
+        border-left: .25em solid var(--markdown-blockquote-border-color);
         padding-left: 5px;
     }
     
@@ -113,20 +113,20 @@
     }
     
     table tr {
-        border-top: 1px solid #c6cbd1;
-        background-color: #fafbfc
+        border-top: 1px solid var(--markdown-table-border-color);
+        background-color: var(--markdown-table-background-color);
     }
     
     table td, table th {
-        border: 1px solid #dfe2e5
+        border: 1px solid var(--markdown-table-cell-border-color);
     }
     
     table tbody tr:nth-child(2n) {
-        background-color: #fff
+        background-color: var(--markdown-table-even-color)
     }
     
     code:not(.hljs):not(.highlight-chroma) {
-        background-color: rgba(27,31,35,.05)
+        background-color: var(--markdown-code-background-color)
     }
 
     pre,code {
@@ -149,10 +149,10 @@
     }
     
     kbd {
-        color: #24292e;
-        background-color: #fafbfc;
-        border: 1px solid #d1d5da;
-        box-shadow: inset 0 -1px 0 #d1d5da
+        color: var(--markdown-kdb-text-color);
+        background-color: var(--markdown-kdb-background-color);
+        border: 1px solid var(--markdown-kdb-border-color);
+        box-shadow: inset 0 -1px 0 var(--markdown-kdb-shadow-color)
     }
 }
 

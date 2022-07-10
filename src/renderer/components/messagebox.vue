@@ -12,21 +12,24 @@
             </Button>
         </section>
         <section class="chat-sender">
-            <Input 
-                ref="message"
-                class="chat-msg"
-                v-model="msg" 
-                type="textarea" 
-                placeholder="简单聊聊"
-                :border="false"
-                :rows="3"
-                @keyup.enter.exact="sendMsg"
-                @keyup.up="selList(-1)"
-                @keyup.down="selList(1)"
-                @keyup.left="selList(-1)"
-                @keyup.right="selList(1)"
-            >
-            </Input>
+            <section class="chat-msg ivu-input-wrapper ivu-input-wrapper-default ivu-input-type-textarea">
+                <textarea 
+                    ref="message"
+                    v-model="msg" 
+                    type="textarea" 
+                    placeholder="简单聊聊"
+                    :rows="3"
+                    @keydown.enter.exact.prevent
+                    @keyup.enter.exact="sendMsg"
+                    @keyup.enter.ctrl.exact="msg += '\n'"
+                    @keyup.up="selList(-1)"
+                    @keyup.down="selList(1)"
+                    @keyup.left="selList(-1)"
+                    @keyup.right="selList(1)"
+                    class="ivu-input ivu-input-no-border"
+                >
+                </textarea>
+            </section>
             <Button
                 class="chat-send"
                 @click="sendMsg"
@@ -165,7 +168,7 @@
             if (!name || name.length < 1) return;
             this.emojiList = Object.keys(this.$fishpi.emoji.default)
                 .filter(e => e.startsWith(name))
-                .slice(0, 5).map(e => this.$fishpi.emoji.default[e]);
+                .slice(0, 5).map(e => ({ name:e, url: this.$fishpi.emoji.default[e] }));
             this.currentSel = -1;
             this.lastCursor = this.msgCursor();
         },
@@ -218,10 +221,39 @@
         .chat-send {
             height: 100%;
             border-radius: 0;
-            background: var(--global-background-color);
+            background: var(--global-append-btn-background-color);
             color: var(--global-active-color);
-            border: 0;
+            border-color: var(--global-control-border-color);
+            border-left: 0;
         }
+        .emoji-list {
+            position: absolute;
+            background: var(--vscode-input-background);
+            top: 2.5em;
+            z-index: 90;
+            left: 0;
+            color: var(--vscode-input-foreground);
+            box-shadow: 0px 1px 2px 0px var(--vscode-input-border);
+            overflow: hidden;
+            .at-item,
+            .emoji-item {
+                padding: 6px 5px;
+                user-select: none;
+                cursor: pointer;
+            }
+            .current-at {
+                background: rgba(100, 100, 100, 0.5);
+            }
+            }
+            .emoji-list {
+            display: flex;
+            flex-direction: row;
+            .emoji-item {
+                img {
+                width: 30px;
+                }
+            }
+            }
     }
 }
 </style>
