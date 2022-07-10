@@ -99,6 +99,10 @@ a {
     color: var(--global-control-text-color);
 }
 
+.msg-control>.ivu-icon+span {
+    display: none;
+}
+
 .ivu-select-selection, .ivu-select-dropdown {
     background-color: var(--global-control-background-color);
     color: var(--global-control-text-color);

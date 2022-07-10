@@ -2,14 +2,21 @@
     <section class="chat-editor">
         <section class="chat-toolbar">
             <input type="file" name="images" accept="image/*" ref="file" v-show="false" @change="uploadImg">
-            <Button type="text" class="msg-control" @click="clear()" title="消息清屏"><Icon custom="fa fa-refresh"/></Button>
-            <Button type="text" class="msg-control" @click="$refs['file'].click()" title="上传图片"><Icon custom="fa fa-picture-o"/></Button>
+            <Button type="text" class="msg-control" @click="clear()" title="消息清屏">
+                <Icon custom="fa fa-refresh"/>
+            </Button>
+            <Button type="text" class="msg-control" @click="$refs['file'].click()"
+                :title="uploading ? '上传中...' : '上传图片'"
+                :loading="uploading">
+                <Icon class="btn-icon" custom="fa fa-picture-o"/>
+            </Button>
             <Button type="text" class="msg-control" @click="emojiForm = !emojiForm" title="发表情"><Icon custom="fa fa-smile-o"/></Button>
             <Button type="text" class="msg-redpacket msg-control" title="发红包" @click="sendRedpacket">
                 <svg class="redpacket-icon">
                     <use xlink:href="#redPacketIcon"></use>
                 </svg>
             </Button>
+            
         </section>
         <section class="chat-sender">
             <section class="chat-msg ivu-input-wrapper ivu-input-wrapper-default ivu-input-type-textarea">
@@ -64,6 +71,8 @@
                 case 'emoji': this.addEmoji(data.value); break;
             }
         }, false);
+        document.removeEventListener('paste', this.onPaste);
+        document.addEventListener('paste', this.onPaste);
     },
     data () {
         return {
@@ -72,6 +81,7 @@
             emojiForm: false,
             faceForm: false,
             lastCursor: 0,
+            uploading: false,
         }
     },
     watch: {
@@ -128,8 +138,41 @@
         sendRedpacket() {
 
         },
-        uploadImg() {
-
+        async onPaste(ev) {
+            let items = ev.clipboardData && ev.clipboardData.items;
+            let file = [];
+            if (items && items.length) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        file.push(items[i].getAsFile());
+                        break;
+                    }
+                    if (items[i].type.indexOf('html') !== -1) {
+                        let files = await this.htmlGetImg(items[i])
+                        files = files || []
+                        files = files.map(f => constructFileFromLocalFileData(new LocalFileData(f.replace(/file:\/\/\//g, ''))))
+                        file = file.concat(files);
+                    }
+                }
+            }
+            if (file.length == 0) return;
+            this.lastCursor = this.msgCursor();
+            await this.uploadImg({ target: { files: file}});
+        },
+        async uploadImg(ev) {
+            let files = Array.from(ev.target.files);
+            this.uploading = true;
+            let rsp = await this.$fishpi.upload(files);
+            this.uploading = false;
+            if (rsp.code != 0) {
+                this.$Message.error(rsp.msg);
+                return;
+            }
+            let fileData = rsp.data.succMap;
+            let filenames = Object.keys(fileData)
+            
+            this.lastCursor = this.msgCursor();
+            this.appendMsg({ regexp: null, data: filenames.map(f => `![${f}](${fileData[f]})`).join('') }); 
         },
         msgCursor() {
             return this.$refs['message'].selectionStart
@@ -211,6 +254,11 @@
                 vertical-align: middle;
             }
         }
+        .ivu-btn.ivu-btn-loading {
+            .btn-icon {
+                display: none;
+            }
+        }
     }
     .chat-sender {
         display: flex;
@@ -254,7 +302,7 @@
                 width: 30px;
                 }
             }
-            }
+        }
     }
 }
 </style>
