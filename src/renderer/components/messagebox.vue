@@ -16,7 +16,7 @@
                     <use xlink:href="#redPacketIcon"></use>
                 </svg>
             </Button>
-            
+            <Emoji v-show="emojiForm"/>
         </section>
         <section class="chat-sender">
             <section class="chat-msg ivu-input-wrapper ivu-input-wrapper-default ivu-input-type-textarea">
@@ -30,10 +30,6 @@
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact="sendMsg"
                     @keyup.enter.ctrl.exact="msg += '\n'"
-                    @keyup.up="selList(-1)"
-                    @keyup.down="selList(1)"
-                    @keyup.left="selList(-1)"
-                    @keyup.right="selList(1)"
                     class="ivu-input ivu-input-no-border"
                 >
                 </textarea>
@@ -50,10 +46,12 @@
 </template>
 
 <script>
-  import { position, offset } from 'caret-pos';
+  import { position } from 'caret-pos';
+  import Emoji from './emoji.vue';
   export default {
     name: 'messagebox',
     components: {
+        Emoji
     },
     props: {
         quote: {
