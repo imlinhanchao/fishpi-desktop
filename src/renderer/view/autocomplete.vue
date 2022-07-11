@@ -78,7 +78,6 @@
 <style lang="less" scoped>
 .autocomplete-list {
     display: inline-block;
-    flex-direction: column;
     background: var(--global-control-background-color);
     color: var(--global-control-text-color);
     margin-top: 15px;
