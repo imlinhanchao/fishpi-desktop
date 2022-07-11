@@ -7,7 +7,7 @@
         :class="{ 'focus-at': focusIndex == i }"
         v-for="(u, i) in list"
       >
-        <div class="auto-flex"><img v-if="u.img" :src="u.img" /> <span class="auto-text" v-if="u.text">{{u.text}}</span></div>
+        <div class="auto-flex"><img v-if="u.img" :src="u.img" @load="resize"/> <span class="auto-text" v-if="u.text">{{u.text}}</span></div>
       </div>
 </div>
 </div>
@@ -81,10 +81,11 @@
     flex-direction: column;
     background: var(--global-control-background-color);
     color: var(--global-control-text-color);
+    margin-top: 15px;
     .autocomplete-item {
         display: inline-block;
         user-select: none;
-        padding: .8em;
+        padding: .5em;
         cursor: pointer;
         &.focus-at, &:hover {
             background: var(--global-control-focus-color);
