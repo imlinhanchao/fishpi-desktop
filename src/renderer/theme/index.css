@@ -195,3 +195,6 @@ a {
     color: var(--global-text-color)
 }
 
+.ivu-tabs-ink-bar {
+    background-color: var(--global-active-color);
+}

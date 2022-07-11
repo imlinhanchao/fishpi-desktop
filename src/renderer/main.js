@@ -1,4 +1,4 @@
-import { Menu, MenuItem, getCurrentWindow } from '@electron/remote';
+import { Menu, getCurrentWindow } from '@electron/remote';
 
 import ipc from './ipc'
 import Setting from './setting'
@@ -60,8 +60,7 @@ window.$VueApp = new Vue({
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             if (!e.target.dataset.menu) return;
-            const menu = Menu.buildFromTemplate(this.defaultMenu);
-            menu.popup({ window: getCurrentWindow() })
+            this.popupMenu(this.defaultMenu);
         }, false)
     },
     data: {
@@ -112,6 +111,9 @@ window.$VueApp = new Vue({
                 x: actualLeft,
                 y: actualTop,
             }
+        },
+        popupMenu(menu) {
+            Menu.buildFromTemplate(menu).popup({ window: getCurrentWindow() })
         }
     },
     watch: {

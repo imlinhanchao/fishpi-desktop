@@ -10,13 +10,15 @@
                 :loading="uploading">
                 <Icon class="btn-icon" custom="fa fa-picture-o"/>
             </Button>
-            <Button type="text" class="msg-control" @click="emojiForm = !emojiForm" title="发表情"><Icon custom="fa fa-smile-o"/></Button>
+            <Button type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
+                @click="emojiForm = !emojiForm" 
+                title="发表情"><Icon custom="fa fa-smile-o"/></Button>
             <Button type="text" class="msg-redpacket msg-control" title="发红包" @click="sendRedpacket">
                 <svg class="redpacket-icon">
                     <use xlink:href="#redPacketIcon"></use>
                 </svg>
             </Button>
-            <Emoji v-show="emojiForm"/>
+            <Emoji v-show="emojiForm" @emoji="pushEmoji" />
         </section>
         <section class="chat-sender">
             <section class="chat-msg ivu-input-wrapper ivu-input-wrapper-default ivu-input-type-textarea">
@@ -231,6 +233,16 @@
                 this.sendAutoComplete([], 'at');
             });
         },
+        pushEmoji(emoji) {
+            this.lastCursor = this.msgCursor();
+            if (emoji.type == 'emoji') {
+                this.appendMsg({ regexp: null, data: `:${emoji.value}:` });
+            }
+            else if(emoji.type == 'fav') {
+                this.appendMsg({ regexp: null, data: `![图片表情](${emoji.value})` });
+            }
+            this.emojiForm = false;
+        }
     }
   }
 </script>
@@ -243,6 +255,7 @@
     .chat-toolbar {
         display: flex;
         align-items: center;
+        position: relative;
         .msg-redpacket {
             padding: 0 8px;
             svg {
@@ -256,6 +269,9 @@
             .btn-icon {
                 display: none;
             }
+        }
+        .active-emoji {
+            color: var(--global-active-color)
         }
     }
     .chat-sender {
@@ -272,34 +288,6 @@
             color: var(--global-active-color);
             border-color: var(--global-control-border-color);
             border-left: 0;
-        }
-        .emoji-list {
-            position: absolute;
-            background: var(--vscode-input-background);
-            top: 2.5em;
-            z-index: 90;
-            left: 0;
-            color: var(--vscode-input-foreground);
-            box-shadow: 0px 1px 2px 0px var(--vscode-input-border);
-            overflow: hidden;
-            .at-item,
-            .emoji-item {
-                padding: 6px 5px;
-                user-select: none;
-                cursor: pointer;
-            }
-            .current-at {
-                background: rgba(100, 100, 100, 0.5);
-            }
-            }
-            .emoji-list {
-            display: flex;
-            flex-direction: row;
-            .emoji-item {
-                img {
-                width: 30px;
-                }
-            }
         }
     }
 }
