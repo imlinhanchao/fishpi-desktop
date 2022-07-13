@@ -43,6 +43,22 @@ export default new Router({
             }
         },
         {
+            path: '/redpacket/:id',
+            name: 'redpacket',
+            component: () => import('./view/redpacket'),
+            meta: {
+                name: 'redpacket'
+            }
+        },
+        {
+            path: '/redpacket/:id/:gesture',
+            name: 'redpacket',
+            component: () => import('./view/redpacket'),
+            meta: {
+                name: 'redpacket'
+            }
+        },
+        {
             path: '*',
             redirect: '/'
         }

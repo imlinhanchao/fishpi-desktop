@@ -6,14 +6,17 @@
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
         <div class="msg-user" :title="item.userName">{{item.userNickname || item.userName}}</div>
         <div class="redpacket-item" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'"
-            :class="{'redpacket-empty': emptyRedpacket || readRedpacket }" 
+            :class="{'redpacket-empty': emptyRedpacket || readRedpacket }" @click="open"
             v-if="isRedpacket">
             <div class="arrow"/>
             <div class="redpacket-content">
-                <svg class="redpacket-icon">
-                    <use xlink:href="#redPacketIcon"></use>
-                </svg>
-                <div class="redpacket-msg">{{item.content.msg}}</div>
+                <div class="redpacket-main">
+                    <svg class="redpacket-icon">
+                        <use xlink:href="#redPacketIcon"></use>
+                    </svg>
+                    <div class="redpacket-msg">{{item.content.msg}}</div>
+                </div>
+                <div class="redpacket-type">{{redpacketType[item.content.type]}}</div>
             </div>
         </div>
         <div class="msg-contain" v-if="!isRedpacket">
@@ -81,6 +84,15 @@
         isCurrent() {
             return this.item.userName == this.current.userName;
         },
+        redpacketType() {
+            return {
+                random: '拼手气红包',
+                average: '普通红包',
+                specify: '专属红包',
+                heartbeat: '心跳红包',
+                rockPaperScissors: '猜拳红包',
+            }
+        }
      },
     methods: {
         doubleMsg() {
@@ -88,6 +100,12 @@
         },
         menuShow() {
             
+        },
+        open() {
+            this.$ipc.send('main-event', {
+                call: 'openRedpacket',
+                args: this.item.oId
+            })
         }
     }
   }
@@ -132,17 +150,28 @@
                 border-right-color: var(--main-redpacket-background-color);
             }
             .redpacket-content{
-                display: inline-flex;
-                align-items: center;
+                display: flex;
+                flex-direction: column;
                 background: var(--main-redpacket-background-color);
                 border-radius: 5px;
                 padding-right: 10px;
+                .redpacket-main {
+                    display: inline-flex;
+                    align-items: center;
+                }
                 .redpacket-icon {
                     width: 64px;
                     height: 64px;
                 }
                 .redpacket-msg {
                     color: var(--main-redpacket-message-color);
+                }
+                .redpacket-type {
+                    border-top: 1px solid var(--main-redpacket-type-border-color);
+                    color: var(--main-redpacket-type-color);
+                    padding: 2px;
+                    margin: 0 10px;
+                    font-size: .5em;
                 }
             }
         }

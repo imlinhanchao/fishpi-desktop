@@ -73,6 +73,22 @@
                     case 'online':
                         this.onlines = msg.data;
                         break;
+                    case 'redPacketStatus':
+                        {
+                            for (let i = 0; i < this.chats.length; i++) {
+                                let c = this.chats[i];
+                                if (c.oId != msg.data.oId || c.type == 'redPacketStatus') continue;
+                                this.chats[i].content.got++;
+                                this.chats[i].content.who.push({
+                                    userName: msg.data.whoGot,
+                                    avatar: (this.onlines.find(u => u.userName == msg.data.whoGot) || {
+                                        userAvatarURL: msg.data.userAvatarURL20
+                                    }).userAvatarURL
+                                });
+                                break;
+                            }
+                        }
+                        break;
                     case 'msg':
                     case 'redPacket':
                         msg.dbUser = [];

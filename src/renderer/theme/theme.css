@@ -41,7 +41,19 @@
     --main-redpacket-readed-background-color: #fecd41;
     --main-redpacket-background-color: #f90;
     --main-redpacket-message-color: #FFF;
-    
+    --main-redpacket-type-color: #FFF;
+    --main-redpacket-type-border-color: #ed4014;
+
+    --redpacket-background-color: #f45e4d;
+    --redpacket-text-color: #fee3aa;
+    --redpacket-username-color: #000;
+    --redpacket-border-color: #f1ca74;
+    --redpacket-max-tip-text-color: #FFF;
+    --redpacket-max-tip-background-color: #60b044;
+    --redpacket-max-tip-border-color: #5ca941;
+    --redpacket-zero-tip-text-color: #d23f31;
+    --redpacket-zero-tip-background-color: #FFF;
+    --redpacket-zero-tip-border-color: #D5D5D5;
 
     --liveness-active-color: var(--global-active-color);
     --liveness-normal-color: #57a3f3;

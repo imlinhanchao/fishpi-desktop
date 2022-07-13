@@ -1,10 +1,10 @@
 import Page from './page'
+import RedPacket from './redpacket'
 
 class Main extends Page
 {
     constructor(app, name) {
         super(app, name);
-        
     }
 
     create(options = {}) {
@@ -47,6 +47,9 @@ class Main extends Page
                 if(!this.win) return;
                 let [x, y] = this.win.getPosition();
                 callback({ x, y });
+            },
+            openRedpacket(event, id) {
+                new RedPacket(this.app, 'redpacket').create({}, id);
             }
         }
     }

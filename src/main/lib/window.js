@@ -24,13 +24,8 @@ class Windows {
         });
 
         this.app = app;
-        this.that.setMenu(null);
-
-        const winURL = process.env.NODE_ENV === 'development' ?
-            `http://localhost:9080/#${options.url}` :
-            `file://${__dirname}/index.html#${options.url}`
-
-        this.loadURL(winURL)
+        this.setMenu(null);
+        this.loadURL(options.url)
 
         if (process.argv.slice(1).filter(a => a.indexOf('--dev') >= 0).length > 0) {
             this.openDevTools()
@@ -53,6 +48,13 @@ class Windows {
         options.show ? this.show() : this.hide()
     }
 
+    loadURL(url) { 
+        url = process.env.NODE_ENV === 'development' ?
+            `http://localhost:9080/#${url}` :
+            `file://${__dirname}/index.html#${url}`
+        return this.that.loadURL(url); 
+    }
+
     get widows ()       { return this.that; }
     get webContents()   { return this.that.webContents; }
     get isVisible()     { return this.that.isVisible(); }
@@ -60,7 +62,6 @@ class Windows {
 
     openDevTools()      { return this.that.openDevTools(...arguments); }
     setMenu()           { return this.that.setMenu(...arguments); }
-    loadURL()           { return this.that.loadURL(...arguments); }
     on()                { return this.that.on(...arguments); }
     show()              { return this.that.show(...arguments); }
     showInactive()      { return this.that.showInactive(...arguments); }
