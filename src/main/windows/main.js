@@ -48,8 +48,18 @@ class Main extends Page
                 let [x, y] = this.win.getPosition();
                 callback({ x, y });
             },
-            openRedpacket(event, id) {
-                new RedPacket(this.app, 'redpacket').create({}, id);
+            openRedpacket(event, args) {
+                if (args == 'send') {
+                    if(!this.redpacket) 
+                        this.redpacket = new RedPacket(this.app, 'redpacket').create({
+                            quitEvent: () => {
+                                this.redpacket = null
+                            }
+                        }, 'send');
+                    else 
+                        this.redpacket.show();
+                }
+                else new RedPacket(this.app, 'redpacket').create({}, args);
             }
         }
     }

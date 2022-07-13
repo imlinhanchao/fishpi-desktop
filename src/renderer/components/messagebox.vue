@@ -136,7 +136,10 @@
             this.$emit('clear');
         },
         sendRedpacket() {
-
+            this.$ipc.send('main-event', {
+                call: 'openRedpacket',
+                args: 'send'
+            })
         },
         async onPaste(ev) {
             let items = ev.clipboardData && ev.clipboardData.items;

@@ -31,10 +31,34 @@
             </section>
         </main>
     </section>
-    <section class="redpacket" v-if="isSend">
-        
+    <section class="redpacket redpacket-form" v-if="isSend">
+        <section class="redpacket-bg"></section>
+        <header class="no-drag">
+            <p class="redpacket-title"><span>发个</span>
+                <Select v-model="redpacket.type">
+                    <Option v-for="item in redpacketType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+            <span>红包</span></p>
+        </header>
+        <Form class="no-drag" ref="redpacketForm" :model="redpacket" :label-width="60" :show-message="false">
+            <FormItem label="发给谁" v-if="redpacket.type == 'specify'">
+                <section class="user-list">
+                    <span v-for="u in onlineList" @click="reciverCheck(u)"
+                        class="user-item" 
+                        :title="u.userName" 
+                        :class="{ 'user-check': redpacket.recivers.indexOf(u.userName) >= 0 }">
+                        <Avatar :src="u.userAvatarURL"></Avatar>
+                    </span>
+                </section>
+            </FormItem>
+            <FormItem label="积分"><InputNumber v-model="redpacket.money" :min="32" :max="20000" placeholder="积分" /></FormItem>
+            <FormItem label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
+            <FormItem label="留言"><Input type="textarea" :rows="3" v-model="redpacket.msg" :placeholder="defaultRedpackWord[redpacket.type]" /></FormItem>
+        </Form>
+        <div class="no-drag">
+            <Button class="redpacket-send" type="error" @click="sendRedpacket">包红包</Button>
+        </div>
     </section>
-
 </section>
 </template>
 
@@ -44,15 +68,26 @@
     components: {
     },
     mounted () {
-        if (this.isSend) return;
-        this.load(this.$route.params);
         document.body.addEventListener('keydown', (ev) => {
             if (ev.keyCode == 27) this.close();
-        })
+        });
+        this.$fishpi.chatroom.addListener(({ msg }) => {
+            if (msg.type == 'online') this.onlineList = msg.data;
+        });
+        if (this.isSend) return;
+        this.load(this.$route.params);
     },
     data () {
         return {
             redpacketData: null,
+            redpacket: {
+                type: 'random',
+                money: 32,
+                count: 2,
+                msg: '',
+                recivers: []
+            },
+            onlineList: []
         }    
     },
     watch: {
@@ -89,6 +124,24 @@
 
             return msg
         },
+        redpacketType() {
+            return [
+                { label: '拼手气红包', value: 'random' },
+                { label: '普通红包', value: 'average' },
+                { label: '专属红包', value: 'specify' },
+                { label: '心跳红包', value: 'heartbeat' },
+                { label: '猜拳红包', value: 'rockPaperScissors' },
+            ]
+        },
+        defaultRedpackWord() {
+            return {
+                random: '摸鱼者，事竟成！',
+                average: '平分红包，人人有份！',
+                specify: '试试看，这是给你的红包吗？',
+                heartbeat: '玩的就是心跳！'
+            }
+        },
+
     },
     methods: {
         async load({ id, gesture }) {
@@ -96,6 +149,29 @@
             let rsp = await this.$fishpi.chatroom.redpacket.open(id, gesture);
             if (!rsp) return;
             this.redpacketData = rsp;
+        },
+        async sendRedpacket() {
+            if (this.redpacket.count <= 0) return;
+            if (this.redpacket.type == 'specify' && this.redpacket.recivers.length == 0) {
+                this.$Message.error('请至少选择一个人收红包');
+                return;
+            }
+            let redpacket = Object.assign({}, this.redpacket);
+            redpacket.msg = redpacket.msg || this.defaultRedpackWord[redpacket.type];
+            let data = { 
+                msg: redpacket.msg, 
+                money: redpacket.money, 
+                count: redpacket.count,
+                recivers: redpacket.recivers,
+                type: redpacket.type
+            } 
+            await this.$fishpi.chatroom.send(`[redpacket]${JSON.stringify(data)}[/redpacket]`);
+            this.close();
+        },
+        reciverCheck(user) {
+            let index = this.redpacket.recivers.indexOf(user.userName);
+            if(index < 0) this.redpacket.recivers.push(user.userName);
+            else this.redpacket.recivers.splice(index, 1);
         },
         close() {
             window.close();
@@ -122,7 +198,7 @@
     color: var(--redpacket-text-color);
     padding: 10px;
     overflow: hidden;
-    background: #f25745;
+    background: var(--redpacket-background-color);
     z-index: 100;
     height: 100vh;
     display: flex;
@@ -137,7 +213,7 @@
         width: 600px;
         height: 600px;
         border: 2px solid var(--redpacket-border-color);
-        background: var(--redpacket-background-color);
+        background: var(--redpacket-header-background-color);
         position: absolute;
         top: -420px;
         left: -175px;
@@ -209,6 +285,95 @@
             color: var(--redpacket-zero-tip-text-color);
             background-color: var(--redpacket-zero-tip-background-color);
             border-color: var(--redpacket-zero-tip-border-color);
+        }
+    }
+}
+
+.redpacket-form {
+    header {
+        margin: 2em auto;
+        .ivu-select {
+            width: 9em;
+        }
+
+    }
+    .redpacket-bg {
+        top: -500px;
+    }
+    .ivu-form-item {
+        margin-bottom: 5px;
+    }
+    .user-list {
+        max-width: 80vw;
+        max-height: 6em;
+        overflow: auto;
+        .user-item {
+            display: inline-block;
+            margin: 2px;
+        }
+        .user-check {
+            .ivu-avatar-image {
+                border: 2px inset #000;
+                box-shadow: 0 0 5px #000;
+            }
+        }
+    }
+    .redpacket-send {
+        width: 100%;
+        color: var(--redpacket-header-background-color);
+        background: var(--redpacket-border-color);
+        border: 2px solid var(--redpacket-border-color);
+        border-radius: 10px;
+        font-weight: bold;
+    }
+}
+</style>
+<style lang="less">
+.redpacket-form {
+    .ivu-form .ivu-form-item-label {
+        color: inherit;
+        font-weight: bold;
+    }
+    .ivu-select-selection {
+        background: transparent;
+        color: var(--redpacket-text-color);
+        border: 0;
+        box-shadow: none;
+        .ivu-select-selected-value {
+            font-size: 130%;
+            font-weight: bold;
+        }
+    }
+    .ivu-select-arrow {
+        color: var(--redpacket-text-color);
+    }
+    
+    .ivu-select-dropdown {
+        background: var(--redpacket-text-color);
+        color: #000;
+        .ivu-select-item {
+            color: inherit;
+        }
+    }
+    .ivu-input-number-handler-wrap, .ivu-input-number-handler-down{
+        background: transparent;
+        border: 0;
+    }
+    .ivu-input-number-handler-down-inner, .ivu-input-number-handler-up-inner {
+        color: var(--redpacket-text-color);
+        &:hover {
+            color: var(--redpacket-text-color);
+        }
+    }
+    .ivu-input, .ivu-input-number, input {
+        background: transparent;
+        border: 0;
+        outline: 0;
+        box-shadow: none;
+        border-bottom: 2px solid var(--redpacket-border-color);
+        color: #FFF;
+        &::-webkit-input-placeholder {
+            color: #CECECE
         }
     }
 }

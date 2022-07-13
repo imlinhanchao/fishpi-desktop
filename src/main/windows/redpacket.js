@@ -7,9 +7,9 @@ class Autocomplete extends Page
         
     }
 
-    create(options = {}, id) {
+    create(options = {}, args) {
         options = Object.assign({
-            url: `redpacket/${id}`,
+            url: `redpacket/${typeof args == 'string' ? args : `${args.id}/${args.gesture}`}`,
             show: true,
             frame: false,
             width: 250, 
