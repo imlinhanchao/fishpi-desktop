@@ -41,7 +41,7 @@
             <span>红包</span></p>
         </header>
         <Form class="no-drag" ref="redpacketForm" :model="redpacket" :label-width="60" :show-message="false">
-            <FormItem label="发给谁" v-if="redpacket.type == 'specify'">
+            <FormItem label="发给谁" v-if="isSpecify">
                 <section class="user-list">
                     <span v-for="u in onlineList" @click="reciverCheck(u)"
                         class="user-item" 
@@ -52,7 +52,7 @@
                 </section>
             </FormItem>
             <FormItem label="积分"><InputNumber v-model="redpacket.money" :min="32" :max="20000" placeholder="积分" /></FormItem>
-            <FormItem label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
+            <FormItem v-if="isRockPaperScissors" label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
             <FormItem label="留言"><Input type="textarea" :rows="3" v-model="redpacket.msg" :placeholder="defaultRedpackWord[redpacket.type]" /></FormItem>
         </Form>
         <div class="no-drag">
@@ -133,6 +133,12 @@
                 { label: '猜拳红包', value: 'rockPaperScissors' },
             ]
         },
+        isSpecify() {
+            return this.redpacket.type == 'specify';
+        },
+        isRockPaperScissors() {
+            return this.redpacket.type == 'rockPaperScissors';
+        },
         defaultRedpackWord() {
             return {
                 random: '摸鱼者，事竟成！',
@@ -141,7 +147,6 @@
                 heartbeat: '玩的就是心跳！'
             }
         },
-
     },
     methods: {
         async load({ id, gesture }) {
