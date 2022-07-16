@@ -48,7 +48,10 @@
         computed: {
             isMarkdown() {
                 return this.mode == 'md'
-            }
+            },
+            current() {
+                return this.$store.getters['fishpi/account'];
+            },
         },
         methods: {
             async reload() {
@@ -94,9 +97,9 @@
                         msg.dbUser = [];
                         this.toBottom = false;
                         let offset = this.$refs.chatlist.scrollHeight - this.$refs.chatlist.scrollTop;
-                        let isBottom = offset < 500;
+                        let isBottom = offset < 500 || msg.data.userName == this.current.userName;
                         if (this.isMarkdown) msg.data.content = msg.data.md;
-                        if (msg.type == 'msg' && msg.content == this.chats[this.chats.length - 1].content) {
+                        if (msg.type == 'msg' && msg.data.content == this.chats[this.chats.length - 1].content) {
                             this.chats[this.chats.length - 1].dbUser || (this.chats[this.chats.length - 1].dbUser = [])
                             this.chats[this.chats.length - 1].dbUser.push(msg.data)
                         }
