@@ -8,7 +8,10 @@
         <header>
             <p class="redpacket-title"><Avatar :src="redpacketData.info.userAvatarURL" size="small"/> {{redpacketData.info.userName}} 的红包 </p>
             <p class="redpacket-msg">{{redpacketData.info.msg}}</p>
-            <p class="redpacket-count">总计{{redpacketData.info.got}}/{{redpacketData.info.count}}</p>
+            <p v-if="!isRockPaperScissors" class="redpacket-count">总计{{redpacketData.info.got}}/{{redpacketData.info.count}}</p>
+            <p v-if="isRockPaperScissors" class="gesture-type">
+                {{redpacketData.info.userName}} 出 {{gesture[redpacketData.info.gesture]}}
+            </p>
         </header>
         <main class="redpacket-content">
             <section>
@@ -23,6 +26,7 @@
                         <span class="redpacket-max redpacket-tip" 
                             v-if="redpacketData.who.find(w => w.userMoney == maxRedpacket).userName == w.userName 
                             && redpacketData.info.got == redpacketData.info.count
+                            && 0 != w.userMoney
                             ">来自老王的认可</span>
                         <span class="redpacket-zero redpacket-tip" v-if="0 == w.userMoney">0 溢事件</span>
                         <span class="redpacket-money">{{w.userMoney}} 积分</span>
@@ -40,6 +44,17 @@
                 </Select>
             <span>红包</span></p>
         </header>
+        <section class="no-drag gesture-list" v-if="isRockPaperScissors">
+            <div class="gesture-item" :class="{ 'gesture-active': redpacket.gesture == 0 }" @click="redpacket.gesture = 0">
+                <img src="../assets/Rock.png" alt="" />
+            </div>
+            <div class="gesture-item" :class="{ 'gesture-active': redpacket.gesture == 1 }" @click="redpacket.gesture = 1">
+                <img src="../assets/Scissors.png" alt="" />
+                </div>
+            <div class="gesture-item" :class="{ 'gesture-active': redpacket.gesture == 2 }" @click="redpacket.gesture = 2">
+                <img src="../assets/Paper.png" alt="" />
+            </div>
+        </section>
         <Form class="no-drag" ref="redpacketForm" :model="redpacket" :label-width="60" :show-message="false">
             <FormItem label="发给谁" v-if="isSpecify">
                 <section class="user-list">
@@ -52,7 +67,7 @@
                 </section>
             </FormItem>
             <FormItem label="积分"><InputNumber v-model="redpacket.money" :min="32" :max="20000" placeholder="积分" /></FormItem>
-            <FormItem v-if="isRockPaperScissors" label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
+            <FormItem v-if="!isRockPaperScissors" label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
             <FormItem label="留言"><Input type="textarea" :rows="3" v-model="redpacket.msg" :placeholder="defaultRedpackWord[redpacket.type]" /></FormItem>
         </Form>
         <div class="no-drag">
@@ -85,7 +100,8 @@
                 money: 32,
                 count: 2,
                 msg: '',
-                recivers: []
+                recivers: [],
+                gesture: 0
             },
             onlineList: []
         }    
@@ -95,6 +111,9 @@
     filters: {
     },
     computed: {
+        gesture() {
+            return ['石头', '剪刀', '布']
+        },
         current() {
             return this.$store.getters['fishpi/account'];
         },
@@ -108,12 +127,12 @@
             let money = this.redpacketData.who.find(
                 (w) => w.userName == this.current.userName
             );
-            this.redpacketData.recivers = this.redpacketData.recivers || [];
-            this.redpacketData.recivers = this.redpacketData.recivers.filter(r => r && typeof(r) == 'string');
-            let specify = (this.redpacketData.recivers.length && this.redpacketData.recivers.indexOf(this.current.userName) >= 0)
+            let specify = (this.isSpecify && this.redpacketData.recivers.indexOf(this.current.userName) >= 0)
             let msg;
-            if (this.redpacketData.recivers.length && !specify) {
+            if (this.isSpecify && !specify) {
                 msg = "会错意了"
+            } else if (this.isRockPaperScissors) {
+                msg = this.rockPaperScissorsTitle;
             } else if (!money) {
                 msg = "错过一个亿";
             } else {
@@ -123,6 +142,22 @@
             }
 
             return msg
+        },
+        rockPaperScissorsTitle() {
+            if (!this.isRockPaperScissors) return '';
+            if (this.redpacketData.info.userName == this.current.userName 
+            && this.redpacketData.who.length > 0) {
+                return this.redpacketData.who[0].userMoney > 0 ? '猜拳落败！😭' : '猜拳胜利！✌'
+            }
+            else if (this.redpacketData.info.userName == this.current.userName) {
+                return '还没人猜...'
+            }
+            if (this.redpacketData.who.length > 0
+            && this.redpacketData.who[0].userName == this.current.userName) {
+                return this.redpacketData.who[0].userMoney > 0 ? '猜拳胜利！✌' : '猜拳落败！😭'
+            }
+            
+            return "错过一个亿";
         },
         redpacketType() {
             return [
@@ -134,17 +169,18 @@
             ]
         },
         isSpecify() {
-            return this.redpacket.type == 'specify';
+            return this.redpacket.type == 'specify' || (this.redpacketData && this.redpacketData.recivers.length > 0);
         },
         isRockPaperScissors() {
-            return this.redpacket.type == 'rockPaperScissors';
+            return this.redpacket.type == 'rockPaperScissors' || (this.redpacketData && this.redpacketData.info.gesture !== undefined);
         },
         defaultRedpackWord() {
             return {
                 random: '摸鱼者，事竟成！',
                 average: '平分红包，人人有份！',
                 specify: '试试看，这是给你的红包吗？',
-                heartbeat: '玩的就是心跳！'
+                heartbeat: '玩的就是心跳！',
+                rockPaperScissors: '石头剪刀布！'
             }
         },
     },
@@ -153,7 +189,10 @@
             await this.$store.dispatch('fishpi/getInfo');
             let rsp = await this.$fishpi.chatroom.redpacket.open(id, gesture);
             if (!rsp) return;
+            this.redpacket.type = '';
             this.redpacketData = rsp;
+            this.redpacketData.recivers = this.redpacketData.recivers || [];
+            this.redpacketData.recivers = this.redpacketData.recivers.filter(r => r && typeof(r) == 'string');
         },
         async sendRedpacket() {
             if (this.redpacket.count <= 0) return;
@@ -162,15 +201,9 @@
                 return;
             }
             let redpacket = Object.assign({}, this.redpacket);
+            if (redpacket.type == 'rockPaperScissors') redpacket.count = 1;
             redpacket.msg = redpacket.msg || this.defaultRedpackWord[redpacket.type];
-            let data = { 
-                msg: redpacket.msg, 
-                money: redpacket.money, 
-                count: redpacket.count,
-                recivers: redpacket.recivers,
-                type: redpacket.type
-            } 
-            await this.$fishpi.chatroom.send(`[redpacket]${JSON.stringify(data)}[/redpacket]`);
+            await this.$fishpi.chatroom.send(`[redpacket]${JSON.stringify(redpacket)}[/redpacket]`);
             this.close();
         },
         reciverCheck(user) {
@@ -208,6 +241,10 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
+    .gesture-type {
+        font-size: .8em;
+        color: var(--redpacket-gesture-type-color);
+    }
     header {
         position: relative;
         z-index: 2;
@@ -301,6 +338,24 @@
             width: 9em;
         }
 
+    }
+    .gesture-list {
+        display: flex;
+        .gesture-item {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            img {
+                border-radius: 2em;
+                overflow: hidden;
+                width: 4em;
+            }
+        }
+        .gesture-active {
+            img {
+                border: 3px solid var(--redpacket-border-color);
+            }
+        }
     }
     .redpacket-bg {
         top: -500px;

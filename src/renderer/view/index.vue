@@ -165,6 +165,7 @@
 .msg-img {
     img {
         max-width: 100%;
+        width: auto;
     }
     [alt="图片表情"] {
         max-width: 100px;

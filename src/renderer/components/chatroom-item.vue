@@ -16,7 +16,25 @@
                     </svg>
                     <div class="redpacket-msg">{{item.content.msg}}</div>
                 </div>
-                <div class="redpacket-type">{{redpacketType[item.content.type]}}</div>
+                <div class="redpacket-type">
+                    <div>{{redpacketType[item.content.type]}}</div>
+                </div>
+            </div>
+            <div v-if="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
+                <div class="gesture-choose" title="猜猜我出什么呢~" @click="gestureOpen=!gestureOpen">
+                    <img src="../assets/gesture.png" alt="">
+                </div>
+                <div class="gesture-list" :class="{ 'gesture-open': gestureOpen} ">
+                    <div class="gesture-item rock" @click="gesture(0)">
+                        <img src="../assets/Rock.png" alt="" />
+                    </div>
+                    <div class="gesture-item scissors" @click="gesture(1)">
+                        <img src="../assets/Scissors.png" alt="" />
+                        </div>
+                    <div class="gesture-item paper" @click="gesture(2)">
+                        <img src="../assets/Paper.png" alt="" />
+                    </div>
+                </div>
             </div>
         </div>
         <div class="msg-contain" v-if="!isRedpacket">
@@ -53,6 +71,8 @@
     },
     data () {
         return {
+            gestureOpen: false,
+            readed: false,
         }
     },
     watch: {
@@ -64,7 +84,7 @@
             return this.item.content.got == this.item.content.count;
         },
         readRedpacket() {
-            return this.item.content.whos && this.item.content.whos.find(w => w.userName == this.current.userName)
+            return this.readed || (this.item.content.who && this.item.content.who.find(w => w.userName == this.current.userName))
         },
         isRedpacket() {
             return this.item.content.msgType == 'redPacket'
@@ -102,9 +122,23 @@
             
         },
         open() {
+            if (this.item.content.type == 'rockPaperScissors' 
+            && this.item.userName != this.current.userName 
+            && !this.emptyRedpacket 
+            && !this.readRedpacket) return;
             this.$ipc.send('main-event', {
                 call: 'openRedpacket',
                 args: this.item.oId
+            })
+            this.readed = this.item.content.type != 'rockPaperScissors' ;
+        },
+        gesture(type) {
+            this.$ipc.send('main-event', {
+                call: 'openRedpacket',
+                args: { 
+                    id: this.item.oId,
+                    gesture: type,
+                }
             })
         }
     }
@@ -138,6 +172,57 @@
             flex-direction: row;
             cursor: pointer;
             user-select: none;
+            .user-gesture {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+            .gesture-choose {
+                position: relative;
+                z-index: 2;
+                img {
+                    width: 1.5em;
+                    margin: 0 3px;
+                }
+            }
+            .gesture-list {
+                position: relative;
+                display: flex;
+                height: 100%;
+                .gesture-item {
+                    position: absolute;
+                    z-index: 1;
+                    top: 1.6em;
+                    left: -1.9em;
+                    transition: all .5s;
+                    img {
+                        width: 1.5em;
+                        border-radius: 50%;
+                        overflow: hidden;
+                        margin: 0 3px;
+                        &:hover {
+                            box-shadow: 0 0 3px 0 #FA0 ;
+                        }
+                    }
+                }
+                &.gesture-open {
+                    img {
+                        width: 2.5em;
+                    }
+                    .rock {
+                        top: -1em;
+                        left: -1em;
+                    }
+                    .scissors {
+                        top: 1.1em;
+                        left: 0.5em;
+                    }
+                    .paper {
+                        top: 3em;
+                        left: -1em;
+                    }
+                }
+            }
             &.redpacket-empty {
                 .redpacket-content {
                     background: var(--main-redpacket-readed-background-color);
@@ -224,23 +309,23 @@
             cursor: pointer;
             font-family: mononoki,Consolas,"Liberation Mono",Menlo,Courier,monospace;
         }
-        .db-users {
-            padding: 5px 0 5px 10px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-wrap: wrap;
-            .db-user {
-                padding: 2px;
-            }
-            .db-avatar {
-                width: 25px;
-                height: 25px;
-            }
-            .db-word {
-                display: inline-block;
-                padding-left: 5px;
-            }
+    }
+    .db-users {
+        padding: 5px 0 5px 10px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        .db-user {
+            padding: 2px;
+        }
+        .db-avatar {
+            width: 25px;
+            height: 25px;
+        }
+        .db-word {
+            display: inline-block;
+            padding-left: 5px;
         }
     }
     &.msg-current {
@@ -275,6 +360,10 @@
                     border-right-color: transparent;
                     border-left-color: var(--main-redpacket-readed-background-color);
                 }
+            }
+            .redpacket-type {
+                display: flex;
+                justify-content: space-between;
             }
         }
         .db-users {
