@@ -55,6 +55,7 @@
     --redpacket-zero-tip-text-color: #d23f31;
     --redpacket-zero-tip-background-color: #FFF;
     --redpacket-zero-tip-border-color: #D5D5D5;
+    --redpacket-gesture-type-color: #DDD;
 
     --liveness-active-color: var(--global-active-color);
     --liveness-normal-color: #57a3f3;
