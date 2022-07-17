@@ -132,11 +132,24 @@
             this.$fishpi.chatroom.send(this.item.md || await await this.$fishpi.chatroom.raw(this.item.oId))
         },
         userMenuShow(ev) {
+            if (this.item.userName == this.current.userName) return;
             let menu = [];
             menu.push({
                 label: `@${this.item.userName}`,
                 click: () => {
                     this.$emit('msg', `@${this.item.userName} `);
+                }
+            });
+            menu.push({
+                label: `发个专属红包`,
+                click: () => {
+                    this.$ipc.send('main-event', {
+                        call: 'openRedpacket',
+                        args: {
+                            id: 'send',
+                            user: this.item.userName
+                        }
+                    });
                 }
             });
             this.$root.popupMenu(menu);
@@ -149,18 +162,6 @@
                     label: `@${this.item.userName}`,
                     click: () => {
                         this.$emit('msg', `@${this.item.userName} `);
-                    }
-                });
-                menu.push({
-                    label: `发个专属红包`,
-                    click: () => {
-                        this.$ipc.send('main-event', {
-                            call: 'openRedpacket',
-                            args: {
-                                id: 'send',
-                                user: this.item.userName
-                            }
-                        });
                     }
                 });
             }

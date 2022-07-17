@@ -59,7 +59,7 @@ export default new Router({
             }
         },
         {
-            path: '/redpacket/:id/:gesture',
+            path: '/redpacket/send/:user',
             name: 'redpacket',
             component: () => import('./view/redpacket'),
             meta: {
@@ -67,7 +67,7 @@ export default new Router({
             }
         },
         {
-            path: '/redpacket/send/:user',
+            path: '/redpacket/:id/:gesture',
             name: 'redpacket',
             component: () => import('./view/redpacket'),
             meta: {

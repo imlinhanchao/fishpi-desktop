@@ -35,6 +35,10 @@
         this.$ipc.listen('img-update',(event, url) => {
             this.$router.replace(url);
         });
+        document.body.addEventListener('keydown', (ev) => {
+            if (ev.keyCode == 27) window.close();
+        });
+
     },
     data () {
         return {
@@ -148,6 +152,7 @@ header {
     }
 }
 .img-content {
+    position: relative;
     display: flex;
     overflow: auto;
 }

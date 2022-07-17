@@ -93,8 +93,9 @@
             if (msg.type == 'online') this.onlineList = msg.data;
         });
         if (this.$route.params.user) {
-            this.redpacket.type = 'specify';
+            this.redpacket.count = 1
             this.redpacket.recivers = [this.$route.params.user];
+            this.$nextTick(() => this.redpacket.type = 'specify')
             return;
         }
         if (this.isSend) return;

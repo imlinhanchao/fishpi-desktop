@@ -84,7 +84,7 @@
                 return this.$root.current;
             },
             firstMsg() {
-                return this.chats.reverse().find((item) => !item.redpacket && !item.whoGot);
+                return this.chats.filter((item) => !item.redpacket && !item.whoGot).slice(-1)[0];
             },
 
         },
