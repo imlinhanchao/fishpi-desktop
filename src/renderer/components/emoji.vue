@@ -75,8 +75,7 @@
                 this.$root.popupMenu([{
                     label: '删除',
                     click: () => {
-                        this.faces.splice(this.faces.indexOf(f), 1);
-                        this.$fishpi.emoji.set(this.faces);
+                        this.faces = this.$fishpi.emoji.remove(f);
                     }
                 }])
             }

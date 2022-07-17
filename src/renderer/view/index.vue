@@ -30,12 +30,17 @@
             if (!this.$root.isLogin()) return this.$router.push('/login');
             else this.$router.push('/chatroom');
             try {
-                console.dir(await this.$store.dispatch('fishpi/getInfo'));
+                console.dir(await this.$root.getInfo());
             } catch (error) {
                 console.log(error);
                 this.$root.logout();
+                return;
             }
             if (!this.$route.meta.notitle && this.$route.meta.title) this.$root.title = this.$route.meta.title;
+            setInterval(async () => {
+                let liveness = await this.$fishpi.account.liveness();
+                if (liveness > 0) this.$root.liveness = liveness;
+            }, 60000);
         },
         data () {
             return {
@@ -172,6 +177,11 @@
     }
     iframe {
         border: 0;
+    }
+}
+.msg-current {
+    blockquote {
+        color: var(--markdown-current-blockquote-color)
     }
 }
 </style>

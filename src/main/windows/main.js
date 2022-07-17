@@ -1,5 +1,6 @@
 import Page from './page'
 import RedPacket from './redpacket'
+import Img from './img'
 
 class Main extends Page
 {
@@ -49,17 +50,31 @@ class Main extends Page
                 callback({ x, y });
             },
             openRedpacket(event, args) {
-                if (args == 'send') {
+                if (args == 'send' || args.id == 'send') {
                     if(!this.redpacket) 
                         this.redpacket = new RedPacket(this.app, 'redpacket').create({
                             quitEvent: () => {
                                 this.redpacket = null
                             }
-                        }, 'send');
+                        }, args);
                     else 
                         this.redpacket.show();
                 }
                 else new RedPacket(this.app, 'redpacket').create({}, args);
+            },
+            openImage(event, args) {
+                if(!this.img) 
+                {
+                    this.img = new Img(this.app, 'img');
+                    this.img.create({
+                        quitEvent: () => {
+                            this.img = null
+                        },
+                        parent: this.win
+                    }, args);
+                }
+                else 
+                    this.img.setImage(args);
             }
         }
     }

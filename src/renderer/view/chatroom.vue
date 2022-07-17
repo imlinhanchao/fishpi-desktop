@@ -3,9 +3,31 @@
     <section class="content">
         <section class="chat-list" ref="chatlist" v-bind:key="1">
             <a class="chat-more" @click="loadMore">...</a>
-            <ChatroomItem v-for="item in chats" :item="item" :v-bind:key="itemKey(item)"></ChatroomItem>
+            <ChatroomItem 
+                :ref="'msg-item-' + item.oId" 
+                v-for="item in chats" 
+                :item="item" 
+                :v-bind:key="itemKey(item)"
+                :plusone="item.dbUser
+                && item.dbUser.length > 0 
+                && item.oId == firstMsg.oId"
+                @msg="appendMsg"
+                @face="appendFace"
+                @quote="quoteMsg"
+            ></ChatroomItem>
         </section>
-        <MessageBox @clear="reload"/>
+        <section class="discusse" v-if="discusse">
+            <a href="javascript:void(0)" @dblclick.stop="sendDiscusse" @click="discussed = discusse">#{{discusse}}#</a> 
+            <a href="javascript:void(0)" @click="modalDiscusse = true"><Icon custom="fa fa-pencil-square-o" /></a>
+            <Modal
+                v-model="modalDiscusse"
+                title="编辑话题"
+                @on-ok="editDiscusse">
+                <p>修改话题需要16积分，将自动从账户中扣除；最大长度16字符，不合法字符将被自动过滤。</p>
+                <Input v-model="newDiscusse" placeholder="话题" />
+            </Modal>
+        </section>
+        <MessageBox ref="msgbox" @clear="reload" :quote.sync="quote" :discussed.sync="discussed"/>
     </section>
     <section class="sidebar">
         <p>当前在线({{onlines.length}})</p>
@@ -28,17 +50,26 @@
         },
         async mounted () {
             await this.reload()
+            this.$fishpi.chatroom.removeListener(this.msgListener);
             this.$fishpi.chatroom.addListener(this.msgListener);
             document.body.addEventListener('load', () => {
                 if (this.toBottom) this.$refs.chatlist.scrollTop = this.$refs.chatlist.scrollHeight;
             }, false);
+            document.body.addEventListener('click', (ev) => {
+                if (ev.target.className == 'discuss-msg') this.discussed = ev.target.dataset.discuss;
+            }, false)
         },
         data () {
             return {
                 chats: [],
                 onlines: [],
                 toBottom: false,
-                mode: 'html'
+                mode: 'html',
+                quote: null,
+                discussed: null,
+                newDiscusse: '',
+                discusse: '',
+                modalDiscusse: false,
             }    
         },
         watch: {
@@ -50,8 +81,12 @@
                 return this.mode == 'md'
             },
             current() {
-                return this.$store.getters['fishpi/account'];
+                return this.$root.current;
             },
+            firstMsg() {
+                return this.chats.reverse().find((item) => !item.redpacket && !item.whoGot);
+            },
+
         },
         methods: {
             async reload() {
@@ -60,21 +95,30 @@
                 await this.load(2);
             },
             async loadMore() {
+                let oId = this.chats[0].oId;
                 let rsp = await this.$fishpi.chatroom.get({
-                    oId: this.chats[0].oId,
+                    oId,
                     mode: 1, size: 25, type: this.mode
                 });
                 if (rsp.code != 0) {
                     this.$Message.error(rsp.msg);
                     return;
                 }
-                this.chats = this.mergeDoubleMsg(rsp.data).reverse().concat(this.chats);
+                this.chats = this.mergeDoubleMsg(rsp.data.slice(0, rsp.data.length - 1)).reverse().concat(this.chats);
+                this.$nextTick(() => {
+                    console.log(this.$refs[`msg-item-${oId}`][0].$el.offsetHeight)
+                    this.$refs.chatlist.scrollTo(0, this.$refs[`msg-item-${oId}`][0].$el.offsetHeight);
+                });
             },
             async msgListener({ msg }) {
                 console.dir(msg);
                 switch(msg.type) {
                     case 'online':
                         this.onlines = msg.data;
+                        this.discusse = this.$fishpi.chatroom.discusse;
+                        break;
+                    case "discussChanged":
+                        this.discusse = msg.data;
                         break;
                     case 'redPacketStatus':
                         {
@@ -123,7 +167,7 @@
                     case 'revoke': {
                         for (let i = 0; i < this.chats.length; i++) {
                             let c = this.chats[i];
-                            if (this.chats[i].dbUser) this.chats[i].dbUser = this.chats[i].dbUser.filter(d => d.oId != msg.oId)
+                            if (this.chats[i].dbUser) this.chats[i].dbUser = this.chats[i].dbUser.filter(d => d.oId != msg.data)
                             if (c.oId != msg.data) continue;
                             if (this.chats[i].dbUser && this.chats[i].dbUser.length) {
                                 let nextUser = this.chats[i].dbUser.shift();
@@ -162,6 +206,27 @@
             itemKey(item) {
                 return (item.content.msgType || 'msg') + '_' + item.oId + (item.whoGot || '');
             },
+            appendMsg(msg) {
+                this.$refs.msgbox.appendMsg({ regexp: null, data: msg});
+            },
+            appendFace(url) {
+                this.$fishpi.emoji.append(url);
+            },
+            quoteMsg(msg) {
+                this.quote = msg;
+            },
+            editDiscusse() {
+                if (!this.newDiscusse) return;
+                if (this.newDiscusse.length > 16) {
+                    this.$Message.error('话题长度太长');
+                    return;
+                }
+                this.$fishpi.chatroom.send(`[setdiscuss]${this.newDiscusse}[/setdiscuss]`)
+            },
+            sendDiscusse() {
+                this.$fishpi.chatroom.send(`*\`# ${this.discusse} #\`*`)
+                this.discussed = null;
+            }
         }
     }
 </script>
@@ -178,6 +243,7 @@
         flex-direction: column;
         overflow: hidden;
         flex: 1;
+        position: relative;
         .chat-list {
             padding-left: .5em;
             padding-bottom: .5em;
@@ -226,6 +292,11 @@
             }
         }
     }
+    .discusse {
+        text-align: center;
+        font-size: 70%;
+        margin: auto;
+    }
 }
 @media (max-width: 500px) {
 
@@ -235,5 +306,15 @@
     }
 }
 
+}
+</style>
+<style lang="less">
+em.discuss-msg {
+    cursor: pointer;
+    padding: 2px 5px;
+    &:hover {
+        background: #57a3f3;
+        border-radius: 5px;
+    }
 }
 </style>

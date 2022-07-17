@@ -18,7 +18,7 @@
                     <use xlink:href="#redPacketIcon"></use>
                 </svg>
             </Button>
-            <Emoji v-show="emojiForm" @emoji="pushEmoji" />
+            <Emoji ref="emoji" v-show="emojiForm" @emoji="pushEmoji" />
         </section>
         <section class="chat-sender">
             <section class="chat-msg ivu-input-wrapper ivu-input-wrapper-default ivu-input-type-textarea">
@@ -43,6 +43,15 @@
             >
                 <Icon custom="fa fa-paper-plane" />
             </Button>
+            <section class="msg-more">
+                <Tooltip placement="top-start" v-if="quote" :max-width="innerWidth * .8">
+                    <Tag closable @on-close="quote=null" color="success" v-if="quote">回复：@{{quote.userName}}</Tag>
+                    <div slot="content">
+                        <div class="msg-quote-tip md-style" v-html="quote.content"></div>
+                    </div>
+                </Tooltip>
+                <Tag closable @on-close="$emit('update:discussed', null)" color="primary" v-if="discussed">#{{discussed}}#</Tag>
+            </section>
         </section>
     </section>
 </template>
@@ -58,6 +67,9 @@
     props: {
         quote: {
             type: Object,
+        },
+        discussed: {
+            type: String,
         },
         chatroom: {
             type: Boolean,
@@ -96,14 +108,22 @@
         quote (val) {
             if (val == null) this.msg =  this.msg.replace(/^并说：/, '');
             else if(!this.msg.startsWith('并说：')) this.msg = '并说：' + this.msg;
+        },
+        emojiForm(val) {
+            if(this.emojiForm) {
+                this.$refs.emoji.loadFav();
+            }
         }
     },
     filters: {
     },
     computed: {
         current() {
-            return this.$store.getters['fishpi/account'];
+            return this.$root.current;
         },
+        innerWidth() {
+            return window.innerWidth
+        }
     },
     methods: {
         async sendMsg() {
@@ -231,9 +251,9 @@
             else preMsg += data;
             this.msg = preMsg + this.msg.slice(this.lastCursor);
             this.$nextTick(() => {
-                this.$refs['message'].focus();
-                this.$refs['message'].setSelectionRange(preMsg.length, preMsg.length)
                 this.sendAutoComplete([], 'at');
+                this.$refs.message.focus();
+                this.$refs.message.setSelectionRange(preMsg.length, preMsg.length)
             });
         },
         pushEmoji(emoji) {
@@ -280,6 +300,7 @@
     .chat-sender {
         display: flex;
         width: 100%;
+        position: relative;
         .chat-msg {
             width: 100%;
             border-radius: 0;
@@ -291,6 +312,11 @@
             color: var(--global-active-color);
             border-color: var(--global-control-border-color);
             border-left: 0;
+        }
+        .msg-more {
+            position: absolute;
+            bottom: 0;
+            left: 0;
         }
     }
 }

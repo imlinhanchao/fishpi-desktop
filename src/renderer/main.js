@@ -29,13 +29,7 @@ Vue.config.productionTip = false
 Vue.config.devtools = true;
 
 Vue.prototype.$ipc = ipc;
-
-Object.defineProperty(Vue.prototype, "$fishpi", {
-    get () {
-        if(!this.$root.fishpi) this.$root.fishpi = new FishPi(this.$root.token);
-        return this.$root.fishpi;
-    }
-});
+Vue.prototype.$fishpi = new FishPi();
 
 router.beforeEach((to, from, next) => {
     if (!to.meta.notitle && to.meta.title) {
@@ -55,20 +49,30 @@ window.$VueApp = new Vue({
     template: '<App/>',
     mounted() {
         this.title = document.title;
-        this.$store.commit('fishpi/setToken', localStorage.getItem('token'));
+        this.$fishpi.setToken(localStorage.getItem('token'));
 
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
-            if (!e.target.dataset.menu) return;
+            if (e.target.dataset.menu != 'true') return e.stopPropagation();
             this.popupMenu(this.defaultMenu);
         }, false)
+
+        document.addEventListener('click', (ev) => {
+            let img = ev.target;
+            if (img.nodeName.toLowerCase() != 'img' || img.className == 'emoji' || img.dataset.action != 'preview') return;
+            let size = {
+                width: img.naturalWidth,
+                height: img.naturalHeight,
+            }
+            this.$ipc.send('main-event', { call: 'openImage', args: { url: img.src, size }});
+          });
     },
     data: {
         token: localStorage.getItem('token') || '',
         setting: new Setting(),
         title: '摸鱼派桌面客户端',
-        liveness: 10,
-        fishpi: null,
+        liveness: 0,
+        current: null,
         defaultMenu: [{
             label: '复制',
             role: 'copy',
@@ -81,13 +85,32 @@ window.$VueApp = new Vue({
     },
     methods: {
         isLogin() {
-            return this.$store.getters['fishpi/isLogin'];
+            return !!this.token;
         },
         async logout() {
-            await this.$store.dispatch('fishpi/logout');
+            this.current = null;
+            this.token = null;
+            this.$fishpi.setToken(null);
+            localStorage.removeItem('token');
             this.$router.push('/login');
-            this.token = ''
-            this.fishpi = null
+        },
+        async login(account) {
+            let rsp = await this.$fishpi.login(account);
+            if (!rsp) return;
+            if (rsp.code != 0) {
+                throw(rsp.msg);
+            }
+            this.token = rsp.Key;
+            localStorage.setItem('token', rsp.Key);
+            return await this.getInfo();
+        },
+        async getInfo() {
+            let rsp = await this.$fishpi.account.info();
+            if (rsp.code != 0) {
+                throw(rsp.msg);
+            }
+            this.current = rsp.data;
+            return rsp.data;
         },
         getElementPosition(element) {
             let actualLeft = element.offsetLeft;

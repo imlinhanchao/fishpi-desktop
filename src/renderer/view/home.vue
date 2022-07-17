@@ -38,7 +38,7 @@
     <section class="sidebar">
         <ul class="feature-list">
             <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'account' }" @click="toAccount"><Avatar :src="account.userAvatarURL" /></li>
-            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chatroom' }"><Icon custom="fa fa-comments" /></li>
+            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')"><Icon custom="fa fa-comments" /></li>
             <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chat' }"><Icon custom="fa fa-comment" /></li>
         </ul>
     </section>
@@ -66,7 +66,7 @@
     },
     computed: {
         account() {
-            return this.$store.getters['fishpi/account'] || {}
+            return this.$root.current || {}
         }
     },
     methods: {

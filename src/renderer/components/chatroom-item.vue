@@ -1,6 +1,6 @@
 <template>
-<section class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}" @contextmenu="menuShow">
-    <div class="msg-avatar-box">
+<section class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}">
+    <div class="msg-avatar-box" @contextmenu="userMenuShow">
         <Avatar class="msg-avatar" :src="item.userAvatarURL" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
@@ -8,18 +8,26 @@
         <div class="redpacket-item" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'"
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }" @click="open"
             v-if="isRedpacket">
-            <div class="arrow"/>
-            <div class="redpacket-content">
-                <div class="redpacket-main">
-                    <svg class="redpacket-icon">
-                        <use xlink:href="#redPacketIcon"></use>
-                    </svg>
-                    <div class="redpacket-msg">{{item.content.msg}}</div>
-                </div>
-                <div class="redpacket-type">
-                    <div>{{redpacketType[item.content.type]}}</div>
+            <div class="redpacket-contain">
+                <div class="arrow"/>
+                <div class="redpacket-content">
+                    <div class="redpacket-main">
+                        <svg class="redpacket-icon">
+                            <use xlink:href="#redPacketIcon"></use>
+                        </svg>
+                        <div class="redpacket-msg">{{item.content.msg}}</div>
+                    </div>
+                    <div class="redpacket-type">
+                        <div>{{redpacketType[item.content.type]}}</div>
+                    </div>
                 </div>
             </div>
+            <div class="redpacket-users" v-if="item.content.who && item.content.who.length">
+                <span class="redpacket-user" :key="u.userId" v-for="u in item.content.who" :title="u.userName">
+                    <Avatar class="redpacket-avatar" :src="u.avatar" />
+                </span>
+                <span class="redpacket-word">领取了</span>
+            </div>            
             <div v-if="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
                 <div class="gesture-choose" title="猜猜我出什么呢~" @click="gestureOpen=!gestureOpen">
                     <img src="../assets/gesture.png" alt="">
@@ -37,11 +45,11 @@
                 </div>
             </div>
         </div>
-        <div class="msg-contain" v-if="!isRedpacket">
+        <div ref="msg" class="msg-contain" v-if="!isRedpacket" @contextmenu="msgMenuShow">
             <div class="arrow" v-if="!isImgOnly"/>
             <div class="msg-content md-style" :data-html="item.content" v-html="formatContent" v-if="!isImgOnly"/>
             <span class="msg-img" v-if="isImgOnly" v-html="formatContent"></span>
-            <span class="plus-one" @click="doubleMsg" v-if="double">+1</span>
+            <span class="plus-one" @click="doubleMsg" v-if="plusone">+1</span>
         </div>
         <div class="db-users" v-if="item.dbUser && item.dbUser.length">
             <span class="db-user" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickame || db.userName">
@@ -62,7 +70,7 @@
         item: {
             required: true
         },
-        double: {
+        plusone: {
             type: Boolean,
             default: false
         },
@@ -93,13 +101,15 @@
             return this.item.content.replace && this.item.content
                 .replace(/(<a )/g, '$1target="_blank" ')
                 .replace(/(<iframe[^>]*?src="(https:)*\/\/music.163.com\/outchain\/player\?type=\d&amp;id=(\d+)[^"]*?">\s*<\/iframe>)/, '<div class="netease-music"><div class="netease-cover" data-id="$3"></div>$1</div>')
-                .replace(/(<img )/g, '$1data-action="preview" ');
+                .replace(/(<img )/g, '$1data-action="preview" ')
+                .replace(/<em><code># (.*?) #<\/code><\/em>/g, '<em class="discuss-msg" title="跟随话题"><code class="discuss-msg" data-discuss="$1"># $1 #<\/code><\/em>')
+
         },
         isImgOnly() {
             return (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
         },
         current() {
-            return this.$store.getters['fishpi/account'];
+            return this.$root.current;
         },
         isCurrent() {
             return this.item.userName == this.current.userName;
@@ -112,14 +122,102 @@
                 heartbeat: '心跳红包',
                 rockPaperScissors: '猜拳红包',
             }
-        }
+        },
      },
     methods: {
-        doubleMsg() {
-
+        emojiCode(target) {
+            return `:${target.src.match(/\/([^\/.]*?)(.gif|.png)/)[1]}:`;
         },
-        menuShow() {
+        async doubleMsg() {
+            this.$fishpi.chatroom.send(this.item.md || await await this.$fishpi.chatroom.raw(this.item.oId))
+        },
+        userMenuShow(ev) {
+            let menu = [];
+            menu.push({
+                label: `@${this.item.userName}`,
+                click: () => {
+                    this.$emit('msg', `@${this.item.userName} `);
+                }
+            });
+            this.$root.popupMenu(menu);
+        },
+        msgMenuShow(ev) {
+            let menu = [];
+            let target = ev.target;
+            if (this.item.userName != this.current.userName) {
+                menu.push({
+                    label: `@${this.item.userName}`,
+                    click: () => {
+                        this.$emit('msg', `@${this.item.userName} `);
+                    }
+                });
+                menu.push({
+                    label: `发个专属红包`,
+                    click: () => {
+                        this.$ipc.send('main-event', {
+                            call: 'openRedpacket',
+                            args: {
+                                id: 'send',
+                                user: this.item.userName
+                            }
+                        });
+                    }
+                });
+            }
+            menu.push({
+                label: '回复',
+                click: () => {
+                    this.$emit('quote', this.item);
+                }
+            });
             
+            menu.push({
+                label: '复读一下',
+                click: () => {
+                    this.doubleMsg();
+                }
+            });
+            if (target.nodeName.toLowerCase() == 'img') {
+                if (target.className == 'emoji') {
+                    menu.push({
+                        label: this.emojiCode(target),
+                        click: () => {
+                            this.$emit('msg', this.emojiCode(target));
+                        }
+                    });
+                }
+                else {
+                    menu.push({
+                        label: '添加表情',
+                        click: () => {
+                            this.$emit('face', target.src);
+                        }
+                    });
+                }
+            }
+            if (this.item.userName == this.current.userName
+            || ['纪律委员', 'OP', '管理员'].indexOf(this.current.userRole) >= 0) {
+                menu.push({
+                    label: '撤回',
+                    click: () => {
+                        this.$fishpi.chatroom.revoke(this.item.oId);
+                    }
+                });
+            }
+            if (['纪律委员', 'OP', '管理员'].indexOf(this.current.userRole) >= 0
+            && this.item.dbUser && this.item.dbUser.length > 0) {
+                menu.push({
+                    label: '撤回复读',
+                    click: () => {
+                        if (!confirm('是否确定批量撤回所有复读消息？')) return;
+                        this.item.dbUser.forEach(m => this.$fishpi.chatroom.revoke(m.oId));
+                        this.$fishpi.chatroom.revoke(this.item.oId);
+                    }
+                });
+            }
+            let selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.isCollapsed) menu = menu.concat(this.$root.defaultMenu)
+            this.$root.popupMenu(menu);
         },
         open() {
             if (this.item.content.type == 'rockPaperScissors' 
@@ -168,9 +266,13 @@
         position: relative;
 
         .redpacket-item {
-            display: flex;
-            flex-direction: row;
-            cursor: pointer;
+            display:flex;
+            flex-direction: column;
+            .redpacket-contain {
+                display: flex;
+                flex-direction: row;
+                cursor: pointer;
+            }
             user-select: none;
             .user-gesture {
                 display: flex;
@@ -310,20 +412,20 @@
             font-family: mononoki,Consolas,"Liberation Mono",Menlo,Courier,monospace;
         }
     }
-    .db-users {
+    .db-users, .redpacket-users {
         padding: 5px 0 5px 10px;
         display: flex;
         justify-content: flex-start;
         align-items: center;
         flex-wrap: wrap;
-        .db-user {
+        .db-user, .redpacket-user {
             padding: 2px;
         }
-        .db-avatar {
+        .db-avatar, .redpacket-avatar {
             width: 25px;
             height: 25px;
         }
-        .db-word {
+        .db-word, .redpacket-word {
             display: inline-block;
             padding-left: 5px;
         }
@@ -349,24 +451,27 @@
             left: -1.5em;
             right: auto;
         }
+        
         .redpacket-item {
-            flex-direction: row-reverse;
-            .arrow {
-                border-right-color: transparent;
-                border-left-color: var(--main-redpacket-background-color);
-            }
-            &.redpacket-empty {
+            .redpacket-contain {
+                flex-direction: row-reverse;
                 .arrow {
                     border-right-color: transparent;
-                    border-left-color: var(--main-redpacket-readed-background-color);
+                    border-left-color: var(--main-redpacket-background-color);
+                }
+                &.redpacket-empty {
+                    .arrow {
+                        border-right-color: transparent;
+                        border-left-color: var(--main-redpacket-readed-background-color);
+                    }
+                }
+                .redpacket-type {
+                    display: flex;
+                    justify-content: space-between;
                 }
             }
-            .redpacket-type {
-                display: flex;
-                justify-content: space-between;
-            }
         }
-        .db-users {
+        .db-users, .redpacket-users {
             justify-content: flex-end;
         }
     }

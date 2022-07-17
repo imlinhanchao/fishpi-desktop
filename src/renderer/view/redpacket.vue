@@ -39,7 +39,7 @@
         <section class="redpacket-bg"></section>
         <header class="no-drag">
             <p class="redpacket-title"><span>发个</span>
-                <Select v-model="redpacket.type">
+                <Select v-model="redpacket.type" :disabled="isSpecifySend">
                     <Option v-for="item in redpacketType" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
             <span>红包</span></p>
@@ -55,8 +55,11 @@
                 <img src="../assets/Paper.png" alt="" />
             </div>
         </section>
+        <section class="specify-user" v-if="isSpecifySend">
+            给 {{this.$route.params.user}} ❤
+        </section>
         <Form class="no-drag" ref="redpacketForm" :model="redpacket" :label-width="60" :show-message="false">
-            <FormItem label="发给谁" v-if="isSpecify">
+            <FormItem label="发给谁" v-if="isSpecify && !isSpecifySend">
                 <section class="user-list">
                     <span v-for="u in onlineList" @click="reciverCheck(u)"
                         class="user-item" 
@@ -89,6 +92,11 @@
         this.$fishpi.chatroom.addListener(({ msg }) => {
             if (msg.type == 'online') this.onlineList = msg.data;
         });
+        if (this.$route.params.user) {
+            this.redpacket.type = 'specify';
+            this.redpacket.recivers = [this.$route.params.user];
+            return;
+        }
         if (this.isSend) return;
         this.load(this.$route.params);
     },
@@ -115,10 +123,13 @@
             return ['石头', '剪刀', '布']
         },
         current() {
-            return this.$store.getters['fishpi/account'];
+            return this.$root.current;
+        },
+        isSpecifySend() {
+            return !!this.$route.params.user;
         },
         isSend() {
-            return this.$route.params.id == 'send'
+            return this.$route.params.id == 'send' || !!this.$route.params.user
         },
         maxRedpacket() {
             return this.redpacketData && Math.max(...this.redpacketData.who.map(a => a.userMoney))
@@ -186,7 +197,7 @@
     },
     methods: {
         async load({ id, gesture }) {
-            await this.$store.dispatch('fishpi/getInfo');
+            await this.$root.getInfo();
             let rsp = await this.$fishpi.chatroom.redpacket.open(id, gesture);
             if (!rsp) return;
             this.redpacket.type = '';
@@ -244,6 +255,9 @@
     .gesture-type {
         font-size: .8em;
         color: var(--redpacket-gesture-type-color);
+    }
+    .specify-user {
+        text-align: center;
     }
     header {
         position: relative;

@@ -51,7 +51,23 @@ export default new Router({
             }
         },
         {
+            path: '/img/:imgpath',
+            name: 'image',
+            component: () => import('./view/img'),
+            meta: {
+                name: 'image-view'
+            }
+        },
+        {
             path: '/redpacket/:id/:gesture',
+            name: 'redpacket',
+            component: () => import('./view/redpacket'),
+            meta: {
+                name: 'redpacket'
+            }
+        },
+        {
+            path: '/redpacket/send/:user',
             name: 'redpacket',
             component: () => import('./view/redpacket'),
             meta: {

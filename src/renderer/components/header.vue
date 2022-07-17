@@ -53,13 +53,13 @@
 </style>
 
 <template>
-<header class="drag header" :title="'已摸鱼' + liveness + '%'">
+<header class="drag header">
     <h1 class="drag"> <img src='../assets/icon.png' />
     <span id="win-title" class="drag">{{ '摸鱼派 - ' + $root.title || '摸鱼派'}}</span></h1>
-    <span class="control no-drag">
+    <span class="control no-drag" :title="!simple ? '已摸鱼' + liveness + '%' : ''">
         <Button type="text" @click="handleMin"><Icon custom="fa fa-minus"></Icon></Button>
-        <Button type="text" @click="handleOpacity" class="win-opacity-btn" :class="{ 'win-checked': opacity.enable }"><span class="cirle-empty"></span></Button>
-        <Button type="text" @click="handleTop" class="win-top-btn" :class="{ 'win-checked': wintop }"><Icon custom="fa fa-thumb-tack"></Icon></Button>
+        <Button v-if="!simple" type="text" @click="handleOpacity" class="win-opacity-btn" :class="{ 'win-checked': opacity.enable }"><span class="cirle-empty"></span></Button>
+        <Button v-if="!simple" type="text" @click="handleTop" class="win-top-btn" :class="{ 'win-checked': wintop }"><Icon custom="fa fa-thumb-tack"></Icon></Button>
         <Button type="text" @click="handleClose"><Icon custom="fa fa-times"></Icon></Button>
     </span>
 </header>
@@ -72,10 +72,13 @@
     },
     props: {
         liveness: {
-            required: true
+            required: false
         },
         page: {
             required: true
+        },
+        simple: {
+            default: false
         }
     },
     mounted () {

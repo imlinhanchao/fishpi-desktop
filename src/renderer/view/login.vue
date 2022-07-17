@@ -143,10 +143,10 @@
                 if (!valid) return;
                 try {
                     this.login_loading = true;
-                    this.$root.token = await this.$store.dispatch('fishpi/login', this.login);
+                    this.$root.token = await this.$root.login(this.login);
                     localStorage.setItem('username', this.login.username);
                     localStorage.setItem('passwd', this.login.passwd);
-                    this.$router.push('/');
+                    this.$router.push('/chatroom');
                 } catch (err) {
                     this.$Message.error(err.message);
                 }

@@ -1,6 +1,6 @@
 import Page from './page'
 
-class Autocomplete extends Page
+class RedPacket extends Page
 {
     constructor(app, name) {
         super(app, name);
@@ -9,7 +9,7 @@ class Autocomplete extends Page
 
     create(options = {}, args) {
         options = Object.assign({
-            url: `redpacket/${typeof args == 'string' ? args : `${args.id}/${args.gesture}`}`,
+            url: `redpacket/${typeof args == 'string' ? args : `${args.id}/${args.gesture || args.user}`}`,
             show: true,
             frame: false,
             width: 250, 
@@ -39,4 +39,4 @@ class Autocomplete extends Page
     }
 }
 
-export default Autocomplete;
+export default RedPacket;
