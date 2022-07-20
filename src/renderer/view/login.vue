@@ -150,6 +150,7 @@
                 } catch (err) {
                     this.$Message.error(err.message);
                 }
+                this.login_loading = false;
             });
         },
         register() {

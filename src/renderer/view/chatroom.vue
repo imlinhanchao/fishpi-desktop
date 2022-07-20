@@ -1,20 +1,23 @@
 <template>
 <div class="layout">
     <section class="content">
-        <section class="chat-list" ref="chatlist" v-bind:key="1">
-            <a class="chat-more" @click="loadMore">...</a>
-            <ChatroomItem 
-                :ref="'msg-item-' + item.oId" 
-                v-for="item in chats" 
-                :item="item" 
-                :v-bind:key="itemKey(item)"
-                :plusone="item.dbUser
-                && item.dbUser.length > 0 
-                && item.oId == firstMsg.oId"
-                @msg="appendMsg"
-                @face="appendFace"
-                @quote="quoteMsg"
-            ></ChatroomItem>
+        <section class="chat-content" ref="chat-content" @mouseover="$refs['chat-content'].focus()" @mousewheel="chatScroll">
+            <ScrollBar class="chat-scroll" />
+            <section :style="{ bottom: `${chatScrollPos}px`}" class="chat-list" ref="chatlist" v-bind:key="1">
+                <a class="chat-more" @click="loadMore">...</a>
+                <ChatroomItem 
+                    :ref="'msg-item-' + item.oId" 
+                    v-for="item in chats" 
+                    :item="item" 
+                    :v-bind:key="itemKey(item)"
+                    :plusone="item.dbUser
+                    && item.dbUser.length > 0 
+                    && item.oId == firstMsg.oId"
+                    @msg="appendMsg"
+                    @face="appendFace"
+                    @quote="quoteMsg"
+                ></ChatroomItem>
+            </section>
         </section>
         <section class="discusse" v-if="discusse">
             <a href="javascript:void(0)" @dblclick.stop="sendDiscusse" @click="discussed = discusse">#{{discusse}}#</a> 
@@ -43,10 +46,11 @@
 <script>
     import ChatroomItem from '../components/chatroom-item.vue';
     import MessageBox from '../components/messagebox.vue';
+    import ScrollBar from '../components/scrollbar.vue';
     export default {
         name: 'chatroom',
         components: {
-            ChatroomItem, MessageBox
+            ChatroomItem, MessageBox, ScrollBar,
         },
         async mounted () {
             await this.reload()
@@ -70,6 +74,7 @@
                 newDiscusse: '',
                 discusse: '',
                 modalDiscusse: false,
+                chatScrollPos: 0
             }    
         },
         watch: {
@@ -226,6 +231,18 @@
             sendDiscusse() {
                 this.$fishpi.chatroom.send(`*\`# ${this.discusse} #\`*`)
                 this.discussed = null;
+            },
+            chatScroll(ev) {
+                if (ev.deltaY + this.chatScrollPos >= 0) {
+                    this.chatScrollPos = 0;
+                    return;
+                }
+                if (ev.deltaY + this.chatScrollPos <= this.$refs['chat-content'].offsetHeight - this.$refs.chatlist.offsetHeight) {
+                    this.chatScrollPos = this.$refs['chat-content'].offsetHeight - this.$refs.chatlist.offsetHeight;
+                    return;
+                }
+                this.chatScrollPos += ev.deltaY;
+                console.log(this.chatScrollPos, this.$refs.chatlist.offsetHeight)
             }
         }
     }
@@ -244,22 +261,32 @@
         overflow: hidden;
         flex: 1;
         position: relative;
-        .chat-list {
-            padding-left: .5em;
-            padding-bottom: .5em;
-            overflow: auto;
+        .chat-scroll {
+            z-index: 2;
+        }
+        .chat-content {
             height: 100%;
-            .chat-more {
-                display: block;
-                cursor: pointer;
-                text-align: center;
-                user-select: none;
-                &:hover {
-                    color: var(--global-active-color);
+            position: relative;
+            display: flex;
+            justify-content: flex-end;
+            overflow: hidden;
+            .chat-list {
+                padding-left: .5em;
+                padding-bottom: .5em;
+                overflow: auto;
+                position:absolute;
+                bottom: 0;
+                .chat-more {
+                    display: block;
+                    cursor: pointer;
+                    text-align: center;
+                    user-select: none;
+                    &:hover {
+                        color: var(--global-active-color);
+                    }
                 }
             }
         }
-
     }
     .sidebar {
         background-color: var(--main-chatroom-sidebar-background-color);
