@@ -2,7 +2,8 @@
 <div class="layout">
     <section class="content">
         <section class="chat-content" ref="chat-content" @mouseover="$refs['chat-content'].focus()" @mousewheel="chatScroll">
-            <ScrollBar class="chat-scroll" />
+            <ScrollBar v-if="$refs.chatlist && $refs['chat-content']" class="chat-scroll" 
+            :scroll="-chatScrollPos" :total="chatScrollTotal" @scrollTo="chatScrollPos = -$event"/>
             <section :style="{ bottom: `${chatScrollPos}px`}" class="chat-list" ref="chatlist" v-bind:key="1">
                 <a class="chat-more" @click="loadMore">...</a>
                 <ChatroomItem 
@@ -74,7 +75,8 @@
                 newDiscusse: '',
                 discusse: '',
                 modalDiscusse: false,
-                chatScrollPos: 0
+                chatScrollPos: 0,
+                chatScrollTotal: 0,
             }    
         },
         watch: {
@@ -90,14 +92,14 @@
             },
             firstMsg() {
                 return this.chats.filter((item) => !item.redpacket && !item.whoGot).slice(-1)[0];
-            },
-
+            }
         },
         methods: {
             async reload() {
                 this.chats = [];
                 await this.load(1);
                 await this.load(2);
+                this.chatScrollTotal = this.$refs.chatlist.offsetHeight - this.$refs['chat-content'].offsetHeight;
             },
             async loadMore() {
                 let oId = this.chats[0].oId;
@@ -113,6 +115,7 @@
                 this.$nextTick(() => {
                     console.log(this.$refs[`msg-item-${oId}`][0].$el.offsetHeight)
                     this.$refs.chatlist.scrollTo(0, this.$refs[`msg-item-${oId}`][0].$el.offsetHeight);
+                    this.chatScrollTotal = this.$refs.chatlist.offsetHeight - this.$refs['chat-content'].offsetHeight;
                 });
             },
             async msgListener({ msg }) {
@@ -145,7 +148,8 @@
                     case 'redPacket':
                         msg.dbUser = [];
                         this.toBottom = false;
-                        let offset = this.$refs.chatlist.scrollHeight - this.$refs.chatlist.scrollTop;
+                        let ContentHeight = this.$refs.chatlist.offsetHeight;
+                        let offset = -this.chatScrollPos;
                         let isBottom = offset < 500 || msg.data.userName == this.current.userName;
                         if (this.isMarkdown) msg.data.content = msg.data.md;
                         if (msg.type == 'msg' && msg.data.content == this.chats[this.chats.length - 1].content) {
@@ -156,17 +160,19 @@
                         console.log('offset:' + offset)
                         if(isBottom) {
                             this.toBottom = true;
-                            this.$nextTick(() => this.$refs.chatlist.scrollTo(0, this.$refs.chatlist.scrollHeight));
+                            this.chatScrollPos = 0;
+                        }
+                        else {
+                            this.$nextTick(() => this.chatScrollPos += ContentHeight - this.$refs.chatlist.offsetHeight);
                             if(msg.type == 'msg'){
                                 (msg.data.content.match(/(?<=<img[^>]*?src=")([^"]*?)(?=")/g) || []).forEach(i => {
                                     let img = new Image();
                                     img.onload = () => {
-                                        this.$refs.chatlist.scrollTop = this.$refs.chatlist.scrollHeight
+                                        this.chatScrollPos += ContentHeight - this.$refs.chatlist.offsetHeight
                                     }
                                     img.src = i;
                                 })
                             } 
-
                         }
                         break;
                     case 'revoke': {
@@ -185,6 +191,9 @@
                         break;
                     }
                 }
+                this.$nextTick(() => {
+                    this.chatScrollTotal = this.$refs.chatlist.offsetHeight - this.$refs['chat-content'].offsetHeight;
+                });
             },
             async load(page) {
                 let rsp = await this.$fishpi.chatroom.more(page, this.mode);
@@ -216,6 +225,7 @@
             },
             appendFace(url) {
                 this.$fishpi.emoji.append(url);
+                this.$Message.info('添加成功');
             },
             quoteMsg(msg) {
                 this.quote = msg;
@@ -239,10 +249,10 @@
                 }
                 if (ev.deltaY + this.chatScrollPos <= this.$refs['chat-content'].offsetHeight - this.$refs.chatlist.offsetHeight) {
                     this.chatScrollPos = this.$refs['chat-content'].offsetHeight - this.$refs.chatlist.offsetHeight;
+                    //this.loadMore();
                     return;
                 }
                 this.chatScrollPos += ev.deltaY;
-                console.log(this.chatScrollPos, this.$refs.chatlist.offsetHeight)
             }
         }
     }
@@ -271,8 +281,8 @@
             justify-content: flex-end;
             overflow: hidden;
             .chat-list {
-                padding-left: .5em;
-                padding-bottom: .5em;
+                padding: .5em;
+                padding-top: 0;
                 overflow: auto;
                 position:absolute;
                 bottom: 0;

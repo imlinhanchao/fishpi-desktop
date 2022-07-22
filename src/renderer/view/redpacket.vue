@@ -19,7 +19,7 @@
                     {{redpacketTitle}}
                 </p>
             </section>
-            <section class="redpacket-list">
+            <section class="redpacket-list no-drag">
                 <ul>
                     <li v-for="w in redpacketData.who" :style="{ fontWeight: maxRedpacket == w.userMoney ? 'bolder' : 'normal' }">
                         <span class="redpacket-user"><Avatar :src="w.avatar" /> {{w.userName}}</span>
@@ -297,7 +297,7 @@
         color: var(--redpacket-username-color);
         display: flex;
         flex-direction: column;
-        height: 100%;
+        height: 80%;
         ul {
             list-style: none;
             padding: 0;
