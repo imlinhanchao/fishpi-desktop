@@ -249,7 +249,7 @@
                 }
                 if (ev.deltaY + this.chatScrollPos <= this.$refs['chat-content'].offsetHeight - this.$refs.chatlist.offsetHeight) {
                     this.chatScrollPos = this.$refs['chat-content'].offsetHeight - this.$refs.chatlist.offsetHeight;
-                    //this.loadMore();
+                    this.loadMore();
                     return;
                 }
                 this.chatScrollPos += ev.deltaY;

@@ -5,7 +5,7 @@
     </section>
     <section ref="bar" class="scroll-bar">
         <section ref="bar-item" class="scroll-bar-item" :style="{ bottom: barPos }" 
-            @mouseup="scrollMoveBegin = false"  @mousedown.stop="scrollMoveBegin = true"></section>
+            @mouseup="scrollMoveBegin = false"  @mousedown.stop="scrollBegin"></section>
     </section>
     <section class="scroll-bottom scroll-btn" @mousedown="$emit('scrollTo', 0)">
         <Icon custom="fa fa-eject  fa-rotate-180" />
@@ -50,6 +50,10 @@
             },
         },
         methods: {
+            scrollBegin(ev) {
+                this.scrollMoveBegin = true;
+                ev.preventDefault()
+            },
             scrollMove(ev) {
                 if(this.scrollMoveBegin) this.scrollTo(ev);
             },
