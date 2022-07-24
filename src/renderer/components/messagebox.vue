@@ -1,5 +1,5 @@
 <template>
-    <section class="chat-editor">
+    <section class="chat-editor" :class="{'chat-resizing': resize}">
         <section class="chat-toolbar">
             <input type="file" name="images" accept="image/*" ref="file" v-show="false" @change="uploadImg">
             <Button type="text" class="msg-control" @click="clear()" title="消息清屏">
@@ -20,6 +20,7 @@
             </Button>
             <Emoji ref="emoji" v-show="emojiForm" @emoji="pushEmoji" />
         </section>
+        <section class="chat-sender-resize" @mousedown="resizeBegin"><hr></section>
         <section class="chat-sender">
             <section class="chat-msg ivu-input-wrapper ivu-input-wrapper-default ivu-input-type-textarea">
                 <textarea data-menu="true"
@@ -33,6 +34,9 @@
                     @keyup.enter.exact="sendMsg"
                     @keyup.enter.ctrl.exact="msg += '\n'"
                     class="ivu-input ivu-input-no-border"
+                    :style="{
+                        height: msgHeight + 'px'
+                    }"
                 >
                 </textarea>
             </section>
@@ -85,6 +89,10 @@
         }, false);
         document.removeEventListener('paste', this.onPaste);
         document.addEventListener('paste', this.onPaste);
+        document.removeEventListener('mousemove', this.resizeMove);
+        document.addEventListener('mousemove', this.resizeMove);
+        document.removeEventListener('mouseup', this.resizeEnd);
+        document.addEventListener('mouseup', this.resizeEnd);
     },
     data () {
         return {
@@ -94,6 +102,8 @@
             faceForm: false,
             lastCursor: 0,
             uploading: false,
+            resize: false,
+            msgHeight: localStorage.getItem('message-height') || 80
         }
     },
     watch: {
@@ -265,6 +275,20 @@
                 this.appendMsg({ regexp: null, data: `![图片表情](${emoji.value})` });
             }
             this.emojiForm = false;
+        },
+        resizeBegin(ev) {
+            this.resize = true;
+            ev.preventDefault()
+        },
+        resizeMove(ev) {
+            if (!this.resize) return;
+            let height = window.innerHeight - ev.clientY - 1;
+            console.log(height)
+            this.msgHeight = height;
+            localStorage.setItem('message-height', height);
+        },
+        resizeEnd(ev) {
+            this.resize = false;
         }
     }
   }
@@ -275,6 +299,18 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0px -1px 1px 0px rgba(255, 255, 255, .1);
+    &.chat-resizing {
+        cursor: row-resize;
+        .ivu-input {
+            cursor: row-resize;
+        }
+        .chat-sender-resize {
+            hr {
+                cursor: row-resize;
+                border-color: var(--global-active-color);
+            }
+        }
+    }
     .chat-toolbar {
         display: flex;
         align-items: center;
@@ -297,6 +333,18 @@
             color: var(--global-active-color)
         }
     }
+    .chat-sender-resize {
+        cursor: row-resize;
+        hr {
+            height: 0;
+            border: 2px solid var(--global-background-color);
+            border-left: 0;
+            border-right: 0;
+            &:hover {
+                border-color: var(--global-active-color);
+            }
+        }
+    }
     .chat-sender {
         display: flex;
         width: 100%;
@@ -317,6 +365,9 @@
             position: absolute;
             bottom: 0;
             left: 0;
+        }
+        .ivu-input {
+            resize: none;
         }
     }
 }
