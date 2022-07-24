@@ -71,7 +71,7 @@
             </FormItem>
             <FormItem label="积分"><InputNumber v-model="redpacket.money" :min="32" :max="20000" placeholder="积分" /></FormItem>
             <FormItem v-if="!isRockPaperScissors" label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
-            <FormItem label="留言"><Input type="textarea" :rows="3" v-model="redpacket.msg" :placeholder="defaultRedpackWord[redpacket.type]" /></FormItem>
+            <FormItem label="留言"><Input class="redpacket-msg" type="textarea" :rows="3" v-model="redpacket.msg" :placeholder="defaultRedpackWord[redpacket.type]" /></FormItem>
         </Form>
         <div class="no-drag">
             <Button class="redpacket-send" type="error" @click="sendRedpacket">包红包</Button>
@@ -159,14 +159,16 @@
             if (!this.isRockPaperScissors) return '';
             if (this.redpacketData.info.userName == this.current.userName 
             && this.redpacketData.who.length > 0) {
-                return this.redpacketData.who[0].userMoney > 0 ? '猜拳落败！😭' : '猜拳胜利！✌'
+                return this.redpacketData.who[0].userMoney > 0 ? '猜拳落败！😭' :
+                    this.redpacketData.who[0].userMoney == 0 ? '打成平手🤣' :  '猜拳胜利！✌'
             }
             else if (this.redpacketData.info.userName == this.current.userName) {
                 return '还没人猜...'
             }
             if (this.redpacketData.who.length > 0
             && this.redpacketData.who[0].userName == this.current.userName) {
-                return this.redpacketData.who[0].userMoney > 0 ? '猜拳胜利！✌' : '猜拳落败！😭'
+                return this.redpacketData.who[0].userMoney > 0 ? '猜拳胜利！✌' : 
+                    this.redpacketData.who[0].userMoney == 0 ? '打成平手🤣' : '猜拳落败！😭'
             }
             
             return "错过一个亿";
@@ -447,6 +449,7 @@
         box-shadow: none;
         border-bottom: 2px solid var(--redpacket-border-color);
         color: #FFF;
+        max-height: 10em;
         &::-webkit-input-placeholder {
             color: #CECECE
         }

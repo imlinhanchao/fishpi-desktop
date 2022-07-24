@@ -21,6 +21,22 @@
                         <div>{{redpacketType[item.content.type]}}</div>
                     </div>
                 </div>
+                <div v-if="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
+                    <div class="gesture-choose" title="猜猜我出什么呢~" @click="gestureOpen=!gestureOpen">
+                        <img src="../assets/gesture.png" alt="">
+                    </div>
+                    <div class="gesture-list" :class="{ 'gesture-open': gestureOpen} ">
+                        <div class="gesture-item rock" @click="gesture(0)">
+                            <img src="../assets/Rock.png" alt="" />
+                        </div>
+                        <div class="gesture-item scissors" @click="gesture(1)">
+                            <img src="../assets/Scissors.png" alt="" />
+                            </div>
+                        <div class="gesture-item paper" @click="gesture(2)">
+                            <img src="../assets/Paper.png" alt="" />
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="redpacket-users" v-if="item.content.who && item.content.who.length">
                 <span class="redpacket-user" :key="u.userId" v-for="u in item.content.who" :title="u.userName">
@@ -28,22 +44,6 @@
                 </span>
                 <span class="redpacket-word">领取了</span>
             </div>            
-            <div v-if="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
-                <div class="gesture-choose" title="猜猜我出什么呢~" @click="gestureOpen=!gestureOpen">
-                    <img src="../assets/gesture.png" alt="">
-                </div>
-                <div class="gesture-list" :class="{ 'gesture-open': gestureOpen} ">
-                    <div class="gesture-item rock" @click="gesture(0)">
-                        <img src="../assets/Rock.png" alt="" />
-                    </div>
-                    <div class="gesture-item scissors" @click="gesture(1)">
-                        <img src="../assets/Scissors.png" alt="" />
-                        </div>
-                    <div class="gesture-item paper" @click="gesture(2)">
-                        <img src="../assets/Paper.png" alt="" />
-                    </div>
-                </div>
-            </div>
         </div>
         <div ref="msg" class="msg-contain" v-if="!isRedpacket" @contextmenu="msgMenuShow">
             <div class="arrow" v-if="!isImgOnly"/>
