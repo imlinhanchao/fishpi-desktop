@@ -45,7 +45,7 @@
             </Button>
             <section class="msg-more">
                 <Tooltip placement="top-start" v-if="quote" :max-width="innerWidth * .8">
-                    <Tag closable @on-close="quote=null" color="success" v-if="quote">回复：@{{quote.userName}}</Tag>
+                    <Tag closable @on-close="$emit('update:quote', null)" color="success" v-if="quote">回复：@{{quote.userName}}</Tag>
                     <div slot="content">
                         <div class="msg-quote-tip md-style" v-html="quote.content"></div>
                     </div>
