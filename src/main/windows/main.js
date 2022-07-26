@@ -1,6 +1,10 @@
 import Page from './page'
 import RedPacket from './redpacket'
 import Img from './img'
+import {
+    dialog
+} from 'electron'
+import fs from 'fs'
 
 class Main extends Page
 {
@@ -75,6 +79,38 @@ class Main extends Page
                 }
                 else 
                     this.img.setImage(args);
+            },
+            faceImport(event, argv, callback) {
+                try {
+                    let filePath = dialog.showOpenDialogSync(this.win.widows, {
+                        title: '导入表情文件',
+                        buttonLabel: '导入',
+                        filters: [
+                            { name: '表情文件', extensions: ['txt'] },
+                        ]
+                    })
+                    if (!filePath) return;
+                    let data = fs.readFileSync(filePath[0]).toString();
+                    data = data.split('\n').filter(d => d.startsWith('http'));
+                    callback(data);
+                } catch (err) {
+                    console.error(err)
+                }
+            },
+            faceExport (event, argv){
+                try {
+                    let filePath = dialog.showSaveDialogSync(this.win.widows, {
+                        title: '导出表情文件',
+                        buttonLabel: '导出',
+                        filters: [
+                            { name: '表情文件', extensions: ['txt'] },
+                        ]
+                    })
+                    if (!filePath) return;
+                    fs.writeFileSync(filePath, argv);
+                } catch (err) {
+                    console.error(err)
+                }
             }
         }
     }

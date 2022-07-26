@@ -12,7 +12,17 @@
             <article class="face-list face-diy">
                 <section class="face-item" @contextmenu="menu(e)" v-for="e in faces" @click="sendFace(e, 'fav')">
                     <img :src="e">
-                </section>               
+                </section>    
+                <section class="face-add" @click="$refs['facefile'].click()">
+                    <Icon custom="fa fa-plus" />
+                    <input type="file" name="images" accept="image/*" ref="facefile" v-show="false" @change="uploadFace">
+                </section>
+                <section class="face-add" @click="exportFace" title="导出">
+                    <Icon custom="fa fa-download" />
+                </section>
+                <section class="face-add" @click="importFaces" title="导入">
+                    <Icon custom="fa fa-upload" />
+                </section>
             </article>
         </TabPane>
     </Tabs>
@@ -78,6 +88,41 @@
                         this.faces = this.$fishpi.emoji.remove(f);
                     }
                 }])
+            },
+            exportFace() {
+                this.$ipc.send('main-event', {
+                    call: 'faceExport',
+                    args: this.faces.join('\n')
+                });
+            },
+            async importFaces() {
+                try {
+                    let urls = (await this.$ipc.sendSync('main-event', {
+                        call: 'faceImport',
+                        args: this.faces.join('\n')
+                    })).data;
+                    console.dir(urls)
+                    urls = urls.filters(u => this.faces.indexOf(u) < 0);
+                    this.faces = this.faces.concat(urls);
+                    this.$fishpi.emoji.set(this.faces);
+                    this.$Message.info(`成功导入${urls.length}个表情`)
+                } catch (error) {
+                    this.$Message.error(error.message)
+                }
+            },
+            async uploadFace(ev) {
+                let files = Array.from(ev.target.files)
+                let rsp = await this.$fishpi.upload(files);
+                if (!rsp) return;
+                if (rsp.code != 0) {
+                    this.$Message.error(rsp.msg);
+                    return;
+                }
+                let fileData = rsp.data.succMap;
+                for(let d in fileData) {
+                    this.faces.push(fileData[d]);
+                }
+                this.$fishpi.emoji.set(this.faces);
             }
         }
     }
