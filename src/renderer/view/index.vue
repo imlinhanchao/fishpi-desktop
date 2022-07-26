@@ -169,7 +169,7 @@
 
 .msg-img {
     img {
-        max-width: 100%;
+        max-width: 80%;
         width: auto;
     }
     [alt="图片表情"] {

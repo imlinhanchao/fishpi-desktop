@@ -224,8 +224,12 @@
                 this.$refs.msgbox.appendMsg({ regexp: null, data: msg});
             },
             appendFace(url) {
-                this.$fishpi.emoji.append(url);
-                this.$Message.info('添加成功');
+                try {
+                    this.$fishpi.emoji.append(url);
+                    this.$Message.info('添加成功');
+                } catch (error) {
+                    this.$Message.error(error.msg);
+                }
             },
             quoteMsg(msg) {
                 this.quote = msg;
