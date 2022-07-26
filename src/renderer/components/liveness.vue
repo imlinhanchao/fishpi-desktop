@@ -59,6 +59,12 @@ footer {
             }
         },
         mounted () {
+            window.addEventListener('resize', () => {
+                this.screen = {
+                    height: window.innerHeight - 2,
+                    width: window.innerWidth - 2
+                };
+            })
         },
         data () {
             return {
