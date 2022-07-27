@@ -29,6 +29,21 @@ export default new Router({
                             name: 'chatroom'
                         },
                         component: () => import('./view/chatroom')
+                    }, {
+                        path: 'chat',
+                        meta: {
+                            title: '私聊',
+                            name: 'chat'
+                        },
+                        component: () => import('./view/chats'),
+                        children: [{
+                            path: ':user',
+                            meta: {
+                                title: '私聊',
+                                name: 'chat'
+                            },
+                            component: () => import('./view/chat')
+                        }]
                     }
                 ],
                 }

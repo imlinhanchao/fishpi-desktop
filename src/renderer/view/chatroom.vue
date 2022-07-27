@@ -36,7 +36,7 @@
     <section class="sidebar">
         <p>当前在线({{onlines.length}})</p>
         <ul class="online-list">
-            <li class="online-item" v-for="user in onlines">
+            <li class="online-item" v-for="user in onlines" @contextmenu="userMenuShow(user)">
                 <Avatar :src="user.userAvatarURL48" /><span class="online-user">{{user.userName}}</span>
             </li>
         </ul>
@@ -57,12 +57,11 @@
             await this.reload()
             this.$fishpi.chatroom.removeListener(this.msgListener);
             this.$fishpi.chatroom.addListener(this.msgListener);
-            document.body.addEventListener('load', () => {
-                if (this.toBottom) this.$refs.chatlist.scrollTop = this.$refs.chatlist.scrollHeight;
-            }, false);
-            document.body.addEventListener('click', (ev) => {
-                if (ev.target.className == 'discuss-msg') this.discussed = ev.target.dataset.discuss;
-            }, false)
+            document.body.addEventListener('click', this.discussClick, false)
+        },
+        unmounted() {
+            this.$fishpi.chatroom.removeListener(this.msgListener);
+            document.body.removeListener('click', this.discussClick)
         },
         data () {
             return {
@@ -217,6 +216,9 @@
                 });
                 return contents.filter(c => !c.hide);
             },
+            discussClick(ev) {
+                if (ev.target.className == 'discuss-msg') this.discussed = ev.target.dataset.discuss;
+            },
             itemKey(item) {
                 return (item.content.msgType || 'msg') + '_' + item.oId + (item.whoGot || '');
             },
@@ -257,7 +259,30 @@
                     return;
                 }
                 this.chatScrollPos += ev.deltaY;
-            }
+            },
+            userMenuShow(item) {
+                if (item.userName == this.current.userName) return;
+                let menu = [];
+                menu.push({
+                    label: `@${item.userName}`,
+                    click: () => {
+                        this.$emit('msg', `@${item.userName} `);
+                    }
+                });
+                menu.push({
+                    label: `发个专属红包`,
+                    click: () => {
+                        this.$ipc.send('main-event', {
+                            call: 'openRedpacket',
+                            args: {
+                                id: 'send',
+                                user: item.userName
+                            }
+                        });
+                    }
+                });
+                this.$root.popupMenu(menu);
+            },
         }
     }
 </script>

@@ -13,7 +13,7 @@
             <Button type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
                 @click="emojiForm = !emojiForm" 
                 title="发表情"><Icon custom="fa fa-smile-o"/></Button>
-            <Button type="text" class="msg-redpacket msg-control" title="发红包" @click="sendRedpacket">
+            <Button v-if="chatroom" type="text" class="msg-redpacket msg-control" title="发红包" @click="sendRedpacket">
                 <svg class="redpacket-icon">
                     <use xlink:href="#redPacketIcon"></use>
                 </svg>
@@ -140,6 +140,18 @@
             if (this.chatroom) {
                 return this.sendChatroom();
             }
+            else {
+                if (this.quote) {
+                    let raw = this.quote.markdown;
+                    raw = raw.split("\n").map((r) => `>${r}`).join("\n").trim();
+                    this.msg = `回复：\n\n${raw}\n\n${this.msg}`;
+                    this.$emit('update:quote', null)
+                }
+                this.$emit('send', this.msg, (error) => {
+                    if (error) this.$Message.error(rsp.msg);
+                    else this.msg = '';
+                });
+            }
         },
         async sendChatroom() {
             if (!this.msg) return;
@@ -149,13 +161,13 @@
                 let at = this.quote.userName != this.current.userName
                     ? `@${this.quote.userName} `
                     : "";
-                this.msg = `${at}引用：\n\n${raw}\n\n${this.msg}`;
+                this.msg = `回复${at}：\n\n${raw}\n\n${this.msg}`;
                 this.$emit('update:quote', null)
             }
             let rsp = await this.$fishpi.chatroom.send(this.msg);
             if (!rsp) return;
             if (rsp.code != 0) {
-                this.$root.msg('error', rsp.msg);
+                this.$Message.error(rsp.msg);
                 return false;
             }
             this.msg = "";

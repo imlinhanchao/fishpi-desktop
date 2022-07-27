@@ -39,7 +39,7 @@
         <ul class="feature-list">
             <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'account' }" @click="toAccount"><Avatar :src="account.userAvatarURL" /></li>
             <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')"><Icon custom="fa fa-comments" /></li>
-            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chat' }"><Icon custom="fa fa-comment" /></li>
+            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chat' }" @click="$router.push('/chat')"><Icon custom="fa fa-comment" /></li>
         </ul>
     </section>
     <section class="content">

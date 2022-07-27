@@ -98,7 +98,7 @@ window.$VueApp = new Vue({
             let rsp = await this.$fishpi.login(account);
             if (!rsp) return;
             if (rsp.code != 0) {
-                throw(rsp.msg);
+                throw(new Error(rsp.msg));
             }
             this.token = rsp.Key;
             localStorage.setItem('token', rsp.Key);

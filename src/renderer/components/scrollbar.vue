@@ -1,5 +1,5 @@
 <template>
-<section class="scroll-silder" ref="silder" @mousedown="scrollTo">
+<section class="scroll-silder" ref="silder" @mousedown="scrollTo" v-if="total >= scroll">
     <section class="scroll-top scroll-btn" @mousedown="$emit('scrollTo', total)">
         <Icon custom="fa fa-eject" />
     </section>
