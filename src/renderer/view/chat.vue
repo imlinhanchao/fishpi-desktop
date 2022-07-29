@@ -5,7 +5,7 @@
             <ScrollBar v-if="$refs.chatlist && $refs['chat-content']" class="chat-scroll" 
             :scroll="-chatScrollPos" :total="chatScrollTotal" @scrollTo="chatScrollPos = -$event"/>
             <section :style="{ bottom: `${chatScrollPos}px`}" class="chat-list" ref="chatlist" v-bind:key="1">
-                <a class="chat-more" @click="loadMore">...</a>
+                <a class="chat-more" @click="loadMore" v-if="chats.length >= 25">...</a>
                 <ChatItem 
                     :ref="'msg-item-' + item.oId" 
                     v-for="item in chats" 
@@ -17,7 +17,7 @@
                 ></ChatItem>
             </section>
         </section>
-        <MessageBox ref="msgbox" @clear="reload" :quote.sync="quote" :discussed.sync="discussed"/>
+        <MessageBox :chatroom="false" ref="msgbox" @clear="reload" :quote.sync="quote" @send="send"/>
     </section>
 </div>
 </template>
@@ -32,21 +32,31 @@
             ChatItem, MessageBox, ScrollBar,
         },
         async mounted () {
-            await this.reload()
+            this.user = this.$route.params.user;
+        },
+        unmounted() {
+            this.$fishpi.chat.removeListener(this.user, this.msgListener)
         },
         data () {
             return {
                 chats: [],
-                users: [],
                 toBottom: false,
                 mode: 'html',
                 quote: null,
-                discussed: null,
                 chatScrollPos: 0,
                 chatScrollTotal: 0,
+                user: '',
+                page: 1,
             }    
         },
         watch: {
+            $route() {
+                this.user = this.$route.params.user;
+            },
+            user (newUser, oldUser) {
+                this.$fishpi.chat.removeListener(oldUser, this.msgListener)
+                this.reload()
+            }
         },
         filters: {
         },
@@ -57,23 +67,35 @@
             current() {
                 return this.$root.current;
             },
-            firstMsg() {
-                return this.chats.filter((item) => !item.redpacket && !item.whoGot).slice(-1)[0];
-            }
         },
         methods: {
             async reload() {
+                this.$root.title = this.user;
+                let data = await this.$fishpi.user(this.user);
+                this.$root.title = data.userNickname || data.userName;
+                this.$fishpi.chat.addListener(this.msgListener, this.user)
                 this.chats = [];
                 await this.load(1);
                 this.chatScrollTotal = this.$refs.chatlist.offsetHeight - this.$refs['chat-content'].offsetHeight;
             },
+            unLoad() {
+                this.$fishpi.chat.removeListener(this.user, this.msgListener)
+            },
             async loadMore() {
-
+                await this.load(this.page + 1);
             },
             async msgListener({ msg }) {
-
+                console.dir(msg);
+                this.chats.push(msg);
             },
             async load(page) {
+                let rsp = await this.$fishpi.chat.get({ user: this.user, page });
+                if (rsp.result != 0) {
+                    if (rsp.msg != '没有更多消息了') this.$Message.error(rsp.msg);
+                    return;
+                }
+                this.chats = rsp.data.reverse().concat(this.chats);
+                this.page = page;
             },
             appendMsg(msg) {
                 this.$refs.msgbox.appendMsg({ regexp: null, data: msg });
@@ -100,6 +122,14 @@
                     return;
                 }
                 this.chatScrollPos += ev.deltaY;
+            },
+            async send(msg, callback) {
+                try {
+                    await this.$fishpi.chat.send(this.user, msg);
+                    callback();
+                } catch (error) {
+                    callback(error.message)
+                }
             }
         }
     }
@@ -122,6 +152,7 @@
             z-index: 2;
         }
         .chat-content {
+            width: 100%;
             height: 100%;
             position: relative;
             display: flex;
@@ -133,6 +164,7 @@
                 overflow: auto;
                 position:absolute;
                 bottom: 0;
+                width: 100%;
                 .chat-more {
                     display: block;
                     cursor: pointer;

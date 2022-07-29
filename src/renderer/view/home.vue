@@ -61,6 +61,9 @@
         }    
     },
     watch: {
+        $route() {
+            this.$refs.content && this.$refs.content.unLoad && this.$refs.content.unLoad()
+        }
     },
     filters: {
     },

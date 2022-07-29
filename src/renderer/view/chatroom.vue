@@ -36,7 +36,7 @@
     <section class="sidebar">
         <p>当前在线({{onlines.length}})</p>
         <ul class="online-list">
-            <li class="online-item" v-for="user in onlines" @contextmenu="userMenuShow(user)">
+            <li class="online-item" v-for="user in onlines" @contextmenu="userMenuShow(user)"  @dblclick="$router.push(`/chat/${user.userName}`)">
                 <Avatar :src="user.userAvatarURL48" /><span class="online-user">{{user.userName}}</span>
             </li>
         </ul>
@@ -55,13 +55,10 @@
         },
         async mounted () {
             await this.reload()
+            this.onlines = this.$root.onlines;
             this.$fishpi.chatroom.removeListener(this.msgListener);
             this.$fishpi.chatroom.addListener(this.msgListener);
             document.body.addEventListener('click', this.discussClick, false)
-        },
-        unmounted() {
-            this.$fishpi.chatroom.removeListener(this.msgListener);
-            document.body.removeListener('click', this.discussClick)
         },
         data () {
             return {
@@ -100,6 +97,10 @@
                 await this.load(2);
                 this.chatScrollTotal = this.$refs.chatlist.offsetHeight - this.$refs['chat-content'].offsetHeight;
             },
+            unLoad() {
+                this.$fishpi.chatroom.removeListener(this.msgListener);
+                document.body.removeEventListener('click', this.discussClick)
+            },
             async loadMore() {
                 let oId = this.chats[0].oId;
                 let rsp = await this.$fishpi.chatroom.get({
@@ -121,7 +122,7 @@
                 console.dir(msg);
                 switch(msg.type) {
                     case 'online':
-                        this.onlines = msg.data;
+                        this.$root.onlines = this.onlines = msg.data;
                         this.discusse = this.$fishpi.chatroom.discusse;
                         break;
                     case "discussChanged":
@@ -270,6 +271,12 @@
                     }
                 });
                 menu.push({
+                    label: `单独聊聊`,
+                    click: () => {
+                        this.$router.push(`/chat/${item.userName}`);
+                    }
+                });
+                menu.push({
                     label: `发个专属红包`,
                     click: () => {
                         this.$ipc.send('main-event', {
@@ -315,6 +322,7 @@
                 overflow: auto;
                 position:absolute;
                 bottom: 0;
+                width: 100%;
                 .chat-more {
                     display: block;
                     cursor: pointer;

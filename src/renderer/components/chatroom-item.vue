@@ -1,6 +1,6 @@
 <template>
 <section class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}">
-    <div class="msg-avatar-box" @contextmenu="userMenuShow">
+    <div class="msg-avatar-box" @contextmenu="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
         <Avatar class="msg-avatar" :src="item.userAvatarURL" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
@@ -141,6 +141,12 @@
                 }
             });
             menu.push({
+                label: `单独聊聊`,
+                click: () => {
+                    this.$router.push(`/chat/${this.item.userName}`);
+                }
+            });
+            menu.push({
                 label: `发个专属红包`,
                 click: () => {
                     this.$ipc.send('main-event', {
@@ -221,6 +227,8 @@
             this.$root.popupMenu(menu);
         },
         open() {
+            if (this.item.content.type == 'rockPaperScissors')
+                this.gestureOpen = !this.gestureOpen;
             if (this.item.content.type == 'rockPaperScissors' 
             && this.item.userName != this.current.userName 
             && !this.emptyRedpacket 

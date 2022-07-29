@@ -61,7 +61,7 @@
                 call: 'resize', 
                 args: { 
                     width: this.$refs.autocomplete.offsetWidth,
-                    height: this.$refs.autocomplete.offsetHeight,
+                    height: this.$refs.autocomplete.offsetHeight + 10,
                 } 
             })
             this.$ipc.send('autocomplete-event', { 
