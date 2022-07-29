@@ -51,7 +51,7 @@
             <span class="msg-img" v-if="isImgOnly" v-html="formatContent"></span>
             <span class="plus-one" @click="doubleMsg" v-if="plusone">+1</span>
         </div>
-        <div class="db-users" v-if="item.dbUser && item.dbUser.length">
+        <div class="db-users" v-if="hasDbUser">
             <span class="db-user" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickame || db.userName">
                 <Avatar class="db-avatar" :src="db.userAvatarURL" />
             </span>
@@ -88,6 +88,9 @@
     filters: {
     },
     computed: {
+        hasDbUser() {
+            return this.item.dbUser.length > 0
+        },
         emptyRedpacket() {
             return this.item.content.got == this.item.content.count;
         },

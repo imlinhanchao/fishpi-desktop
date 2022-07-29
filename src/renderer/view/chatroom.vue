@@ -151,6 +151,7 @@
                         let ContentHeight = this.$refs.chatlist.offsetHeight;
                         let offset = -this.chatScrollPos;
                         let isBottom = offset < 500 || msg.data.userName == this.current.userName;
+                        msg.data.dbUser = []
                         if (this.isMarkdown) msg.data.content = msg.data.md;
                         if (msg.type == 'msg' && msg.data.content == this.chats[this.chats.length - 1].content) {
                             this.chats[this.chats.length - 1].dbUser || (this.chats[this.chats.length - 1].dbUser = [])
