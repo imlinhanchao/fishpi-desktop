@@ -322,7 +322,9 @@
             left: -1.5em;
             right: auto;
         }
-        
+        .msg-img {
+            text-align: right;
+        }
         .redpacket-item {
             .redpacket-contain {
                 flex-direction: row-reverse;
