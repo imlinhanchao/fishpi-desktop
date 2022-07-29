@@ -73,6 +73,7 @@ window.$VueApp = new Vue({
         title: '摸鱼派桌面客户端',
         liveness: 0,
         current: null,
+        onlines: [],
         defaultMenu: [{
             label: '复制',
             role: 'copy',
