@@ -19,6 +19,9 @@
                     @quote="quoteMsg"
                 ></ChatroomItem>
             </section>
+            <section v-if="newMessage > 0" class="chat-new" @click="chatScrollPos = newMessage = 0">
+                <Icon custom="fa fa-angle-double-down" /> {{newMessage}} 条新消息 
+                <span class="chat-new-close" @click="newMessage = 0">×</span></section>
         </section>
         <section class="discusse" v-if="discusse">
             <a href="javascript:void(0)" @dblclick.stop="sendDiscusse" @click="discussed = discusse">#{{discusse}}#</a> 
@@ -73,6 +76,7 @@
                 modalDiscusse: false,
                 chatScrollPos: 0,
                 chatScrollTotal: 0,
+                newMessage: 0,
             }    
         },
         watch: {
@@ -162,8 +166,10 @@
                         if(isBottom) {
                             this.toBottom = true;
                             this.chatScrollPos = 0;
+                            this.newMessage = 0;
                         }
                         else {
+                            this.newMessage ++;
                             this.$nextTick(() => this.chatScrollPos += ContentHeight - this.$refs.chatlist.offsetHeight);
                             if(msg.type == 'msg'){
                                 (msg.data.content.match(/(?<=<img[^>]*?src=")([^"]*?)(?=")/g) || []).forEach(i => {
@@ -177,6 +183,7 @@
                         }
                         break;
                     case 'revoke': {
+                        let ContentHeight = this.$refs.chatlist.offsetHeight;
                         for (let i = 0; i < this.chats.length; i++) {
                             let c = this.chats[i];
                             if (this.chats[i].dbUser) this.chats[i].dbUser = this.chats[i].dbUser.filter(d => d.oId != msg.data)
@@ -189,6 +196,7 @@
                             else this.chats.splice(i, 1);
                             break;
                         }
+                        this.$nextTick(() => this.chatScrollPos += ContentHeight - this.$refs.chatlist.offsetHeight);
                         break;
                     }
                 }
@@ -323,6 +331,23 @@
             display: flex;
             justify-content: flex-end;
             overflow: hidden;
+            .chat-new {
+                cursor: pointer;
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                background: var(--global-active-color);
+                padding: 5px;
+                border-radius: 5px;
+                .chat-new-close {
+                    cursor: pointer;
+                    border-left: 1px solid #AAA;
+                    padding-left: 4px;
+                    font-size: 1.2em;
+                    line-height: 1;
+                    vertical-align: text-top;
+                }
+            }
             .chat-list {
                 padding: .5em;
                 padding-top: 0;
