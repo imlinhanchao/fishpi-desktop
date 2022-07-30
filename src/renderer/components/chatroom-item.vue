@@ -1,5 +1,5 @@
 <template>
-<section class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}">
+<section ref="msg-view" class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}" :style="autoVisibleStyle">
     <div class="msg-avatar-box" @contextmenu="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
         <Avatar class="msg-avatar" :src="item.userAvatarURL" />
     </div>
@@ -9,7 +9,7 @@
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }" @click="open"
             v-if="isRedpacket">
             <div class="redpacket-contain">
-                <div class="arrow"/>
+                <div class="arrow"></div>
                 <div class="redpacket-content">
                     <div class="redpacket-main">
                         <svg class="redpacket-icon">
@@ -74,20 +74,40 @@
             type: Boolean,
             default: false
         },
+        visible: {
+            type: Boolean,
+            default: true,
+        }
     },
     mounted () {
+    },
+    updated() {
+        if (this.autoHide) return;
+        this.contentHeight = this.$refs['msg-view'].offsetHeight;
+        this.autoHide = true;
     },
     data () {
         return {
             gestureOpen: false,
             readed: false,
+            contentHeight: 0,
+            autoHide: false,
         }
     },
     watch: {
+        'item.dbUser'(n, o) {
+            if (o.length == 0) this.autoHide = false;
+        }
     },
     filters: {
     },
     computed: {
+        autoVisibleStyle() {
+            return {
+                containIntrinsicSize: this.contentHeight > 0 ? this.contentHeight + 'px' : 'unset',
+                contentVisibility: this.autoHide ? 'auto' : 'unset',
+            }
+        },
         hasDbUser() {
             return this.item.dbUser.length > 0
         },

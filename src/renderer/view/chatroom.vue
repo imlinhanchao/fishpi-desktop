@@ -8,7 +8,7 @@
                 <a class="chat-more" @click="loadMore">...</a>
                 <ChatroomItem 
                     :ref="'msg-item-' + item.oId" 
-                    v-for="item in chats" 
+                    v-for="(item, i) in chats" 
                     :item="item" 
                     :v-bind:key="itemKey(item)"
                     :plusone="item.dbUser
