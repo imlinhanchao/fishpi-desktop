@@ -77,9 +77,9 @@
     <span id="win-title" class="drag">{{ '摸鱼派 - ' + $root.title || '摸鱼派'}}</span></h1>
     <span class="no-drag music-player plyr--audio" v-if="$root.playSongs.length > 0">
         <button title="关闭播放器" class="audio-control-btn audio-close" @click="$root.playSongs = []"><Icon custom="fa fa-times"></Icon></button>
-        <button title="上一首" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.prevSong()"><Icon custom="fa fa-backward " v-if="$root.playSongs.length > 1"></Icon></button>
+        <button title="上一首" v-if="$root.playSongs.length > 1" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.prevSong()"><Icon custom="fa fa-backward "></Icon></button>
         {{$root.currentMusic.artist}} - {{$root.currentMusic.name}}
-        <button title="下一首" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.nextSong()"><Icon custom="fa fa-forward " v-if="$root.playSongs.length > 1" ></Icon></button>
+        <button title="下一首" v-if="$root.playSongs.length > 1" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.nextSong()"><Icon custom="fa fa-forward " ></Icon></button>
         <span><Player ref="audio" @ended="$root.nextSong()" :options="{
             plyr: {
             },

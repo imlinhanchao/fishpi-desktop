@@ -278,6 +278,12 @@
                     }
                 });
                 menu.push({
+                    label: `访问主页`,
+                    click: () => {
+                        window.open(`https://fishpi.cn/member/${item.userName}`);
+                    }
+                });    
+                menu.push({
                     label: `发个专属红包`,
                     click: () => {
                         this.$ipc.send('main-event', {
