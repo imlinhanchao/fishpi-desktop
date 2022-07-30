@@ -170,6 +170,12 @@
                 }
             });
             menu.push({
+                label: `访问主页`,
+                click: () => {
+                    window.open(`https://fishpi.cn/member/${this.item.userName}`);
+                }
+            });
+            menu.push({
                 label: `发个专属红包`,
                 click: () => {
                     this.$ipc.send('main-event', {
@@ -194,10 +200,26 @@
                     }
                 });
             }
+            if (target.className == 'netease-cover' && !this.$root.inPlayList(target.dataset.id)) {
+                menu.push({
+                    label: `加入播放列表`,
+                    click: () => {
+                        this.$root.playMusic(target.dataset.id, true);
+                    }
+                });
+            }
+            if (target.className == 'netease-cover' && this.$root.inPlayList(target.dataset.id)) {
+                menu.push({
+                    label: `移出播放列表`,
+                    click: () => {
+                        this.$root.removeSong(target.dataset.id);
+                    }
+                });
+            }
             menu.push({
                 label: '回复',
                 click: () => {
-                    this.$emit('quote', this.item);
+                    this.playMusic(id, true);
                 }
             });
             

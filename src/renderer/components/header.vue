@@ -50,12 +50,43 @@
     border: 2px dashed var(--global-control-text-color);
     vertical-align: middle;
 }
+.music-player {
+    display: flex;
+    align-items: center;
+    .audio-control-btn {
+        line-height: 15px;
+        vertical-align: middle;
+        width: 32px;
+        height: 32px;
+        margin: 2px;
+        text-align: center;
+        padding: 0;
+        &.audio-close {
+            background: transparent;
+            color: inherit;
+            border: 0;
+            cursor: pointer;
+        }
+    }
+}
 </style>
 
 <template>
 <header class="drag header">
     <h1 class="drag"> <img src='../assets/icon.png' />
     <span id="win-title" class="drag">{{ '摸鱼派 - ' + $root.title || '摸鱼派'}}</span></h1>
+    <span class="no-drag music-player plyr--audio" v-if="$root.playSongs.length > 0">
+        <button title="关闭播放器" class="audio-control-btn audio-close" @click="$root.playSongs = []"><Icon custom="fa fa-times"></Icon></button>
+        <button title="上一首" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.prevSong()"><Icon custom="fa fa-backward " v-if="$root.playSongs.length > 1"></Icon></button>
+        {{$root.currentMusic.artist}} - {{$root.currentMusic.name}}
+        <button title="下一首" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.nextSong()"><Icon custom="fa fa-forward " v-if="$root.playSongs.length > 1" ></Icon></button>
+        <span><Player ref="audio" @ended="$root.nextSong()" :options="{
+            plyr: {
+            },
+            controls: [ 'play', 'mute' ]
+        }" :source="$root.currentMusic"></Player></span>
+        <button title="移出播放列表" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.delSong()"><Icon custom="fa fa-trash-o audio-remove"></Icon></button>
+    </span>
     <span class="control no-drag" :title="!simple ? '已摸鱼' + liveness + '%' : ''">
         <Button type="text" @click="handleMin"><Icon custom="fa fa-minus"></Icon></Button>
         <Button v-if="!simple" type="text" @click="handleOpacity" class="win-opacity-btn" :class="{ 'win-checked': opacity.enable }"><span class="cirle-empty"></span></Button>
@@ -66,9 +97,11 @@
 </template>
 
 <script>
+  import Player from './player.vue'
   export default {
     name: 'main-header',
     components: {
+        Player,
     },
     props: {
         liveness: {
@@ -82,6 +115,10 @@
         }
     },
     mounted () {
+        document.addEventListener('click', (ev) => {
+            let target = ev.target;
+            if (target.className == 'netease-cover') this.$root.playMusic(target.dataset.id);
+        }, false)
     },
     data () {
         return {

@@ -67,6 +67,18 @@ a {
     background: var(--global-scroll-bar-color);
 }
 
+.plyr--audio .plyr__controls {
+    padding: 0;
+}
+
+.plyr, .plyr__volume {
+    min-width: 0;
+}
+
+.plyr__volume {
+    width: auto;
+}
+
 ::-webkit-scrollbar-corner {
     background-color: transparent;
 }

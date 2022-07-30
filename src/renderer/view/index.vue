@@ -53,7 +53,7 @@
         computed: {
             liveness() {
                 return this.$root.liveness || 0
-            }
+            },
         },
         methods: {
 
@@ -182,6 +182,15 @@
 .msg-current {
     blockquote {
         color: var(--markdown-current-blockquote-color)
+    }
+}
+.netease-music {
+    position: relative;
+    .netease-cover {
+        z-index: 200;
+        position: absolute;
+        left: 10px; right: 10px; top: 10px; bottom: 18px;
+        cursor: pointer;
     }
 }
 </style>
