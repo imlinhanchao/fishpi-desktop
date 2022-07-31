@@ -46,7 +46,7 @@ class Main extends Page
             resize(event, args) {
                 if(!this.win) return;
                 let size = this.win.getSize();
-                this.win.setSize(args.width || size[0], args.height || size[1]);
+                this.win.setSize(parseInt(args.width || size[0]), parseInt(args.height || size[1]));
             },
             getPosition(event, args, callback) {
                 if(!this.win) return;

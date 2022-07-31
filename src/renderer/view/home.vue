@@ -54,7 +54,19 @@
     components: {
     },
     mounted () {
-        this.$ipc.send('main-event', { call: 'resize', args: { width: 800 } })
+        let size = {
+            width: localStorage.getItem('main.size.width') || 800,
+            height: localStorage.getItem('main.size.height') || undefined
+        }
+        this.$ipc.send('main-event', { call: 'resize', args: size })
+        window.addEventListener('resize', () => {
+            let size = {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            };
+            localStorage.setItem('main.size.width', size.width)
+            localStorage.setItem('main.size.height', size.height)
+        });
     },
     data () {
         return {

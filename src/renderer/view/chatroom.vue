@@ -106,6 +106,7 @@
                 document.body.removeEventListener('click', this.discussClick)
             },
             async loadMore() {
+                if (this.chats.length == 0) return;
                 let oId = this.chats[0].oId;
                 let rsp = await this.$fishpi.chatroom.get({
                     oId,

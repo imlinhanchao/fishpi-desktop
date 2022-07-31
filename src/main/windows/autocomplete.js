@@ -38,12 +38,12 @@ class Autocomplete extends Page
             resize(event, args) {
                 if(!this.win) return;
                 let size = this.win.getSize();
-                this.win.setSize(args.width || size[0], args.height || size[1]);
+                this.win.setSize(parseInt(args.width || size[0]), parseInt(args.height || size[1]));
             },
             position(event, args) {
                 if(!this.win) return;
                 let pos = this.win.getPosition();
-                this.win.setPosition(args.x || pos[0], args.y || pos[1]);
+                this.win.setPosition(parseInt(args.x || pos[0]), parseInt(args.y || pos[1]));
             }
         }
     }
