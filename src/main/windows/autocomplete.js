@@ -18,7 +18,7 @@ class Autocomplete extends Page
             minHeight: 0,
             alwaysOnTop :true,
             skipTaskbar: true,
-            resize: false,
+            resizable: false,
         }, options);
         let ret = super.create(options);
         return ret;

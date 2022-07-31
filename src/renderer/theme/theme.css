@@ -9,6 +9,7 @@
     --global-control-text-color: #aca49a;
     --global-control-border-color: #393e40;
     --global-scroll-bar-color: rgba(100, 100, 100, 0.5);
+    --global-alpha-background-color: rgba(35, 36, 37, 0.5);
 
     --markdown-hr-color: #eaecef;
     --markdown-head-border-color: #eaecef;

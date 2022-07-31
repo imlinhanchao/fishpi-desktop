@@ -38,7 +38,6 @@
         document.body.addEventListener('keydown', (ev) => {
             if (ev.keyCode == 27) window.close();
         });
-
     },
     data () {
         return {

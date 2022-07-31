@@ -65,7 +65,13 @@ window.$VueApp = new Vue({
                 height: img.naturalHeight,
             }
             this.$ipc.send('main-event', { call: 'openImage', args: { url: img.src, size }});
-          });
+        });
+        
+        new BroadcastChannel('main-router').addEventListener("message", ({ data }) => {
+            if(!data.url) return;
+            this.$router.push(data.url);
+        }, false);
+
     },
     data: {
         token: localStorage.getItem('token') || '',

@@ -1,5 +1,6 @@
 import Page from './page'
 import RedPacket from './redpacket'
+import Card from './card'
 import Img from './img'
 import {
     dialog
@@ -23,7 +24,12 @@ class Main extends Page
             height: 600, 
             minWidth: 350
         }, options);
-        return super.create(options);
+        let page = super.create(options);
+        page.on('focus', () => {
+            if(!this.card) return;
+            this.card.windows.close();
+        })
+        return page
     }
 
     get events() {
@@ -82,7 +88,7 @@ class Main extends Page
             },
             faceImport(event, argv, callback) {
                 try {
-                    let filePath = dialog.showOpenDialogSync(this.win.widows, {
+                    let filePath = dialog.showOpenDialogSync(this.win.windows, {
                         title: '导入表情文件',
                         buttonLabel: '导入',
                         filters: [
@@ -97,9 +103,9 @@ class Main extends Page
                     console.error(err)
                 }
             },
-            faceExport (event, argv){
+            faceExport (event, argv) {
                 try {
-                    let filePath = dialog.showSaveDialogSync(this.win.widows, {
+                    let filePath = dialog.showSaveDialogSync(this.win.windows, {
                         title: '导出表情文件',
                         buttonLabel: '导出',
                         filters: [
@@ -111,6 +117,24 @@ class Main extends Page
                 } catch (err) {
                     console.error(err)
                 }
+            },
+            viewCard(event, { user, pos }) {
+                if(!this.card) {
+                    this.card = new Card(this.app, 'card').create({
+                        quitEvent: () => {
+                            this.card = null
+                        },
+                        parent: this.win.windows
+                    }, user);
+                } else {
+                    this.card.webContents.send('user-update', user);
+                }
+                this.card.setPosition(parseInt(pos.x), parseInt(pos.y));
+            },
+            closeCard(event) {
+                if(!this.card) return;
+                this.card.windows.close();
+                this.card = null;
             }
         }
     }

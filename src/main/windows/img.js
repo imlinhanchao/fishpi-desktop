@@ -24,7 +24,7 @@ class Img extends Page
             minWidth: size.width,
             minHeight: size.height,
             alwaysOnTop :true,
-            resize: true,            
+            resizable: true,            
             skipTaskbar: true,
         }, options);
         let ret = super.create(options);

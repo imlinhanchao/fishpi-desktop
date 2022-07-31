@@ -55,7 +55,7 @@ class Windows {
         return this.that.loadURL(url); 
     }
 
-    get widows ()       { return this.that; }
+    get windows ()       { return this.that; }
     get webContents()   { return this.that.webContents; }
     get isVisible()     { return this.that.isVisible(); }
     get isFocused()     { return this.that.isFocused(); }

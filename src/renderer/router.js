@@ -58,6 +58,14 @@ export default new Router({
             }
         },
         {
+            path: '/card/:user',
+            name: 'card',
+            component: () => import('./view/card'),
+            meta: {
+                name: 'card'
+            }
+        },
+        {
             path: '/redpacket/:id',
             name: 'redpacket',
             component: () => import('./view/redpacket'),
