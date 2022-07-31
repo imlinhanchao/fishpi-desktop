@@ -9,7 +9,7 @@ class RedPacket extends Page
 
     create(options = {}, args) {
         options = Object.assign({
-            url: `redpacket/${typeof args == 'string' ? args : `${args.id}/${args.gesture || args.user}`}`,
+            url: `redpacket/${typeof args == 'string' ? args : `${args.id}/${args.user || args.gesture}`}`,
             show: true,
             frame: false,
             width: 250, 
