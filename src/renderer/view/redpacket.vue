@@ -185,8 +185,21 @@
         isSpecify() {
             return this.redpacket.type == 'specify' || (this.redpacketData && this.redpacketData.recivers.length > 0);
         },
+        senderGesture() {
+            if (this.$route.params.gesture === undefined) return this.redpacketData.info.gesture;
+            if (this.redpacketData.who[0].userMoney > 0) {
+                return [1, 2, 0][parseInt(this.$route.params.gesture)]
+            }
+            else if (this.redpacketData.who[0].userMoney == 0) {
+                return [0, 1, 2][parseInt(this.$route.params.gesture)]
+            }
+            else if (this.redpacketData.who[0].userMoney < 0) {
+                return [2, 0, 1][parseInt(this.$route.params.gesture)]
+            }
+        },
         isRockPaperScissors() {
-            return this.redpacket.type == 'rockPaperScissors' || (this.redpacketData && this.redpacketData.info.gesture !== undefined);
+            return this.redpacket.type == 'rockPaperScissors' 
+               || (this.redpacketData && this.redpacketData.info.gesture !== undefined)
         },
         defaultRedpackWord() {
             return {
@@ -207,6 +220,7 @@
             this.redpacketData = rsp;
             this.redpacketData.recivers = this.redpacketData.recivers || [];
             this.redpacketData.recivers = this.redpacketData.recivers.filter(r => r && typeof(r) == 'string');
+            this.redpacketData.info.gesture = this.redpacketData.info.gesture || this.senderGesture;
         },
         async sendRedpacket() {
             if (this.redpacket.count <= 0) return;
