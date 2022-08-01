@@ -30,8 +30,8 @@
                     </section>
                 </section>
                 <section class="info-state">
-                    <Tag class="info-online" :color="this.info.userOnlineFlag ? 'error': 'default'">{{onlineMsg}}</Tag>
-                    <Button @click="chat">私聊</Button>
+                    <Tag class="info-online" :color="info.userOnlineFlag ? 'error': 'default'">{{onlineMsg}}</Tag>
+                    <Button v-if="current.userName != info.userName" @click="chat">私聊</Button>
                 </section>
             </section>
         </section>
@@ -46,7 +46,7 @@
     },
     async mounted () {
         let user = this.$route.params.user;
-        await this.$root.getInfo();
+        this.current = await this.$root.getInfo();
         this.info = await this.$fishpi.user(user);
         document.body.addEventListener('keydown', (ev) => {
             if (ev.keyCode == 27) this.close();
@@ -70,7 +70,8 @@
     },
     data () {
         return {
-            info: null
+            info: null,
+            current: {},
         }
     },
     watch: {

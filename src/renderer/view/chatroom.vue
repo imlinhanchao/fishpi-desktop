@@ -188,6 +188,9 @@
                         break;
                     case 'revoke': {
                         let ContentHeight = this.$refs.chatlist.offsetHeight;
+                        let offset = -this.chatScrollPos;
+                        let isBottom = offset < 500;
+
                         for (let i = 0; i < this.chats.length; i++) {
                             let c = this.chats[i];
                             if (this.chats[i].dbUser) this.chats[i].dbUser = this.chats[i].dbUser.filter(d => d.oId != msg.data)
@@ -200,7 +203,10 @@
                             else this.chats.splice(i, 1);
                             break;
                         }
-                        this.$nextTick(() => this.chatScrollPos += ContentHeight - this.$refs.chatlist.offsetHeight);
+                        if (!isBottom) 
+                            this.$nextTick(() => this.chatScrollPos += ContentHeight - this.$refs.chatlist.offsetHeight);
+                        else 
+                            this.chatScrollPos = 0;
                         break;
                     }
                 }

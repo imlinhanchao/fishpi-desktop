@@ -64,6 +64,9 @@ window.$VueApp = new Vue({
                 this.showCard(ev, target.closest('.user-card').dataset.user);
                 return false;
             }
+            this.$ipc.send('card-event', {
+                call: 'hide'
+            });
             if (target.nodeName.toLowerCase() != 'img' || target.className == 'emoji' || target.dataset.action != 'preview') return;
             let size = {
                 width: target.naturalWidth,
@@ -207,11 +210,15 @@ window.$VueApp = new Vue({
         waitShowCard(ev) {
             let closest = ev.target.closest('.user-card')
             if (!closest) return false;
-            this.cardTimer = setTimeout(() => this.showCard(ev, closest.dataset.user), 800);
+            let time = parseInt(closest.dataset.time || 0.8) * 1000;
+            this.cardTimer = setTimeout(() => this.showCard(ev, closest.dataset.user), time);
         },
         clearShowCard() {
             clearTimeout(this.cardTimer);
             this.cardTimer = 0;
+            this.$ipc.send('card-event', {
+                call: 'hide'
+            });
         },
         async showCard(ev, user) {
             this.cardTimer = 0;
