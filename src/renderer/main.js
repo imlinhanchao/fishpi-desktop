@@ -58,20 +58,33 @@ window.$VueApp = new Vue({
         }, false)
 
         document.addEventListener('click', (ev) => {
-            let img = ev.target;
-            if (img.nodeName.toLowerCase() != 'img' || img.className == 'emoji' || img.dataset.action != 'preview') return;
-            let size = {
-                width: img.naturalWidth,
-                height: img.naturalHeight,
+            let target = ev.target;
+            if (target.closest('.user-card')) {
+                clearTimeout(this.cardTimer);
+                this.showCard(ev, target.closest('.user-card').dataset.user);
+                return false;
             }
-            this.$ipc.send('main-event', { call: 'openImage', args: { url: img.src, size }});
-        });
+            if (target.nodeName.toLowerCase() != 'img' || target.className == 'emoji' || target.dataset.action != 'preview') return;
+            let size = {
+                width: target.naturalWidth,
+                height: target.naturalHeight,
+            }
+            this.$ipc.send('main-event', { call: 'openImage', args: { url: target.src, size }});
+        }, true);
         
         new BroadcastChannel('main-router').addEventListener("message", ({ data }) => {
             if(!data.url) return;
             this.$router.push(data.url);
         }, false);
 
+        document.addEventListener('mouseover', this.waitShowCard, false);
+        document.addEventListener('mouseout', this.clearShowCard, false);
+        document.addEventListener('mousemove', async (ev) => {
+            this.mouse = {
+                x: ev.clientX,
+                y: ev.clientY,
+            }
+        }, false);
     },
     data: {
         token: localStorage.getItem('token') || '',
@@ -82,6 +95,8 @@ window.$VueApp = new Vue({
         onlines: [],
         playSongs:[],
         playIndex: 0,
+        cardTimer: 0,
+        mouse: { x: 0, y: 0 },
         defaultMenu: [{
             label: '复制',
             role: 'copy',
@@ -134,7 +149,6 @@ window.$VueApp = new Vue({
                 actualLeft += current.offsetLeft;
                 current = current.offsetParent;
             }
-                
                 
             let actualTop = element.offsetTop;
             current = element.offsetParent;
@@ -189,6 +203,33 @@ window.$VueApp = new Vue({
                 url: `http://music.163.com/song/media/outer/url?id=${id}`
             });
             if(this.playIndex >= this.playSongs.length) this.playIndex = 0;
+        },
+        waitShowCard(ev) {
+            let closest = ev.target.closest('.user-card')
+            if (!closest) return false;
+            this.cardTimer = setTimeout(() => this.showCard(ev, closest.dataset.user), 800);
+        },
+        clearShowCard() {
+            clearTimeout(this.cardTimer);
+            this.cardTimer = 0;
+        },
+        async showCard(ev, user) {
+            this.cardTimer = 0;
+            if (!user) return;
+            let winPos = (await this.$ipc.sendSync('main-event', {
+                call: 'getPosition',
+            })).data
+
+            this.$ipc.send('main-event', {
+                call: 'viewCard',
+                args: {
+                    user,
+                    pos: {
+                        x: winPos.x + this.mouse.x,
+                        y: winPos.y + this.mouse.y,
+                    }
+                }
+            })
         },
     },
     watch: {

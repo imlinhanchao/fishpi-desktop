@@ -1,6 +1,6 @@
 import Page from './page'
 
-class RedPacket extends Page
+class Card extends Page
 {
     constructor(app, name) {
         super(app, name);
@@ -14,6 +14,8 @@ class RedPacket extends Page
             frame: false,
             width: 400, 
             height: 200, 
+            minWidth: 0,
+            minHeight: 0,
             skipTaskbar: true,
             resizable: false,
         }, options);
@@ -29,11 +31,14 @@ class RedPacket extends Page
             },
             show() {
                 if(!this.win) return;
-                this.win.setAlwaysOnTop(true, 'floating')
                 this.win.showInactive()
+            },
+            resize(event, args) {
+                if(!this.win) return;
+                this.win.setBounds(args);
             },
         }
     }
 }
 
-export default RedPacket;
+export default Card;

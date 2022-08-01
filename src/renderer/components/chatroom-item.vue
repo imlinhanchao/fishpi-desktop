@@ -1,6 +1,6 @@
 <template>
 <section ref="msg-view" class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}" :style="autoVisibleStyle">
-    <div class="msg-avatar-box" @mouseover="waitShowCard" @mouseout="clearShowCard" @contextmenu="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
+    <div :data-user="item.userName" class="msg-avatar-box user-card" @contextmenu="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
         <Avatar class="msg-avatar" :src="item.userAvatarURL" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="redpacket-users" v-if="item.content.who && item.content.who.length">
-                <span @mouseover="waitShowCard($event, u.userName)" @mouseout="clearShowCard" class="redpacket-user" :key="u.userId" v-for="u in item.content.who" :title="u.userName">
+                <span :data-user="u.userName" class="redpacket-user user-card" :key="u.userId" v-for="u in item.content.who" :title="u.userName">
                     <Avatar class="redpacket-avatar" :src="u.avatar" />
                 </span>
                 <span class="redpacket-word">领取了</span>
@@ -52,7 +52,7 @@
             <span class="plus-one" @click="doubleMsg" v-if="plusone">+1</span>
         </div>
         <div class="db-users" v-if="hasDbUser">
-            <span @mouseover="waitShowCard($event, u.userName)" @mouseout="clearShowCard" class="db-user" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickame || db.userName">
+            <span :data-user="db.userName" class="db-user user-card" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickame || db.userName">
                 <Avatar class="db-avatar" :src="db.userAvatarURL" />
             </span>
             <span class="db-word">也这么说</span>
@@ -92,7 +92,6 @@
             readed: false,
             contentHeight: 0,
             autoHide: false,
-            cardTimer: 0,
         }
     },
     watch: {
@@ -149,29 +148,6 @@
         },
      },
     methods: {
-        waitShowCard(ev, user) {
-            this.cardTimer = setTimeout(() => this.showCard(ev, user), 1500);
-        },
-        clearShowCard() {
-            clearTimeout(this.cardTimer);
-        },
-        async showCard(ev, user) {
-            user = user || this.item.userName;
-            let winPos = (await this.$ipc.sendSync('main-event', {
-                call: 'getPosition',
-            })).data
-
-            this.$ipc.send('main-event', {
-                call: 'viewCard',
-                args: {
-                    user,
-                    pos: {
-                        x: winPos.x + ev.clientX,
-                        y: winPos.y + ev.clientY,
-                    }
-                }
-            })
-        },
         emojiCode(target) {
             return `:${target.src.match(/\/([^\/.]*?)(.gif|.png)/)[1]}:`;
         },

@@ -21,7 +21,8 @@
             </section>
             <section v-if="newMessage > 0" class="chat-new" @click="chatScrollPos = newMessage = 0">
                 <Icon custom="fa fa-angle-double-down" /> {{newMessage}} 条新消息 
-                <span class="chat-new-close" @click="newMessage = 0">×</span></section>
+                <span class="chat-new-close" @click.stop="newMessage = 0">×</span>
+            </section>
         </section>
         <section class="discusse" v-if="discusse">
             <a href="javascript:void(0)" @dblclick.stop="sendDiscusse" @click="discussed = discusse">#{{discusse}}#</a> 

@@ -27,7 +27,7 @@ class Main extends Page
         let page = super.create(options);
         page.on('focus', () => {
             if(!this.card) return;
-            this.card.windows.close();
+            this.card.windows.hide();
         })
         return page
     }
@@ -130,11 +130,8 @@ class Main extends Page
                     this.card.webContents.send('user-update', user);
                 }
                 this.card.setPosition(parseInt(pos.x), parseInt(pos.y));
-            },
-            closeCard(event) {
-                if(!this.card) return;
-                this.card.windows.close();
-                this.card = null;
+                this.card.setSize(400, 200);
+                this.card.showInactive(); 
             }
         }
     }

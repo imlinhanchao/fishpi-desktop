@@ -52,6 +52,11 @@ class Img extends Page
                 if(!this.win) return;
                 this.win.showInactive()
             },
+            resize(event, args) {
+                if(!this.win) return;
+                let size = this.win.getSize();
+                this.win.setSize(parseInt(args.width || size[0]), parseInt(args.height || size[1]));
+            },
         }
     }
 }

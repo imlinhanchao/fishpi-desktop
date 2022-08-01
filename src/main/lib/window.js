@@ -55,7 +55,7 @@ class Windows {
         return this.that.loadURL(url); 
     }
 
-    get windows ()       { return this.that; }
+    get windows ()      { return this.that; }
     get webContents()   { return this.that.webContents; }
     get isVisible()     { return this.that.isVisible(); }
     get isFocused()     { return this.that.isFocused(); }
@@ -70,6 +70,7 @@ class Windows {
     setAlwaysOnTop()    { return this.that.setAlwaysOnTop(...arguments); }
     setOpacity()        { return this.that.setOpacity(...arguments); }
     setSize()           { return this.that.setSize(...arguments); }
+    setBounds()         { return this.that.setBounds(...arguments); }
     getSize()           { return this.that.getSize(...arguments); }
     getPosition()       { return this.that.getPosition(...arguments); }
     setPosition()       { return this.that.setPosition(...arguments); }
