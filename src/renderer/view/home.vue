@@ -39,7 +39,11 @@
         <ul class="feature-list">
             <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'account' }" @click="toAccount"><Avatar :src="account.userAvatarURL" /></li>
             <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')"><Icon custom="fa fa-comments" /></li>
-            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chat' }" @click="$router.push('/chat')"><Icon custom="fa fa-comment" /></li>
+            <li class="feature-item" 
+                :class="{ 'feature-active': $route.meta.name == 'chat' }" 
+                @click="$router.push('/chat')">
+                <Badge :offset="[5, -2]" :title="`${chats}条未读私信`" :count="chats" :dot="true"><Icon custom="fa fa-comment"/></Badge>
+            </li>
         </ul>
     </section>
     <section class="content">
@@ -67,9 +71,27 @@
             localStorage.setItem('main.size.width', size.width)
             localStorage.setItem('main.size.height', size.height)
         });
+        this.getUnread();
+        this.$fishpi.chat.addListener(({msg}) => {
+            switch(msg.command) {
+                case 'chatUnreadCountRefresh': this.chats = msg.count; break;
+                case 'refreshNotification': break;
+                case 'newIdleChatMessage': this.chats++; break;
+                case 'warnBroadcast': this.broadcast = {
+                        text: msg.warnBroadcastText,
+                        publisher: msg.who
+                    };
+                    break;
+            }
+        })
     },
     data () {
         return {
+            chats: 0,
+            broadcast: {
+                text: '',
+                publisher: ''
+            }
         }    
     },
     watch: {
@@ -87,6 +109,10 @@
     methods: {
         async toAccount() {
             console.dir(await this.$fishpi.account.info())
+        },
+        async getUnread() {
+            let rsp = await this.$fishpi.chat.unread();
+            this.chats = rsp.data.length;
         }
     }
   }

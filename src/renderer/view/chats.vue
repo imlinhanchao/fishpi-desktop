@@ -5,10 +5,12 @@
             <li class="chat-item" title="添加聊天用户" @click="chatWho">
                 <Icon custom="fa fa-plus" />
             </li>            
-            <li class="chat-item" 
+            <li class="chat-item user-card" 
              :class="{ 'chat-active-item': userName(user) == $route.params.user }" 
-             v-for="user in users" @click="chatTo(userName(user))">
-                <Avatar :src="avatar(user)" :class="{ 'chat-active': userName(user) == $route.params.user }"/>
+             v-for="user in users" @click="chatTo(userName(user))" :data-user="userName(user)" :data-time="3">
+                <Badge :count="user.unread" :dot="true" :title="`${user.unread}条未读私信`">
+                    <Avatar :src="avatar(user)" :class="{ 'chat-active': userName(user) == $route.params.user }"/>
+                </Badge>
             </li>
         </ul>
     </section>
@@ -42,6 +44,8 @@
                 }
             }, false);
 
+            this.$fishpi.chat.addListener(this.newMsgEvent);
+
             if (this.$route.params.user) {
                 this.chatTo(this.$route.params.user)
             }
@@ -73,6 +77,16 @@
             },
         },
         methods: {
+            unLoad() {
+                this.$fishpi.chat.removeListener(this.newMsgEvent);
+            },
+            newMsgEvent({msg}) {
+                switch (msg.command) {
+                    case 'chatUnreadCountRefresh':
+                    case 'newIdleChatMessage':
+                        this.load();
+                }
+            },
             async getUser(name) {
                 if (!name) return;
                 try {
@@ -101,8 +115,13 @@
             },
             async load() {
                 let rsp = await this.$fishpi.chat.list();
-                console.dir(rsp);
-                this.users = rsp.data;
+                this.users = rsp.data.map(d => ({ unread: 0, ...d }));
+                rsp = await this.$fishpi.chat.unread();
+                rsp.data.forEach(d => {
+                    let user = d.senderUserName;
+                    let index = this.users.findIndex(u => this.userName(u) == user);
+                    this.users[index].unread = this.users[index].unread + 1;
+                })
             },
             appendMsg(msg) {
                 this.$refs.msgbox.appendMsg({ regexp: null, data: msg });
@@ -112,6 +131,7 @@
                 else return item.senderAvatar;
             },
             userName(item) {
+                if (!item) return '';
                 if (item.senderUserName == this.current.userName) return item.receiverUserName;
                 else return item.senderUserName;
             },
@@ -151,7 +171,7 @@
             .chat-active {
                 box-shadow: 0 0 5px var(--global-active-color);
             }
-            &.chat-active-item {
+            &.chat-active-item, &:hover {
                 background: var(--main-chatroom-background-color);
             }
         }
