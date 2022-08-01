@@ -97,9 +97,9 @@
     },
     methods: {
         close() {
-            /*this.$ipc.send('card-event', {
+            this.$ipc.send('card-event', {
                 call: 'hide'
-            });*/
+            });
         },
         chat() {
             new BroadcastChannel('main-router').postMessage({ url: `/chat/${this.info.userName}` }); 
