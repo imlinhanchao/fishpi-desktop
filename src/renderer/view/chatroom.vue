@@ -19,7 +19,7 @@
                     @quote="quoteMsg"
                 ></ChatroomItem>
             </section>
-            <section v-if="newMessage > 0" class="chat-new" @click="chatScrollPos = newMessage = 0">
+            <section v-if="newMessage > 0" class="chat-new" @click="gotoMsg(chats[chats.length - newMessage].oId)">
                 <Icon custom="fa fa-angle-double-down" /> {{newMessage}} 条新消息 
                 <span class="chat-new-close" @click.stop="newMessage = 0">×</span>
             </section>
@@ -163,7 +163,10 @@
                             this.chats[this.chats.length - 1].dbUser || (this.chats[this.chats.length - 1].dbUser = [])
                             this.chats[this.chats.length - 1].dbUser.push(msg.data)
                         }
-                        else this.chats.push(msg.data);
+                        else {
+                            if (!isBottom) this.newMessage ++;
+                            this.chats.push(msg.data);
+                        }
                         console.log('offset:' + offset)
                         if(isBottom) {
                             this.toBottom = true;
@@ -171,7 +174,6 @@
                             this.newMessage = 0;
                         }
                         else {
-                            this.newMessage ++;
                             this.$nextTick(() => this.chatScrollPos += ContentHeight - this.$refs.chatlist.offsetHeight);
                             if(msg.type == 'msg'){
                                 (msg.data.content.match(/(?<=<img[^>]*?src=")([^"]*?)(?=")/g) || []).forEach(i => {
@@ -263,6 +265,7 @@
             chatScroll(ev) {
                 if (ev.deltaY + this.chatScrollPos >= 0) {
                     this.chatScrollPos = 0;
+                    this.newMessage = 0;
                     return;
                 }
                 if (ev.deltaY + this.chatScrollPos <= this.$refs['chat-content'].offsetHeight - this.$refs.chatlist.offsetHeight) {
@@ -307,6 +310,13 @@
                 });
                 this.$root.popupMenu(menu);
             },
+            gotoMsg(oId) {
+                if (!oId || !this.$refs['msg-item-' + oId]) return;
+                let ele = this.$refs['msg-item-' + oId][0];
+                if (!ele) return;
+                this.chatScrollPos = ele.$el.offsetTop - this.$refs.chatlist.offsetHeight;
+                this.newMessage = 0;
+            }
         }
     }
 </script>
