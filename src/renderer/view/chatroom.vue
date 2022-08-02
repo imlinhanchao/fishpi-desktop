@@ -40,7 +40,7 @@
     <section class="sidebar">
         <p>当前在线({{onlines.length}})</p>
         <ul class="online-list">
-            <li class="online-item" v-for="user in onlines" @contextmenu="userMenuShow(user)"  @dblclick="$router.push(`/chat/${user.userName}`)">
+            <li class="online-item user-card" :data-user="user.userName" v-for="user in onlines" @contextmenu="userMenuShow(user)"  @dblclick="$router.push(`/chat/${user.userName}`)">
                 <Avatar :src="user.userAvatarURL48" /><span class="online-user">{{user.userName}}</span>
             </li>
         </ul>

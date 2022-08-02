@@ -59,7 +59,7 @@ window.$VueApp = new Vue({
 
         document.addEventListener('click', (ev) => {
             let target = ev.target;
-            if (target.closest('.user-card')) {
+            if (target.closest('.user-card-click')) {
                 clearTimeout(this.cardTimer);
                 this.showCard(ev, target.closest('.user-card').dataset.user);
                 return false;
@@ -210,15 +210,12 @@ window.$VueApp = new Vue({
         waitShowCard(ev) {
             let closest = ev.target.closest('.user-card')
             if (!closest) return false;
-            let time = parseInt(closest.dataset.time || 0.8) * 1000;
+            let time = parseInt(closest.dataset.time || 1.5) * 1000;
             this.cardTimer = setTimeout(() => this.showCard(ev, closest.dataset.user), time);
         },
         clearShowCard() {
             clearTimeout(this.cardTimer);
             this.cardTimer = 0;
-            this.$ipc.send('card-event', {
-                call: 'hide'
-            });
         },
         async showCard(ev, user) {
             this.cardTimer = 0;
