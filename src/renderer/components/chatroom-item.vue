@@ -350,7 +350,7 @@
                     z-index: 1;
                     top: 1.6em;
                     left: -1.9em;
-                    transition: all .5s;
+                    transition: all .2s;
                     img {
                         width: 1.5em;
                         border-radius: 50%;
