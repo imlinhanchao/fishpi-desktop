@@ -177,7 +177,7 @@ window.$VueApp = new Vue({
         },
         delSong() {
             this.playSongs.splice(this.playIndex, 1)
-            this.nextSong()
+            if(this.playSongs.length) this.nextSong()
         },
         inPlayList(id) {
             return this.playSongs.find(p => p.id == id) != null

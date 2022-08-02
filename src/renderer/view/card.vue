@@ -59,7 +59,7 @@
     updated() {
         if(this.$refs.content) {
             let size = {
-                width: this.$refs.content.scrollWidth,
+                width: 400,
                 height: this.$refs.content.scrollHeight * 2,
             }
             this.$ipc.send('card-event', {

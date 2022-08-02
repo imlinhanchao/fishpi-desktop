@@ -347,7 +347,7 @@
                 height: 100%;
                 .gesture-item {
                     position: absolute;
-                    z-index: 1;
+                    z-index: 2;
                     top: 1.6em;
                     left: -1.9em;
                     transition: all .2s;

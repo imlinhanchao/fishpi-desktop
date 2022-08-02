@@ -64,6 +64,7 @@
             <span><Player ref="audio" @ended="$root.nextSong()" :options="{
                 plyr: {
                 },
+                iconUrl: './static/images/plyr.svg',
                 controls: [ 'play', 'mute' ]
             }" :source="$root.currentMusic"></Player></span>
             <button title="移出播放列表" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.delSong()"><Icon custom="fa fa-trash-o audio-remove"></Icon></button>

@@ -37,7 +37,6 @@
             new BroadcastChannel('autocomplete-choose').addEventListener("message", ({ data }) => {
                 switch(data.type) {
                     case 'user': 
-                        this.sendAutoComplete([], 'user');
                         this.chatTo(data.value);
                         this.user = ''
                         break;
@@ -137,6 +136,7 @@
             },
             async chatTo(user) {
                 let index = this.users.findIndex(u => this.userName(u) == user);
+                this.sendAutoComplete([], 'user');
                 if (index < 0) {
                     let data = await this.$fishpi.user(user);
                     let userItem = {
@@ -144,6 +144,7 @@
                         receiverUserName: this.current.userName,
                         senderAvatar: data.userAvatarURL,
                         receiverAvatar: this.current.userAvatarURL,
+                        unread: 0,
                     }
                     this.users.unshift(userItem);
                 }

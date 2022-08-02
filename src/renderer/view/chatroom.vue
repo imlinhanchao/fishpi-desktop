@@ -320,7 +320,7 @@
                 if (!oId || !this.$refs['msg-item-' + oId]) return;
                 let ele = this.$refs['msg-item-' + oId][0];
                 if (!ele) return;
-                this.chatScrollPos = ele.$el.offsetTop - this.$refs.chatlist.offsetHeight;
+                this.chatScrollPos = ele.$el.offsetTop + ele.$el.offsetHeight - this.$refs.chatlist.offsetHeight;
                 this.newMessage = 0;
             }
         }
