@@ -1,11 +1,11 @@
 <template>
 <div class="layout" v-if="current">
     <section class="sidebar">
+        <div class="chat-item" title="添加聊天用户" @click="chatWho">
+            <Icon custom="fa fa-plus" />
+        </div>        
         <ul class="chat-list">
-            <li class="chat-item" title="添加聊天用户" @click="chatWho">
-                <Icon custom="fa fa-plus" />
-            </li>            
-            <li class="chat-item user-card" 
+            <li class="chat-item user-card" v-bind:key="userName(user)"
              :class="{ 'chat-active-item': userName(user) == $route.params.user }" 
              v-for="user in users" @click="chatTo(userName(user))" :data-user="userName(user)" :data-time="3">
                 <Badge :count="user.unread" :dot="true" :title="`${user.unread}条未读私信`">
@@ -52,6 +52,7 @@
         data () {
             return {
                 users: [],
+                newUser: [],
                 userForm: false,
                 user: ''
             }    
@@ -83,7 +84,7 @@
                 switch (msg.command) {
                     case 'chatUnreadCountRefresh':
                     case 'newIdleChatMessage':
-                        this.load();
+                        this.loadUnread();
                 }
             },
             async getUser(name) {
@@ -112,15 +113,18 @@
                     y: msgPos.y + caretPos.top + caretPos.height + winPos.y
                 }
             },
-            async load() {
-                let rsp = await this.$fishpi.chat.list();
-                this.users = rsp.data.map(d => ({ unread: 0, ...d }));
-                rsp = await this.$fishpi.chat.unread();
+            async loadUnread() {
+                let rsp = await this.$fishpi.chat.unread();
                 rsp.data.forEach(d => {
                     let user = d.senderUserName;
                     let index = this.users.findIndex(u => this.userName(u) == user);
                     this.users[index].unread = this.users[index].unread + 1;
                 })
+            },
+            async load() {
+                let rsp = await this.$fishpi.chat.list();
+                this.users = rsp.data.map(d => ({ unread: 0, ...d }));
+                await this.loadUnread();
             },
             appendMsg(msg) {
                 this.$refs.msgbox.appendMsg({ regexp: null, data: msg });
@@ -163,8 +167,14 @@
     height: 100%;
     display: flex;
     background: var(--main-chatroom-background-color);
-    .chat-list {
-        list-style: none;
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        .chat-list {
+            list-style: none;
+            height: 100%;
+            overflow: auto;
+        }
         .chat-item {
             padding: 10px;
             cursor: pointer;
