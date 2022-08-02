@@ -5,12 +5,12 @@
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
         <div class="msg-user" :title="item.userName">{{item.userNickname || item.userName}}</div>
-        <div class="redpacket-item" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'"
-            :class="{'redpacket-empty': emptyRedpacket || readRedpacket }" @click="open"
+        <div class="redpacket-item"
+            :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"
             v-if="isRedpacket">
             <div class="redpacket-contain">
                 <div class="arrow"></div>
-                <div class="redpacket-content">
+                <div class="redpacket-content" @click="open" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'">
                     <div class="redpacket-main">
                         <svg class="redpacket-icon">
                             <use xlink:href="#redPacketIcon"></use>
@@ -325,7 +325,6 @@
             .redpacket-contain {
                 display: flex;
                 flex-direction: row;
-                cursor: pointer;
             }
             user-select: none;
             .user-gesture {
@@ -396,7 +395,8 @@
                 background: var(--main-redpacket-background-color);
                 border-radius: 5px;
                 padding-right: 10px;
-                .redpacket-main {
+                cursor: pointer;
+               .redpacket-main {
                     display: inline-flex;
                     align-items: center;
                 }
