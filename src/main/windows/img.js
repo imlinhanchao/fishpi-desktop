@@ -23,7 +23,6 @@ class Img extends Page
             height: size.height, 
             minWidth: size.width,
             minHeight: size.height,
-            alwaysOnTop :true,
             resizable: true,            
             skipTaskbar: true,
         }, options);
@@ -33,10 +32,14 @@ class Img extends Page
 
     setImage(args) {
         let size = args.size;
-        if (size.width < 400) { size.height = size.height * 400 / size.width; size.width = 400; }
-        if (size.width > 800) { size.height = size.height * 800 / size.width; size.width = 800; }
-        if (size.height > 600) { size.width = size.width * 600 / size.height; size.height = 600; }
-        if (size.height < 100) size.height += 150;
+        if (size.width < size.height) {
+            if (size.height > 600) { size.width = size.width * 600 / size.height; size.height = 600; }
+            if (size.height < 100) size.height += 150;
+        }
+        else {
+            if (size.width < 400) { size.height = size.height * 400 / size.width; size.width = 400; }
+            if (size.width > 800) { size.height = size.height * 800 / size.width; size.width = 800; }
+        }
         size.height += 10;
         this.win.setSize(parseInt(size.width), parseInt(size.height));
         this.win.webContents.send('img-update', `/img/${encodeURIComponent(args.url)}`);

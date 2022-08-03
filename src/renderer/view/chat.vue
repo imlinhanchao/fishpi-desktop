@@ -34,8 +34,8 @@
         async mounted () {
             this.user = this.$route.params.user;
         },
-        unmounted() {
-            this.$fishpi.chat.removeListener(this.user, this.msgListener)
+        beforeDestroy() {
+            this.unLoad();
         },
         data () {
             return {
@@ -87,6 +87,7 @@
             async msgListener({ msg }) {
                 console.dir(msg);
                 this.chats.push(msg);
+                this.$fishpi.chat.markRead(this.user);
             },
             async load(page) {
                 let rsp = await this.$fishpi.chat.get({ user: this.user, page });

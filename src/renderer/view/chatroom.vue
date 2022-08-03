@@ -1,5 +1,5 @@
 <template>
-<div class="layout">
+<div class="layout" v-if="current">
     <section class="content">
         <section class="chat-content" ref="chat-content" @mouseover="$refs['chat-content'].focus()" @mousewheel="chatScroll">
             <ScrollBar v-if="$refs.chatlist && $refs['chat-content']" class="chat-scroll" 
@@ -63,6 +63,9 @@
             this.$fishpi.chatroom.removeListener(this.msgListener);
             this.$fishpi.chatroom.addListener(this.msgListener);
             document.body.addEventListener('click', this.discussClick, false)
+        },
+        beforeDestroy() {
+            this.unLoad();
         },
         data () {
             return {

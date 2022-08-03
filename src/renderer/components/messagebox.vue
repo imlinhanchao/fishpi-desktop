@@ -81,18 +81,21 @@
         },
     },
     mounted () {
-        new BroadcastChannel('autocomplete-choose').addEventListener("message", ({ data }) => {
+        this.autocompleteBroad.addEventListener("message", ({ data }) => {
             switch(data.type) {
                 case 'at': this.atUser(data.value); break;
                 case 'emoji': this.addEmoji(data.value); break;
             }
         }, false);
-        document.removeEventListener('paste', this.onPaste);
         document.addEventListener('paste', this.onPaste);
-        document.removeEventListener('mousemove', this.resizeMove);
         document.addEventListener('mousemove', this.resizeMove);
-        document.removeEventListener('mouseup', this.resizeEnd);
         document.addEventListener('mouseup', this.resizeEnd);
+    },
+    beforeDestroy() {
+        document.removeEventListener('mouseup', this.resizeEnd);
+        document.removeEventListener('mousemove', this.resizeMove);
+        document.removeEventListener('paste', this.onPaste);
+        this.autocompleteBroad.close();
     },
     data () {
         return {
@@ -103,7 +106,8 @@
             lastCursor: 0,
             uploading: false,
             resize: false,
-            msgHeight: localStorage.getItem('message-height') || 80
+            msgHeight: localStorage.getItem('message-height') || 80,
+            autocompleteBroad: new BroadcastChannel('autocomplete-choose')
         }
     },
     watch: {

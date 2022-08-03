@@ -3,9 +3,9 @@ import { Menu, getCurrentWindow } from '@electron/remote';
 import ipc from './ipc'
 import Setting from './setting'
 
+import FishPi from 'fishpi';
 import Vue from 'vue'
 import VueWorker from 'vue-worker'
-import FishPi from 'fishpi';
 
 import App from './App'
 import router from './router'
@@ -61,7 +61,7 @@ window.$VueApp = new Vue({
             let target = ev.target;
             if (target.closest('.user-card-click')) {
                 clearTimeout(this.cardTimer);
-                this.showCard(ev, target.closest('.user-card').dataset.user);
+                this.showCard(ev, target.closest('.user-card-click').dataset.user);
                 return false;
             }
             this.$ipc.send('card-event', {
@@ -75,11 +75,6 @@ window.$VueApp = new Vue({
             this.$ipc.send('main-event', { call: 'openImage', args: { url: target.src, size }});
         }, true);
         
-        new BroadcastChannel('main-router').addEventListener("message", ({ data }) => {
-            if(!data.url) return;
-            this.$router.push(data.url);
-        }, false);
-
         document.addEventListener('mouseover', this.waitShowCard, false);
         document.addEventListener('mouseout', this.clearShowCard, false);
         document.addEventListener('mousemove', async (ev) => {
@@ -124,7 +119,6 @@ window.$VueApp = new Vue({
             this.token = null;
             this.$fishpi.setToken(null);
             localStorage.removeItem('token');
-            this.$router.push('/login');
         },
         async login(account) {
             let rsp = await this.$fishpi.login(account);

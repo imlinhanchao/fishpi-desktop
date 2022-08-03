@@ -13,7 +13,7 @@
             @load="loadHandle" ref="img" class="img" 
             v-if="image" :src="image" 
             @mousedown="dragStart" @mousemove="dragImg" @mouseup="dragOver"
-            @wheel="wheelHandle" :style="{ width: width + 'px', height: height + 'px', maxWidth, maxHeight, margin }"
+            @wheel="wheelHandle" :style="style"
         />
     </Content>
 </section>
@@ -29,9 +29,6 @@
     mounted () {
         this.image = this.$route.params.imgpath;
         document.title = path.basename(this.image);
-        window.addEventListener('resize', () => {
-            this.wheelHandle({ deltaY: 0 });
-        })
         this.$ipc.listen('img-update',(event, url) => {
             this.$router.replace(url);
         });
@@ -44,13 +41,15 @@
             image: '',
             width: undefined,
             height: undefined,
-            maxWidth: undefined,
-            maxHeight: undefined,
+            radio: 1,
             margin: 'auto',
+            dragStartPos: {
+                x: 0, y: 0
+            },
             dragPos: {
                 x: 0, y: 0
             },
-            dragScroll: {
+            dragStartPointer: {
                 x: 0, y: 0
             },
             drag: false,
@@ -74,15 +73,27 @@
         },
         content() {
             return this.$refs.content.$el
+        },
+        style() {
+            return {
+                width: this.width ? this.width + 'px' : 'auto',
+                height: this.height ? this.height + 'px' : 'auto',
+                left: this.dragPos.x ? this.dragPos.x + 'px' : 'auto',
+                top: this.dragPos.y ? this.dragPos.y + 'px' : 'auto',
+            }
         }
     },
     methods: {
         loadHandle() {
+            let contentSize = {
+                width: this.content.offsetWidth,
+                height: this.content.offsetHeight,
+            }
             this.radio = this.img.naturalHeight / this.img.naturalWidth;
-            this.maxWidth = window.innerWidth - 50
-            this.maxHeight = window.innerHeight - 80
-            this.width = this.img.width > this.img.height ? this.maxWidth : this.maxHeight / this.radio;
-            this.height = this.img.height > this.img.width ? this.maxHeight : this.maxWidth * this.radio;
+            this.width = this.radio <= 1 ? contentSize.width : contentSize.height / this.radio;
+            this.height = this.radio > 1 ? contentSize.height : contentSize.width * this.radio;
+            this.dragPos.x = (contentSize.width - this.width) / 2;
+            this.dragPos.y = (contentSize.height - this.height) / 2;
         },
         handleClose() {
             window.close();
@@ -92,20 +103,28 @@
             window.open(this.image);
         },
         wheelHandle(ev) {
-            if (ev.deltaY > 0 && this.maxWidth < 20) return;
-            this.maxWidth = this.maxHeight = 'none';
+            if (ev.deltaY > 0 && (this.width < 20 || this.height < 20)) return;
+            let lastSize = {
+                width: this.width,
+                height: this.height,
+            }
             this.width = Math.max(20, (this.width - ev.deltaY))
             this.height = this.width * this.radio;
+
+            this.dragPos.x = ev.clientX - (ev.clientX - this.dragPos.x) / lastSize.width * this.width;
+            this.dragPos.y = ev.clientY - (ev.clientY - this.dragPos.y) / lastSize.height * this.height;
         },
         dragStart(ev) {
             this.drag = true
-            this.dragPos = { x: ev.clientX, y: ev.clientY };
-            this.dragScroll = { x: this.content.scrollTop, y: this.content.scrollLeft };
+            this.dragStartPointer = { x: ev.clientX, y: ev.clientY };
+            this.dragStartPos = this.dragPos;
         },
         dragImg(ev) {
             if (!this.drag) return;
-            this.content.scrollTo(this.dragScroll.x - (ev.clientX - this.dragPos.x), 
-                            this.dragScroll.y - (ev.clientY - this.dragPos.y));
+            this.dragPos = {
+                x: this.dragStartPos.x + (ev.clientX - this.dragStartPointer.x),
+                y: this.dragStartPos.y + (ev.clientY - this.dragStartPointer.y),
+            }
         },
         dragOver(ev) {
             this.drag = false
@@ -152,11 +171,12 @@ header {
 }
 .img-content {
     position: relative;
-    display: flex;
-    overflow: auto;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
 }
 .img {
-    margin: auto;
+    position: absolute;
     user-select: none;
 }
 </style>

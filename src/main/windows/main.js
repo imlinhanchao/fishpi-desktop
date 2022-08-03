@@ -65,7 +65,8 @@ class Main extends Page
                         this.redpacket = new RedPacket(this.app, 'redpacket').create({
                             quitEvent: () => {
                                 this.redpacket = null
-                            }
+                            },
+                            parent: this.win.windows
                         }, args);
                     else 
                         this.redpacket.show();
@@ -80,11 +81,10 @@ class Main extends Page
                         quitEvent: () => {
                             this.img = null
                         },
-                        parent: this.win
+                        parent: this.win.windows
                     }, args);
                 }
-                else 
-                    this.img.setImage(args);
+                else this.img.setImage(args);
             },
             faceImport(event, argv, callback) {
                 try {

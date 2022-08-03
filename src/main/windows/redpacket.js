@@ -16,7 +16,6 @@ class RedPacket extends Page
             height: 400, 
             minWidth: 250,
             minHeight: 400,
-            alwaysOnTop :true,
             resize: true,            
             skipTaskbar: true,
         }, options);

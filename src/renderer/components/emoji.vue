@@ -130,7 +130,7 @@
 <style lang="less" scoped>
 .emoji-form {
     position: absolute;
-    width: 100%;
+    width: calc(100% - 10px);
     bottom: 2em;
     .face-list {
         display: flex;

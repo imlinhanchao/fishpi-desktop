@@ -15,7 +15,7 @@
         </ul>
     </section>
     <section class="content">
-        <section class="user-form" v-if="userForm">
+        <section class="user-form" v-show="userForm">
             <Input type="text" ref="users" v-model="user"
                 placeholder="想和谁聊聊？"
                 @on-keydown.enter="chatTo(user)"
@@ -34,7 +34,7 @@
         },
         async mounted () {
             await this.load()
-            new BroadcastChannel('autocomplete-choose').addEventListener("message", ({ data }) => {
+            this.autocompleteBroad.addEventListener("message", ({ data }) => {
                 switch(data.type) {
                     case 'user': 
                         this.chatTo(data.value);
@@ -49,12 +49,17 @@
                 this.chatTo(this.$route.params.user)
             }
         },
+        beforeDestroy () {
+            this.autocompleteBroad.close();
+            this.unLoad();
+        },
         data () {
             return {
                 users: [],
                 newUser: [],
                 userForm: false,
-                user: ''
+                user: '',
+                autocompleteBroad: new BroadcastChannel('autocomplete-choose')
             }    
         },
         watch: {
@@ -83,8 +88,15 @@
             newMsgEvent({msg}) {
                 switch (msg.command) {
                     case 'chatUnreadCountRefresh':
+                        if(msg.count > 0) this.loadUnread();
+                        else this.users.forEach((u, i) => {
+                            this.users[i].unread = 0;
+                        });
+                        break;
                     case 'newIdleChatMessage':
-                        this.loadUnread();
+                        let i = this.users.findIndex(u => u.userName == msg.senderUserName);
+                        this.users[i].unread = this.users[i].unread + 1;
+                        break;
                 }
             },
             async getUser(name) {
@@ -115,15 +127,18 @@
             },
             async loadUnread() {
                 let rsp = await this.$fishpi.chat.unread();
+                this.users.forEach((u, i) => {
+                    this.users[i].unread = 0;
+                })
                 rsp.data.forEach(d => {
                     let user = d.senderUserName;
-                    let index = this.users.findIndex(u => this.userName(u) == user);
+                    let index = this.users.findIndex(u => u.userName == user);
                     this.users[index].unread = this.users[index].unread + 1;
                 })
             },
             async load() {
                 let rsp = await this.$fishpi.chat.list();
-                this.users = rsp.data.map(d => ({ unread: 0, ...d }));
+                this.users = rsp.data.map(d => ({ unread: 0, userName: this.userName(d), ...d }));
                 await this.loadUnread();
             },
             appendMsg(msg) {

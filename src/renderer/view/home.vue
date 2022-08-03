@@ -37,7 +37,7 @@
 <div class="layout">
     <section class="sidebar">
         <ul class="feature-list">
-            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'account' }" @click="toAccount"><Avatar :src="account.userAvatarURL" /></li>
+            <li class="feature-item user-card-click" :data-user="account.userName" :class="{ 'feature-active': $route.meta.name == 'account' }"><Avatar :src="account.userAvatarURL" /></li>
             <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')"><Icon custom="fa fa-comments" /></li>
             <li class="feature-item" 
                 :class="{ 'feature-active': $route.meta.name == 'chat' }" 
@@ -49,6 +49,19 @@
     <section class="content">
         <router-view ref="content"/>
     </section>
+    <Modal
+        v-model="broadcastShow"
+        class-name="vertical-center-modal">
+        <p slot="header" style="color:#f60;text-align:center">
+            <Icon type="ios-information-circle"></Icon>
+            <span>摸鱼派社区紧急公告</span>
+        </p>
+        <section v-html="broadcast.text"></section>
+        <section><p style="text-align:right">———— {{broadcast.publisher}}</p></section>
+        <div slot="footer">
+            <Button type="error" size="large" long @click="broadcastShow = false">已阅</Button>
+        </div>
+    </Modal>
 </div>
 </template>
 
@@ -63,27 +76,10 @@
             height: localStorage.getItem('main.size.height') || undefined
         }
         this.$ipc.send('main-event', { call: 'resize', args: size })
-        window.addEventListener('resize', () => {
-            let size = {
-                width: window.innerWidth,
-                height: window.innerHeight,
-            };
-            localStorage.setItem('main.size.width', size.width)
-            localStorage.setItem('main.size.height', size.height)
-        });
+        window.addEventListener('resize', this.resizeListener);
         this.getUnread();
-        this.$fishpi.chat.addListener(({msg}) => {
-            switch(msg.command) {
-                case 'chatUnreadCountRefresh': this.chats = msg.count; break;
-                case 'refreshNotification': break;
-                case 'newIdleChatMessage': this.chats++; break;
-                case 'warnBroadcast': this.broadcast = {
-                        text: msg.warnBroadcastText,
-                        publisher: msg.who
-                    };
-                    break;
-            }
-        })
+        this.$fishpi.chat.addListener(this.noticeListener)
+        this.routerBroadcast.addEventListener("message", this.routerListener, false);
     },
     data () {
         return {
@@ -91,7 +87,9 @@
             broadcast: {
                 text: '',
                 publisher: ''
-            }
+            },
+            broadcastShow: false,
+            routerBroadcast: new BroadcastChannel('main-router')
         }    
     },
     watch: {
@@ -113,6 +111,40 @@
         async getUnread() {
             let rsp = await this.$fishpi.chat.unread();
             this.chats = rsp.data.length;
+        },
+        unLoad() {
+            this.$refs.content.unLoad && this.$refs.content.unLoad();
+            this.$fishpi.chat.removeListener(this.noticeListener);
+            window.removeEventListener('resize', this.resizeListener);
+            this.routerBroadcast.close();
+        },
+        noticeListener({msg})  {
+            switch(msg.command) {
+                case 'chatUnreadCountRefresh': this.chats = msg.count; break;
+                case 'refreshNotification': break;
+                case 'newIdleChatMessage': this.chats++; break;
+                case 'warnBroadcast': this.broadcast = {
+                        text: msg.warnBroadcastText,
+                        publisher: msg.who
+                    };
+                    this.broadcastShow = true;
+                    break;
+            }
+        },
+        routerListener({ data }) {
+            if (!data.url) return;
+            this.$refs.content.unLoad()
+            if (data.logout) this.$root.logout();
+            this.$router.push(data.url);
+        },
+        resizeListener() {
+            if (this.$route.path == '/login') return;
+            let size = {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            };
+            localStorage.setItem('main.size.width', size.width)
+            localStorage.setItem('main.size.height', size.height)
         }
     }
   }

@@ -35,7 +35,7 @@ app.on('web-contents-created', (e, contents) => {
   if (contents.getType() == 'window') {
     // Listen for any new window events
     contents.on('new-window', (e, url) => {
-      if (url.startsWith('file://')) return;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) return;
       let mat = url.match(/goto=(.*?)$/);
       if (mat) url = decodeURIComponent(mat[1])
       e.preventDefault()

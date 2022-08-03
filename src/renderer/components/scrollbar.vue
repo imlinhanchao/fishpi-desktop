@@ -29,11 +29,13 @@
             },
         },
         mounted () {
-            document.body.removeEventListener('mousemove', this.scrollMove)
             document.body.addEventListener('mousemove', this.scrollMove)
-            document.body.addEventListener('mouseup', () => {
-                this.scrollMoveBegin = false;
-            })
+            document.body.addEventListener('mouseup', this.scrollUp)
+        },
+        beforeDestroy() {
+            document.body.removeEventListener('mousemove', this.scrollMove)
+            document.body.removeEventListener('mouseup', this.scrollUp)
+
         },
         data () {
             return {
@@ -63,6 +65,9 @@
                 let scrollPercent = 1 - (ev.clientY - pos.y + 30) / (bar.offsetHeight + 30);
                 if (scrollPercent > 1 || scrollPercent < 0) return;
                 this.$emit('scrollTo', scrollPercent * this.total);
+            },
+            scrollUp() {
+                this.scrollMoveBegin = false;
             }
         }
     }
