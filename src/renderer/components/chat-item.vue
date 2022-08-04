@@ -1,7 +1,7 @@
 <template>
 <section class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}">
-    <div :data-user="item.senderUserName" class="msg-avatar-box user-card" @contextmenu="userMenuShow">
-        <Avatar class="msg-avatar" :src="item.senderAvatar" />
+    <div class="msg-avatar-box" @contextmenu="userMenuShow">
+        <Avatar class="msg-avatar user-card" :data-user="item.senderUserName" :src="item.senderAvatar" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
         <div ref="msg" class="msg-contain" @contextmenu="msgMenuShow">

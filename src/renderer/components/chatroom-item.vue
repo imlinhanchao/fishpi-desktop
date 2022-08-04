@@ -1,7 +1,7 @@
 <template>
 <section ref="msg-view" class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}" :style="autoVisibleStyle">
-    <div :data-user="item.userName" class="msg-avatar-box user-card" @contextmenu="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
-        <Avatar class="msg-avatar" :src="item.userAvatarURL" />
+    <div class="msg-avatar-box" @contextmenu="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
+        <Avatar class="msg-avatar user-card" :data-user="item.userName" :src="item.userAvatarURL" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
         <div class="msg-user" :title="item.userName">{{item.userNickname || item.userName}}</div>
