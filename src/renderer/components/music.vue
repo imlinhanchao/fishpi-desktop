@@ -61,7 +61,7 @@
             <button title="上一首" v-if="$root.playSongs.length > 1" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.prevSong()"><Icon custom="fa fa-backward "></Icon></button>
             <span class="music-name">{{$root.currentMusic.artist}} - {{$root.currentMusic.name}}</span>
             <button title="下一首" v-if="$root.playSongs.length > 1" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.nextSong()"><Icon custom="fa fa-forward " ></Icon></button>
-            <span><Player ref="audio" @ended="$root.nextSong()" :options="{
+            <span><Player v-if="$root.playIndex >= 0" ref="audio" @ended="end" :options="{
                 plyr: {
                 },
                 iconUrl: './static/images/plyr.svg',
@@ -100,7 +100,10 @@
     computed: {
     },
     methods: {
-
+        end() {
+            this.$root.nextSong();
+            this.$refs.audio.player.play()
+        }
     }
   }
 </script>
