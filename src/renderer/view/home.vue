@@ -6,6 +6,9 @@
 .sidebar {
     height: 100%;
     width: 3em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     .feature-list {
         list-style: none;
         padding: 0;
@@ -44,6 +47,9 @@
                 @click="$router.push('/chat')">
                 <Badge :offset="[5, -2]" :title="`${chats}条未读私信`" :count="chats" :dot="true"><Icon custom="fa fa-comment"/></Badge>
             </li>
+        </ul>
+        <ul class="feature-list">
+            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'setting' }" @click="$router.push('/setting')"><Icon custom="fa fa-cog" /></li>
         </ul>
     </section>
     <section class="content">

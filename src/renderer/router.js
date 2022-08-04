@@ -23,6 +23,13 @@ export default new Router({
                     },
                     component: () => import('./view/home'),
                     children: [{
+                        path: 'setting',
+                        meta: {
+                            title: '设置',
+                            name: 'setting'
+                        },
+                        component: () => import('./view/setting')
+                    }, {
                         path: 'chatroom',
                         meta: {
                             title: '聊天室',
