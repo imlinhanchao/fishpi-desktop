@@ -47,6 +47,8 @@
     methods: {
         choose(value) {
             new BroadcastChannel('autocomplete-choose').postMessage({ type: this.type, value });
+            this.$ipc.send('autocomplete-event', { call: 'hide' });
+            this.list = []
         },
         receive(ev) {
             if (!ev.data || !ev.data.type) return;
