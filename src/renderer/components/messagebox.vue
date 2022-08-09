@@ -169,6 +169,10 @@
                 this.msg = `回复${at}：\n\n${raw}\n\n${this.msg}`;
                 this.$emit('update:quote', null)
             }
+            if (this.discussed) {
+                this.msg += `\r\n*\`# ${this.discussed} #\`*`
+                this.$emit('update:discussed', null)
+            }
             let rsp = await this.$fishpi.chatroom.send(this.msg);
             if (!rsp) return;
             if (rsp.code != 0) {
