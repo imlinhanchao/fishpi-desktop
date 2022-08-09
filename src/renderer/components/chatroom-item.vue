@@ -219,7 +219,7 @@
             menu.push({
                 label: '回复',
                 click: () => {
-                    this.playMusic(id, true);
+                    this.$emit('quote', this.item);
                 }
             });
             
