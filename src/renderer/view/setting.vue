@@ -14,7 +14,7 @@
                     <i-switch v-model="setting.global.topWindow" @on-change="changeSetting"/>            
                 </FormItem>
                 <FormItem label="昨日活跃">
-                    <i-switch v-model="setting.global.autoReward" @on-change="changeSetting"/>            
+                    <i-switch title="自动领取" v-model="setting.global.autoReward" @on-change="changeSetting"/>            
                 </FormItem>
                 <FormItem label="网易音乐">
                     <Select v-model="setting.global.music">
@@ -37,7 +37,7 @@
                                 </Select>
                             </section>
                             <section class="shield-value" v-if="!m.type.startsWith('redpacket')">
-                                <Input v-model="m.value" @on-change="changeSetting"/>
+                                <Input v-model="m.value"  @on-keydown="getUser(m.value)" @on-change="changeSetting"/>
                             </section>
                             <Button type="text" @click="setting.chatroom.shield.splice(i, 1) && changeSetting()"><Icon custom="fa fa-trash-o"/></Button>
                         </section>
@@ -52,7 +52,7 @@
                     <Button style="width:10em;background: #141516" 
                         icon="ios-add" type="dashed" size="small" 
                         @click="pushCase">
-                        <Input ref="users" @click.stop="false" @on-keydown="getUser(careUser)" @on-keyup.enter="pushCase" v-model="careUser" class="no-border" placeholder="用户名" />
+                        <span @click.stop="$event.stopPropagation()"><Input ref="users" @on-keydown="getUser(careUser)" @on-keyup.enter="pushCase" v-model="careUser" class="no-border" placeholder="用户名" /></span>
                     </Button>
                 </FormItem>
                 <FormItem label="红包提醒">
@@ -102,41 +102,15 @@
                         break;
                 }
             }, false);
+            this.$root.setting.addListener(this.settingListener);
         },
         beforeDestroy() {
+            this.$root.setting.removeListener(this.settingListener);
         },
         data () {
             return {
                 careUser: '',
-                titles: [
-                    '通用',
-                    '消息',
-                    '快捷键',
-                ],
-                setting: {
-                    global: {
-                        opacity: {
-                            enable: false,
-                            value: 60,
-                        },
-                        topWindow: false,
-                        autoReward: false,
-                        music: 0,
-                    },
-                    chatroom: {
-                        shield: [],
-                        careUsers: [],
-                        redpackNotice: false,
-                    },
-                    message: {
-                        notice: {
-                            chatroom: false, chat: false, at: false, reply: false, sys: false, talk: false, talkmsg: ''
-                        },
-                        way: {
-                            audio: false, msg: false,
-                        }
-                    }
-                },
+                setting: this.$root.setting.value,
                 autocompleteBroad: new BroadcastChannel('autocomplete-choose')
             }    
         },
@@ -154,8 +128,11 @@
             }
         },
         methods: {
+            settingListener(setting) {
+                this.setting = setting;
+            },
             changeSetting() {
-
+                this.$root.setting.update(this.setting);
             },
             async pushCase() {
                 if (this.careUser == '' || this.setting.chatroom.careUsers.indexOf(this.careUser) >= 0) return

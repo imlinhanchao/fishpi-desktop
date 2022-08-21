@@ -169,6 +169,9 @@ window.$VueApp = new Vue({
         nextSong() {
             this.playIndex = (this.playIndex + 1) % this.playSongs.length
         },
+        playLast() {
+            if(this.playSongs.length > 0) this.playIndex = this.playSongs.length - 1
+        },
         delSong() {
             this.playSongs.splice(this.playIndex, 1)
             if(this.playSongs.length) this.nextSong()

@@ -75,11 +75,11 @@
 <header class="drag header">
     <h1 class="drag"> <img src='../assets/icon.png' />
     <span id="win-title" class="drag">{{ '摸鱼派 - ' + $root.title || '摸鱼派'}}</span></h1>
-    <Music />
+    <Music :music="music" />
     <span class="control no-drag" :title="!simple ? '已摸鱼' + liveness + '%' : ''">
         <Button type="text" @click="handleMin"><Icon custom="fa fa-minus"></Icon></Button>
         <Button v-if="!simple" type="text" @click="handleOpacity" class="win-opacity-btn" :class="{ 'win-checked': opacity.enable }"><span class="cirle-empty"></span></Button>
-        <Button v-if="!simple" type="text" @click="handleTop" class="win-top-btn" :class="{ 'win-checked': wintop }"><Icon custom="fa fa-thumb-tack"></Icon></Button>
+        <Button v-if="!simple" type="text" @click="handleTop" class="win-top-btn" :class="{ 'win-checked': topWindow }"><Icon custom="fa fa-thumb-tack"></Icon></Button>
         <Button type="text" @click="handleClose"><Icon custom="fa fa-times"></Icon></Button>
     </span>
 </header>
@@ -104,14 +104,17 @@
         }
     },
     mounted () {
+        this.$root.setting.addListener(this.settingListener);
+        this.execSetting();
+    },
+    beforeDestroy() {
+        this.$root.setting.removeListener(this.settingListener);
     },
     data () {
         return {
-            wintop: false,
-            opacity: {
-                enable: false,
-                value: 60
-            },
+            topWindow: this.$root.setting.value.global.topWindow,
+            opacity: this.$root.setting.value.global.opacity,
+            music: this.$root.setting.value.global.music,
         }
     },
     watch: {
@@ -124,6 +127,22 @@
         },
     },
     methods: {
+        settingListener(setting) {
+            this.topWindow = setting.global.topWindow;
+            this.opacity = setting.global.opacity;
+            this.music = setting.global.music;
+            this.execSetting();
+        },
+
+        execSetting() {
+            this.$ipc.send(`${this.page}-event`, { 
+                call: 'top', args: this.topWindow 
+            });
+            this.$ipc.send(`${this.page}-event`, { 
+                call: 'opacity', args: this.opacity 
+            });
+        },
+
         handleClose() {
             this.$ipc.send(`${this.page}-event`, { call: 'close' });
         },
@@ -133,10 +152,11 @@
         },
         
         handleTop() {
-            this.wintop = !this.wintop;
+            this.topWindow = !this.topWindow;
             this.$ipc.send(`${this.page}-event`, { 
-                call: 'top', args: this.wintop 
+                call: 'top', args: this.topWindow 
             });
+            this.$root.setting.config('global', 'topWindow', this.topWindow);
         },
         
         handleOpacity() {
@@ -144,6 +164,7 @@
             this.$ipc.send(`${this.page}-event`, { 
                 call: 'opacity', args: this.opacity 
             })
+            this.$root.setting.config('global', 'opacity', this.opacity);
         },
     }
   }

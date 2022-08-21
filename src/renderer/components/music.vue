@@ -80,12 +80,28 @@
         Player,
     },
     props: {
-
+        music: {
+            type: Number,
+            default: 0,
+        }
     },
     mounted () {
         document.addEventListener('click', (ev) => {
             let target = ev.target;
-            if (target.className == 'netease-cover') this.$root.playMusic(target.dataset.id);
+            if (target.className == 'netease-cover') {
+                switch(this.music){
+                    case 0:
+                        this.$root.playMusic(target.dataset.id);
+                        break;
+                    case 1:
+                        this.$root.playMusic(target.dataset.id, true);
+                        break;
+                    case 2:
+                        this.$root.playMusic(target.dataset.id, true);
+                        this.$root.playLast();
+                        break;
+                } 
+            }
         }, false)
     },
     data () {

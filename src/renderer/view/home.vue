@@ -76,16 +76,23 @@
     name: 'home',
     components: {
     },
-    mounted () {
+    async mounted () {
         let size = {
             width: localStorage.getItem('main.size.width') || 800,
             height: localStorage.getItem('main.size.height') || undefined
         }
         this.$ipc.send('main-event', { call: 'resize', args: size })
         window.addEventListener('resize', this.resizeListener);
+        if (!this.$root.isLogin()) return;
         this.getUnread();
         this.$fishpi.chat.addListener(this.noticeListener)
         this.routerBroadcast.addEventListener("message", this.routerListener, false);
+        if (this.$root.setting.value.global.autoReward){
+            let points = await this.$fishpi.account.rewardLiveness();
+            if (points > 0) {
+                this.$Message.info(`领取昨日活跃度奖励 ${points} 积分`)
+            }
+        }
     },
     data () {
         return {
