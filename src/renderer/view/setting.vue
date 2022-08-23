@@ -37,7 +37,7 @@
                                 </Select>
                             </section>
                             <section class="shield-value" v-if="!m.type.startsWith('redpacket')">
-                                <Input v-model="m.value"  @on-keydown="getUser(m.value)" @on-change="changeSetting"/>
+                                <Input v-model="m.value"  @on-keydown="getUser(m.value, 'user', i)" @on-change="changeSetting"/>
                             </section>
                             <Button type="text" @click="setting.chatroom.shield.splice(i, 1) && changeSetting()"><Icon custom="fa fa-trash-o"/></Button>
                         </section>
@@ -52,7 +52,7 @@
                     <Button style="width:10em;background: #141516" 
                         icon="ios-add" type="dashed" size="small" 
                         @click="pushCase">
-                        <span @click.stop="$event.stopPropagation()"><Input ref="users" @on-keydown="getUser(careUser)" @on-keyup.enter="pushCase" v-model="careUser" class="no-border" placeholder="用户名" /></span>
+                        <span @click.stop="$event.stopPropagation()"><Input ref="users" @on-keydown="getUser(careUser, 'care', 0)" @on-keyup.enter="pushCase" v-model="careUser" class="no-border" placeholder="用户名" /></span>
                     </Button>
                 </FormItem>
                 <FormItem label="红包提醒">
@@ -78,7 +78,6 @@
                     <section style="display:flex;flex-wrap: wrap;">
                         <Checkbox v-model="setting.message.way.audio" @on-change="changeSetting">新消息声音</Checkbox>
                         <Checkbox v-model="setting.message.way.msg" @on-change="changeSetting">系统消息(聊天室除外)</Checkbox>
-
                     </section>
                 </FormItem>
             </Form>
@@ -98,20 +97,27 @@
             this.autocompleteBroad.addEventListener("message", ({ data }) => {
                 switch(data.type) {
                     case 'care': 
-                        this.careUser = data.value
+                        this.careUser = data.value;
+                        break;
+                    case 'user': 
+                        this.setting.chatroom.shield[this.shieldIndex].value = data.value;
                         break;
                 }
+                this.sendAutoComplete([], data.type);
             }, false);
             this.$root.setting.addListener(this.settingListener);
         },
         beforeDestroy() {
             this.$root.setting.removeListener(this.settingListener);
+            this.autocompleteBroad.close();
         },
         data () {
             return {
                 careUser: '',
                 setting: this.$root.setting.value,
-                autocompleteBroad: new BroadcastChannel('autocomplete-choose')
+                autocompleteBroad: new BroadcastChannel('autocomplete-choose'),
+                currentActive: document.activeElement,
+                shieldIndex: 0
             }    
         },
         watch: {
@@ -145,14 +151,15 @@
                 this.careUser = ''
                 this.changeSetting();
             },
-            async getUser(name) {
+            async getUser(name, type, index) {
                 if (!name || !this.$refs['users']) return;
                 try {
                     let atList = await this.$fishpi.names(name);
                     let autocomplete = atList.map(a => ({ 
                         value: a.userName, text: a.userName, img: a.userAvatarURL48
                     }))
-                    this.sendAutoComplete(autocomplete, 'care');
+                    this.shieldIndex = index;
+                    this.sendAutoComplete(autocomplete, type);
                 } catch (error) {
                     
                 }
@@ -161,11 +168,12 @@
                 new BroadcastChannel('autocomplete').postMessage({ list, type, direct, caret: await this.getCaretPos() });
             },
             async getCaretPos() {
+                this.currentActive =  document.activeElement
                 let winPos = (await this.$ipc.sendSync('main-event', {
                     call: 'getPosition',
                 })).data
-                let msgPos = this.$root.getElementPosition(this.$refs['users'].$el);
-                let caretPos = position(this.$refs['users'].$el.getElementsByTagName('input')[0]);
+                let msgPos = this.$root.getElementPosition(this.currentActive);
+                let caretPos = position(this.currentActive);
                 return {
                     x: msgPos.x + caretPos.left + winPos.x,
                     y: msgPos.y + caretPos.top + caretPos.height + winPos.y

@@ -6,7 +6,7 @@
             :scroll="-chatScrollPos" :total="chatScrollTotal" @scrollTo="chatScrollPos = -$event"/>
             <section :style="{ bottom: `${chatScrollPos}px`}" class="chat-list" ref="chatlist" v-bind:key="1">
                 <a class="chat-more" @click="loadMore">...</a>
-                <ChatroomItem 
+                <ChatroomItem v-if="!isShield(item)" 
                     :ref="'msg-item-' + item.oId" 
                     v-for="(item, i) in chats" 
                     :item="item" 
@@ -63,6 +63,7 @@
             this.$fishpi.chatroom.removeListener(this.msgListener);
             this.$fishpi.chatroom.addListener(this.msgListener);
             document.body.addEventListener('click', this.discussClick, false)
+            this.$root.setting.addListener(this.settingListener);
         },
         beforeDestroy() {
             this.unLoad();
@@ -81,6 +82,7 @@
                 chatScrollPos: 0,
                 chatScrollTotal: 0,
                 newMessage: 0,
+                setting: this.$root.setting.value.chatroom
             }    
         },
         watch: {
@@ -108,6 +110,22 @@
             unLoad() {
                 this.$fishpi.chatroom.removeListener(this.msgListener);
                 document.body.removeEventListener('click', this.discussClick)
+                this.$root.setting.removeListener(this.settingListener);
+            },
+            settingListener(setting) {
+                this.setting = setting.chatroom;
+            },
+            isShield(msg) {
+                return this.setting.shield.find(s => {
+                    if (s.value == '' && !s.type.startsWith('redpacket')) return false;
+                    switch(s.type)
+                    {
+                        case 'username': return msg.userName == s.value;
+                        case 'content': return (msg.content || '').match(new RegExp(s.value)) != null;
+                        case 'redpacket': return msg.content.msgType == 'redPacket';
+                    }
+                    return false;
+                }) != null
             },
             async loadMore() {
                 if (this.chats.length == 0) return;
