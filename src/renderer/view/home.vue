@@ -93,6 +93,7 @@
                 this.$Message.info(`领取昨日活跃度奖励 ${points} 积分`)
             }
         }
+        this.$root.notice.setCurrent(this.account);
     },
     data () {
         return {
@@ -132,6 +133,7 @@
             this.routerBroadcast.close();
         },
         noticeListener({msg})  {
+            this.$root.notice.noticeMsg(msg);
             switch(msg.command) {
                 case 'chatUnreadCountRefresh': this.chats = msg.count; break;
                 case 'refreshNotification': break;

@@ -146,7 +146,7 @@
                 });
             },
             async msgListener({ msg }) {
-                console.dir(msg);
+                this.$root.notice.chatroomMsg(msg);
                 switch(msg.type) {
                     case 'online':
                         this.$root.onlines = this.onlines = msg.data;
@@ -173,13 +173,12 @@
                         break;
                     case 'msg':
                     case 'redPacket':
-                        msg.dbUser = [];
                         this.toBottom = false;
                         let ContentHeight = this.$refs.chatlist.offsetHeight;
                         let offset = -this.chatScrollPos;
                         let isBottom = offset < 500 || msg.data.userName == this.current.userName;
                         msg.data.dbUser = []
-                        if (this.isMarkdown) msg.data.content = msg.data.md;
+                        if (this.isMarkdown && msg.type != 'redPacket') msg.data.content = msg.data.md;
                         if (msg.type == 'msg' && msg.data.content == this.chats[this.chats.length - 1].content) {
                             this.chats[this.chats.length - 1].dbUser || (this.chats[this.chats.length - 1].dbUser = [])
                             this.chats[this.chats.length - 1].dbUser.push(msg.data)

@@ -2,6 +2,7 @@ import { Menu, getCurrentWindow } from '@electron/remote';
 
 import ipc from './ipc'
 import Setting from './setting'
+import Notice from './notice'
 
 import FishPi from 'fishpi';
 import Vue from 'vue'
@@ -50,6 +51,7 @@ window.$VueApp = new Vue({
     mounted() {
         this.title = document.title;
         this.$fishpi.setToken(localStorage.getItem('token'));
+        this.notice.updateSetting(this.setting);
 
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
@@ -87,6 +89,7 @@ window.$VueApp = new Vue({
     data: {
         token: localStorage.getItem('token') || '',
         setting: new Setting(),
+        notice: new Notice(this.setting),
         title: '摸鱼派桌面客户端',
         liveness: 0,
         current: null,

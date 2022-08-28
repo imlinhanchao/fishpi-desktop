@@ -70,7 +70,7 @@
                         <Checkbox v-model="setting.message.notice.at" @on-change="changeSetting" >提及了我</Checkbox>
                         <Checkbox v-model="setting.message.notice.reply" @on-change="changeSetting" >收到回复</Checkbox>
                         <Checkbox v-model="setting.message.notice.sys" @on-change="changeSetting" >系统公告</Checkbox>
-                        <Checkbox v-model="setting.message.notice.talk"@on-change="changeSetting" >聊到了</Checkbox>
+                        <Checkbox v-model="setting.message.notice.talk"@on-change="changeSetting" >聊天室聊到了</Checkbox>
                         <Input v-model="setting.message.notice.talkmsg" @on-change="changeSetting" size="small" placeholder="内容正则" style="width: auto;margin: 5px;"/>
                     </section>
                 </FormItem>
