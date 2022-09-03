@@ -21,7 +21,7 @@
                         <div>{{redpacketType[item.content.type]}}</div>
                     </div>
                 </div>
-                <div v-if="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
+                <div v-show="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
                     <div class="gesture-choose" title="猜猜我出什么呢~" @click="gestureOpen=!gestureOpen">
                         <img src="../assets/gesture.png" alt="">
                     </div>
@@ -340,7 +340,7 @@
             }
             .gesture-choose {
                 position: relative;
-                z-index: 2;
+                z-index: 5;
                 img {
                     width: 1.5em;
                     margin: 0 3px;
