@@ -70,7 +70,7 @@
                 </section>
             </FormItem>
             <FormItem label="积分"><InputNumber v-model="redpacket.money" :min="32" :max="20000" placeholder="积分" /></FormItem>
-            <FormItem v-if="!isRockPaperScissors" label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
+            <FormItem v-if="!isRockPaperScissors && !isSpecify && !isSpecifySend" label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
             <FormItem label="留言"><Input class="redpacket-msg" type="textarea" :rows="3" v-model="redpacket.msg" :placeholder="defaultRedpackWord[redpacket.type]" /></FormItem>
         </Form>
         <div class="no-drag">
@@ -228,11 +228,15 @@
                 this.$Message.error('请至少选择一个人收红包');
                 return;
             }
+            if (this.redpacket.type == 'specify') {
+                this.redpacket.count = this.redpacket.recivers.length;
+            }
             let redpacket = Object.assign({}, this.redpacket);
             if (redpacket.type == 'rockPaperScissors') redpacket.count = 1;
             redpacket.msg = redpacket.msg || this.defaultRedpackWord[redpacket.type];
-            await this.$fishpi.chatroom.send(`[redpacket]${JSON.stringify(redpacket)}[/redpacket]`);
-            this.close();
+            let rsp = await this.$fishpi.chatroom.send(`[redpacket]${JSON.stringify(redpacket)}[/redpacket]`);
+            if(rsp.code == 0) this.close();
+            else this.$Message.error(rsp.msg);
         },
         reciverCheck(user) {
             let index = this.redpacket.recivers.indexOf(user.userName);
