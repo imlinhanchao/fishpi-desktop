@@ -41,12 +41,13 @@
     <section class="sidebar">
         <ul class="feature-list">
             <li class="feature-item user-card-click" :data-user="account.userName" :class="{ 'feature-active': $route.meta.name == 'account' }"><Avatar :src="account.userAvatarURL" /></li>
-            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')"><Icon custom="fa fa-comments" /></li>
-            <li class="feature-item" 
+            <li class="feature-item" title="聊天室" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')"><Icon custom="fa fa-comments" /></li>
+            <li class="feature-item" title="私聊"
                 :class="{ 'feature-active': $route.meta.name == 'chat' }" 
                 @click="$router.push('/chat')">
                 <Badge :offset="[5, -2]" :title="`${chats}条未读私信`" :count="chats" :dot="true"><Icon custom="fa fa-comment"/></Badge>
             </li>
+            <li class="feature-item" title="清风明月" :class="{ 'feature-active': $route.meta.name == 'breezemoons' }" @click="$router.push('/breezemoons')"><Icon custom="fa fa-leaf" /></li>
         </ul>
         <ul class="feature-list">
             <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'setting' }" @click="$router.push('/setting')"><Icon custom="fa fa-cog" /></li>
@@ -86,14 +87,22 @@
         if (!this.$root.isLogin()) return;
         this.getUnread();
         this.$fishpi.chat.addListener(this.noticeListener)
+        this.$fishpi.chatroom.addListener(this.msgListener);
         this.routerBroadcast.addEventListener("message", this.routerListener, false);
         if (this.$root.setting.value.global.autoReward){
             let points = await this.$fishpi.account.rewardLiveness();
             if (points > 0) {
-                this.$Message.info(`领取昨日活跃度奖励 ${points} 积分`)
+                this.$Message.info({
+                    content: `已领取昨日活跃度奖励 ${points} 积分`,
+                    duration: 5,
+                    closable: true
+                })
             }
         }
         this.$root.notice.setCurrent(this.account);
+    },
+    beforeDestroy() {
+        this.unLoad();
     },
     data () {
         return {
@@ -108,7 +117,7 @@
     },
     watch: {
         $route() {
-            this.$refs.content && this.$refs.content.unLoad && this.$refs.content.unLoad()
+            
         }
     },
     filters: {
@@ -127,10 +136,13 @@
             this.chats = rsp.data.length;
         },
         unLoad() {
-            this.$refs.content.unLoad && this.$refs.content.unLoad();
             this.$fishpi.chat.removeListener(this.noticeListener);
+            this.$fishpi.chatroom.removeListener(this.msgListener);
             window.removeEventListener('resize', this.resizeListener);
             this.routerBroadcast.close();
+        },
+        async msgListener({ msg }) {
+            this.$root.notice.chatroomMsg(msg);
         },
         noticeListener({msg})  {
             this.$root.notice.noticeMsg(msg);
@@ -148,7 +160,6 @@
         },
         routerListener({ data }) {
             if (!data.url) return;
-            this.$refs.content.unLoad()
             if (data.logout) this.$root.logout();
             this.$router.push(data.url);
         },

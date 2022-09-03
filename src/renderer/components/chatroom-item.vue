@@ -154,6 +154,12 @@
         async doubleMsg() {
             this.$fishpi.chatroom.send(this.item.md || await await this.$fishpi.chatroom.raw(this.item.oId))
         },
+        highlight() {
+            this.$refs['msg-view'].style.background = 'rgba(255,255,255,.1)'
+            setTimeout(() => {
+                this.$refs['msg-view'].style.background = 'transparent'
+            }, 700)
+        },
         userMenuShow(ev) {
             if (this.item.userName == this.current.userName) return;
             let menu = [];
@@ -301,7 +307,7 @@
     display: flex;
     flex-direction: row;
     margin: 5px 0;
-
+    transition: .5s background;
     .msg-avatar-box {
         position: relative;
         .msg-avatar {

@@ -1,7 +1,7 @@
 class Setting {
     constructor() {
         let setting = localStorage.getItem('setting');
-        this.setting = setting ? JSON.parse(setting) : Setting.default;
+        this.setting = setting ? Object.assign(Setting.default, JSON.parse(setting)) : Setting.default;
         this.id = new Date().getTime();
         this.Listeners = []
         new BroadcastChannel('settings').addEventListener("message", (ev) => {

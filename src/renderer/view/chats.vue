@@ -63,9 +63,6 @@
             }    
         },
         watch: {
-            $route() {
-                this.$refs.content && this.$refs.content.unLoad && this.$refs.content.unLoad();
-            },
             user () {
                 this.getUser(this.user);
             },

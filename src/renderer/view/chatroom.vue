@@ -60,7 +60,6 @@
         async mounted () {
             await this.reload()
             this.onlines = this.$root.onlines;
-            this.$fishpi.chatroom.removeListener(this.msgListener);
             this.$fishpi.chatroom.addListener(this.msgListener);
             document.body.addEventListener('click', this.discussClick, false)
             this.$root.setting.addListener(this.settingListener);
@@ -86,6 +85,13 @@
             }    
         },
         watch: {
+            $route() {
+                if (this.$route.query.id) {
+                    setTimeout(() => {
+                        this.focusMsg(this.$route.query.id);
+                    }, 1000)
+                }
+            }
         },
         filters: {
         },
@@ -101,6 +107,16 @@
             }
         },
         methods: {
+            async focusMsg(oId) {
+                let ele = this.$refs[`msg-item-${oId}`];
+                if (!ele) return;
+                els = ele[0]
+                let top = ele.$el.offsetTop;
+                if (top < this.chatScrollTotal + this.chatScrollPos) {
+                    this.chatScrollPos = top - this.chatScrollTotal;
+                }
+                ele.highlight();
+            },
             async reload() {
                 this.chats = [];
                 await this.load(1);
@@ -146,7 +162,6 @@
                 });
             },
             async msgListener({ msg }) {
-                this.$root.notice.chatroomMsg(msg);
                 switch(msg.type) {
                     case 'online':
                         this.$root.onlines = this.onlines = msg.data;

@@ -37,6 +37,13 @@ export default new Router({
                         },
                         component: () => import('./view/chatroom')
                     }, {
+                        path: 'breezemoons',
+                        meta: {
+                            title: '清风明月',
+                            name: 'breezemoons'
+                        },
+                        component: () => import('./view/breezemoons')
+                    }, {
                         path: 'chat',
                         meta: {
                             title: '私聊',

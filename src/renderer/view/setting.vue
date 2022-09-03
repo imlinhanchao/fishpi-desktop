@@ -17,7 +17,7 @@
                     <i-switch title="自动领取" v-model="setting.global.autoReward" @on-change="changeSetting"/>            
                 </FormItem>
                 <FormItem label="网易音乐">
-                    <Select v-model="setting.global.music">
+                    <Select v-model="setting.global.music" @on-change="changeSetting">
                         <Option :value="0" :key="0">点击播放</Option>
                         <Option :value="2" :key="2">点击加入播放列表</Option>
                         <Option :value="1" :key="1">点击播放并加入播放列表</Option>

@@ -59,7 +59,7 @@ class Notice {
             }
 
             case 'msg': {
-                this.audioNotice();
+                if (this.setting.value.message.notice.chatroom) this.audioNotice();
                 if (!this.setting.value.message.notice.talk) break;
                 if (msg.data.md.match(new RegExp(this.setting.value.message.talkmsg))) {
                     this.sysNotice('关心的消息', `${msg.data.userNickname} 说：“${msg.data.md}”`, null, () => {
