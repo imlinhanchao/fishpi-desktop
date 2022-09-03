@@ -59,7 +59,8 @@
         },
         async mounted () {
             await this.reload()
-            this.onlines = this.$root.onlines;
+            this.onlines = this.$fishpi.chatroom.onlines;
+            this.discusse = this.$fishpi.chatroom.discusse;
             this.$fishpi.chatroom.addListener(this.msgListener);
             document.body.addEventListener('click', this.discussClick, false)
             this.$root.setting.addListener(this.settingListener);

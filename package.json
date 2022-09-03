@@ -1,5 +1,5 @@
 {
-  "name": "pwl-app",
+  "name": "fishpi-app",
   "version": "1.1.5",
   "author": "Hancel.Lin",
   "description": "摸鱼派聊天室",
@@ -19,17 +19,13 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "PWL",
-    "appId": "icu.pwl.mofish",
+    "productName": "fishpi",
+    "appId": "cn.fishpi.mofish",
     "directories": {
       "output": "build"
     },
     "files": [
       "dist/electron/**/*"
-    ],
-    "extraResources": [
-      "audio/**/*",
-      "config.json"
     ],
     "dmg": {
       "contents": [
