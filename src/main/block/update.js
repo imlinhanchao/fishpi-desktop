@@ -16,7 +16,7 @@ const downloadFile = (url, dest, cb = () =>{}) => {
     
     https.get(urlImage, (res) => {
 
-      if (res.statusCode == 302)
+      if (res.statusCode == 302 || res.statusCode == 301)
       {
         downloadFile(res.headers.location, dest, cb)
         return
@@ -117,6 +117,7 @@ function updateEvent(event, argv) {
     {
         let data = getDownload(argv);
         let savePath = path.resolve(os.tmpdir(), data.name);
+        data.browser_download_url = data.browser_download_url.replace(/^https:\/\/github.com/, 'https://hub.fastgit.org')
         downloadFile(data.browser_download_url, savePath, (state, pro, currPro, total) => {
             if (state == 'data') {
                 if (argv.callback) event.sender.send('win-update-app-callback-' + argv.callback, { state, pro, currPro, total })
