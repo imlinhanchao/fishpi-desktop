@@ -164,7 +164,7 @@ class Notice {
 
     async noticeSys() {
         if(!this.setting.value.message.notice.sys) return;
-        let rsp = await this.$root.pwl.noticelist('sys-announce');
+        let rsp = await this.$fishpi.notice.list('sys-announce');
         if (rsp.code != 0) return;
         console.dir(rsp)
         let data = rsp.data.filter(d => !d.hasRead && this.noticed.sys.indexOf(d.dataId) < 0);
