@@ -240,7 +240,7 @@
                         }
                         else if (data.state == 'fail') {
                             that.state = '自动更新失效，请手动下载'
-                            window.open(`https://gitee.com/imlinhanchao/pwl-chat/releases/${this.update.tag_name}`)
+                            window.open(`https://github.com/imlinhanchao/fishpi-desktop/releases/${this.update.tag_name}`)
                         }
                     }
                 );
