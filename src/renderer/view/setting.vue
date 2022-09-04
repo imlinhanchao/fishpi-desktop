@@ -1,6 +1,24 @@
 <template>
 <div class="layout">
+    <section class="update-card" v-if="update && updateModal">
+        <header class="update-header">{{update.name}}</header>
+        <section class="update-time">{{new Date(update.created_at).toLocaleString()}}</section>
+        <section class="update-note md-style" v-html="tohtml(update.body)">
+        </section>
+        <footer>
+            <section v-if="progress > 0" :title="progress + '%'" class="update-progress" :style="{ width: progress + '%' }"></section>
+            <Button type="success" long @click="startUpdate">{{state}}</Button>
+        </footer>
+    </section>
+
     <article class="settings">
+        <section class="app-version">
+            <p><b>当前版本：</b><span>{{version}}</span></p>
+            <p>
+                <Button v-if="!update" type="success" size="small" @click="updateCheck" :loading="checking">{{updateBtn}}</Button>
+                <Button v-if="update" type="success" size="small" @click="updateBegin" :loading="updating">{{updateBtn}}</Button>
+            </p>
+        </section>
         <section id="setting_0">
             <Divider orientation="left">通用</Divider>
             <Form class="setting-form" :label-width="80" v-model="setting.global" :show-message="false">
@@ -88,6 +106,8 @@
 
 <script>
   import { position } from 'caret-pos';
+  import Package from '../../../package.json'
+  import { marked } from 'marked';
 
     export default {
         name: 'setting',
@@ -106,6 +126,7 @@
                 this.sendAutoComplete([], data.type);
             }, false);
             this.$root.setting.addListener(this.settingListener);
+            this.updateCheck();
         },
         beforeDestroy() {
             this.$root.setting.removeListener(this.settingListener);
@@ -117,7 +138,15 @@
                 setting: this.$root.setting.value,
                 autocompleteBroad: new BroadcastChannel('autocomplete-choose'),
                 currentActive: document.activeElement,
-                shieldIndex: 0
+                shieldIndex: 0,
+                version: Package.version,
+                updateBtn: '检查更新',    
+                progress: 0,
+                state: '更新',
+                updating: false,
+                update: null,
+                updateModal: false,
+                checking: false,
             }    
         },
         watch: {
@@ -179,6 +208,46 @@
                     y: msgPos.y + caretPos.top + caretPos.height + winPos.y
                 }
             },
+            async updateCheck() {
+                this.checking = true;
+                let rsp = await this.$ipc.sendSync('win-update');
+                this.checking = false;
+                console.log(rsp)
+                if (!rsp) return;
+                this.update = rsp.data;
+                if (!this.update) this.updateBtn = '已是最新';
+                else this.updateBtn = '开始更新'
+            },
+            updateBegin() {
+                this.updateModal = true;
+            },
+            startUpdate() {
+                if (this.updating) return;
+                this.updating = true;
+                let that = this;
+                this.$ipc.send('win-update-app', this.update, 
+                    (ev, data) => {
+                        console.dir(data);
+                        if (data.state == 'data'){
+                            that.progress = data.pro;
+                            that.state = '下载中' + (that.progress > 0 ? `(${that.progress}%)` : '');
+                        }
+                        else if(data.state == 'finish') {
+                            that.state = '下载完成，等待更新'
+                        }
+                        else if(data.state == 'done') {
+                            that.state = '更新完成，请重启生效'
+                        }
+                        else if (data.state == 'fail') {
+                            that.state = '自动更新失效，请手动下载'
+                            window.open(`https://gitee.com/imlinhanchao/pwl-chat/releases/${this.update.tag_name}`)
+                        }
+                    }
+                );
+            },
+            tohtml (markdown) {
+                return marked(markdown, { sanitize: true })
+            },
         }
     }
 </script>
@@ -226,6 +295,52 @@
     .shield-add {
         text-align: center;
         cursor: pointer;
+    }
+}
+.app-version {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.update-card {
+    overflow: hidden;
+    position: absolute;
+    width: 70vw;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    margin: auto;
+    background: #131415;
+    box-shadow: 1px 1px 1px #aca49a;
+    border-radius: 10px;
+    max-height:50vh;
+    padding: 10px 0 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 5000;
+    header {
+        text-align: center;
+        font-size: 2em;
+    }
+    .update-time {
+        font-size: .8em;
+        color: #454647;
+        text-align: center;
+    }
+    .update-note {
+        max-height: 40vh;
+        overflow: auto;
+        padding: 0 15px;
+    }
+    .update-progress {
+        background: var(--global-active-color);
+        height: 5px;
+        margin: 0;
+    }
+    footer {
+        margin: 0;
+        position: absolute;
+        width: 100%;
+        bottom: 0;
     }
 }
 </style>

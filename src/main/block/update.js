@@ -60,7 +60,7 @@ const downloadFile = (url, dest, cb = () =>{}) => {
   
 async function checkUpdate() {
     try {
-        let rsp = await axios.get('https://gitee.com/api/v5/repos/imlinhanchao/pwl-chat/releases/latest');
+        let rsp = await axios.get('https://api.github.com/repos/imlinhanchao/fishpi-desktop/releases/latest');
         return rsp.data;            
     } catch (error) {
         console.error(error)
@@ -78,11 +78,11 @@ function updateApp(file, cb) {
         let isWin32 = process.platform == 'win32'
         let execute = isWin32 ? 'cmd' : 'bash'
         let argv = isWin32 ? [ '/k' ] : [];
-        let updateShell = path.resolve(os.tmpdir(), `pwl-update.${isWin32 ? 'bat' : 'sh'}`);
+        let updateShell = path.resolve(os.tmpdir(), `fishpi-update.${isWin32 ? 'bat' : 'sh'}`);
         let sleep = isWin32 ? 'timeout /T 3 /NOBREAK' : 'sleep 3s';
-        let kill = isWin32 ? 'taskkill /im PWL.exe /F' : '';
+        let kill = isWin32 ? 'taskkill /im fishpi.exe /F' : '';
         let copy = isWin32 ? `xcopy "${unzipPath}" "${rootPath}" /s /e /y` : `cp -r "${unzipPath}/" "${path.join(rootPath, CopyPath)}"`
-        let lanuch = isWin32 ? `"${path.resolve(rootPath, 'PWL.exe')}"` : `open ${rootPath}`;
+        let lanuch = isWin32 ? `"${path.resolve(rootPath, 'fishpi.exe')}"` : `open ${rootPath}`;
         fs.writeFileSync(updateShell, `${isWin32 ? '@echo off' : ''}
 echo '更新中...'
 ${sleep}
@@ -115,18 +115,18 @@ function getDownload(update) {
 function updateEvent(event, argv) {
     try
     {
-        let data = getDownload(argv.data);
+        let data = getDownload(argv);
         let savePath = path.resolve(os.tmpdir(), data.name);
         downloadFile(data.browser_download_url, savePath, (state, pro, currPro, total) => {
             if (state == 'data') {
-                if (argv.callback) event.sender.send('update-app-callback-' + argv.callback, { state, pro, currPro, total })
+                if (argv.callback) event.sender.send('win-update-app-callback-' + argv.callback, { state, pro, currPro, total })
             }
             else if(state == 'finish') {
-                if (argv.callback) event.sender.send('update-app-callback-' + argv.callback, { state })
+                if (argv.callback) event.sender.send('win-update-app-callback-' + argv.callback, { state })
                 if (data.name == 'update-file.zip' && process.platform == 'darwin')
                     CopyPath = 'Contents';
                 updateApp(savePath, (state) => {
-                    event.sender.send('update-app-callback-' + argv.callback, { state })
+                    event.sender.send('win-update-app-callback-' + argv.callback, { state })
                 });
             }
         })

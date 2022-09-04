@@ -53,8 +53,8 @@ class Notice {
                     this.sysNotice('红包提醒', `${msg.data.userNickname} 发红包啦~`, null, () => {
                         new BroadcastChannel('main-router').postMessage({ url: `/chatroom?id=${msg.oId}` }); 
                     });
+                    this.audioNotice();
                 }
-                this.audioNotice();
                 break;
             }
 
