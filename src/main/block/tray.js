@@ -3,6 +3,7 @@ import {
     Tray,
     ipcMain,
     nativeImage,
+    shell,
 } from 'electron'
 import path from 'path'
 import Package from '../../../package.json'
@@ -30,6 +31,12 @@ class TrayModel {
     get menu() {
         return Menu.buildFromTemplate([
             {
+                label: 'Open Source',
+                type: 'normal',
+                click: () => {
+                    shell.openExternal('https://github.com/imlinhanchao/fishpi-desktop');
+                }
+            },{
                 label: 'Developer Tool',
                 type: 'normal',
                 click: () => {
