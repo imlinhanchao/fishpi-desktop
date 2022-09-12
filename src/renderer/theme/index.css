@@ -210,3 +210,7 @@ a {
 .ivu-tabs-ink-bar {
     background-color: var(--global-active-color);
 }
+
+.ivu-avatar>img {
+    object-fit: cover;
+}

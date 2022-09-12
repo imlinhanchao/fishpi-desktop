@@ -45,6 +45,7 @@ class Notice {
                         this.sysNotice('特别关心', `你的特别关心 ${u} 上线啦~`);
                     }
                 })
+                this.lastOnline = userNames;
                 break;
             }
 
@@ -61,12 +62,12 @@ class Notice {
             case 'msg': {
                 if (this.setting.value.message.notice.chatroom) this.audioNotice();
                 if (!this.setting.value.message.notice.talk) break;
-                if (msg.data.md.match(new RegExp(this.setting.value.message.talkmsg))) {
-                    this.sysNotice('关心的消息', `${msg.data.userNickname} 说：“${msg.data.md}”`, null, () => {
+                if (msg.data.md.match(new RegExp(this.setting.value.message.notice.talkmsg))) {
+                    this.sysNotice('关心的消息', `${msg.data.userNickname} 说：“${this.toText(msg.data.content)}”`, null, () => {
                         new BroadcastChannel('main-router').postMessage({ url: `/chatroom?id=${msg.oId}` }); 
 
                     });
-                    this.audioNotice();
+                    if (!this.setting.value.message.notice.chatroom) this.audioNotice();
                 }
             }
         }
@@ -128,7 +129,7 @@ class Notice {
         data.forEach(d => {
             this.noticed.reply.push(d.oId);
             this.sysNotice(d.commentArticleTitle, 
-            `${d.userName}回复你 ${this.$root.toText(d.content)}`, `https://fishpi.cn${d.commentSharpURL}`)
+            `${d.userName}回复你 ${this.toText(d.content)}`, `https://fishpi.cn${d.commentSharpURL}`)
         })
     }
 
@@ -158,7 +159,7 @@ class Notice {
         data.forEach(d => {
             this.noticed.comment.push(d.oId);
             this.sysNotice(d.commentArticleTitle, 
-            `${d.commentAuthorName}评论你 ${this.$root.toText(d.commentContent)}`, `https://fishpi.cn${d.commentSharpURL}`)
+            `${d.commentAuthorName}评论你 ${this.toText(d.commentContent)}`, `https://fishpi.cn${d.commentSharpURL}`)
         })
     }
 
