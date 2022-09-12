@@ -21,7 +21,7 @@
                 <section class="info-basic">
                     <section class="info-role"><img :src="roleImg[info.userRole]" :alt="info.userRole" :title="info.userRole"></section>
                     <section class="info-money">
-                        <a :href="`https://fishpi.cn/member/${info.userName}/points`" title="24283 积分" target="_blank">
+                        <a :href="`https://fishpi.cn/member/${info.userName}/points`" :title="`${info.userPoint} 积分`" target="_blank">
                             <svg>
                                 <use xlink:href="#iconPoints"></use>
                             </svg>
