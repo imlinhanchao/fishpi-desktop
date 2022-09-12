@@ -1,3 +1,5 @@
+import ipc from './ipc'
+
 class Setting {
     constructor() {
         let setting = localStorage.getItem('setting');
@@ -7,6 +9,9 @@ class Setting {
         new BroadcastChannel('settings').addEventListener("message", (ev) => {
             if (ev.data.id != this.id) this.update(ev.data.setting, false);
         }, false);
+        for(let key in this.setting.hotkey) {
+            this.registerHotkey(key, this.setting.hotkey[key].text || this.setting.hotkey[key]);
+        }
     }
 
     get value() {
@@ -36,6 +41,9 @@ class Setting {
                 way: {
                     audio: false, msg: false,
                 }
+            },
+            hotkey: {
+                boss: 'Win+F2'
             }
         }
     }
@@ -70,6 +78,10 @@ class Setting {
         this.Listeners.forEach((call) => {
             if (call instanceof Function) call(this.value)
         })
+    }
+
+    registerHotkey(type, hotkey) {
+        ipc.send('win-hotkey-' + type, { hotkey });
     }
 }
 

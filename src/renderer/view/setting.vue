@@ -100,6 +100,19 @@
                 </FormItem>
             </Form>
         </section>
+        <section id="setting_2">
+            <Divider orientation="left">快捷键</Divider>
+            <Form class="setting-form" :label-width="80" v-model="setting.message" :show-message="false">
+                <FormItem label="老板键">
+                    <HotKeyInput
+                        class="hotkey"
+                        @change="changeHotKey('boss', $event)"
+                        :hotkey.sync="setting.hotkey.boss"
+                        placeholder="请按下组合按键">
+                    </HotKeyInput>
+                </FormItem>
+            </Form>
+        </section>
     </article>
 </div>
 </template>
@@ -108,10 +121,12 @@
   import { position } from 'caret-pos';
   import Package from '../../../package.json'
   import { marked } from 'marked';
+  import HotKeyInput from '../components/hotkey.vue';
 
     export default {
         name: 'setting',
         components: {
+            HotKeyInput
         },
         async mounted () {
             this.autocompleteBroad.addEventListener("message", ({ data }) => {
@@ -167,6 +182,10 @@
                 this.setting = setting;
             },
             changeSetting() {
+                this.$root.setting.update(this.setting);
+            },
+            changeHotKey(type, hotkey) {
+                this.$root.setting.registerHotkey(type, hotkey.text || hotkey);
                 this.$root.setting.update(this.setting);
             },
             async pushCase() {

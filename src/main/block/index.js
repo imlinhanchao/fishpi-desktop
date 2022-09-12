@@ -1,5 +1,6 @@
 import windows from '../windows'
 import TrayModel from './tray'
+import HotKey from '../lib/hotkeys'
 import {
     ipcMain, Notification, shell
 } from 'electron'
@@ -24,6 +25,11 @@ let create = (app) => {
         if(argv.callback) event.sender.send('win-update-callback-' + argv.callback, { data })
     });
     ipcMain.on('win-update-app', Update.updateEvent);
+    ipcMain.on('win-hotkey-boss', (event, argv) => {
+        HotKey.register('boss', argv.hotkey, () => {
+            win.main.isVisible ? win.main.hide() : win.main.show();
+        })
+    })
 
     return win;
 }
