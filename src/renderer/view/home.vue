@@ -38,7 +38,7 @@
 
 <template>
 <div class="layout">
-    <section class="sidebar">
+    <section id="home-sidebar" class="sidebar">
         <ul class="feature-list">
             <li class="feature-item user-card-click" :data-user="account.userName" :class="{ 'feature-active': $route.meta.name == 'account' }"><Avatar :src="account.userAvatarURL" /></li>
             <li class="feature-item" title="聊天室" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')"><Icon custom="fa fa-comments" /></li>

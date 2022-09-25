@@ -1,5 +1,5 @@
 <template>
-<section class="layout">
+<section class="layout" id="img-form">
     <header class="drag header">
         <h1 class="drag"> <img src='../assets/icon.png' />
         <span id="win-title" class="drag" :title="imageName">{{ imageName }}</span></h1>

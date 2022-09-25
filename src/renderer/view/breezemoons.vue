@@ -1,5 +1,5 @@
 <template>
-<div class="layout" v-if="current">
+<div id="breezemoons" class="layout" v-if="current">
     <section class="breezemoons">
         <Input ref="message"
                 type="text"

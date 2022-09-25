@@ -1,5 +1,5 @@
 <template>
-<div class="layout" v-if="current">
+<div id="chats" class="layout" v-if="current">
     <section class="sidebar">
         <div class="chat-item" title="添加聊天用户" @click="chatWho">
             <Icon custom="fa fa-plus" />

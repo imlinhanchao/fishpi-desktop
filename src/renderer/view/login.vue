@@ -37,11 +37,11 @@
 </style>
 
 <template>
-<div class="layout">
+<div id="login" class="layout">
     <section class="layout-logo">
         <img src="../assets/icon.png" alt="" /><span>摸鱼派·登录</span>
     </section> 
-    <Form ref="loginForm" :model="login" :rules="ruleValidate" class="layout-form">
+    <Form id="login-form" ref="loginForm" :model="login" :rules="ruleValidate" class="layout-form">
         <FormItem prop="username">
             <Input
                 type="text"

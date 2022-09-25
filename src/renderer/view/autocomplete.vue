@@ -1,6 +1,6 @@
 <template>
 <div style="width: 500px;height:500px">
-<div ref="autocomplete" class="autocomplete-list no-drag">
+<div id="autocomplete" ref="autocomplete" class="autocomplete-list no-drag">
     <div :style="itemStyle"
         class="autocomplete-item"
         @click="choose(u.value)"

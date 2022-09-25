@@ -1,5 +1,5 @@
 <template>
-<div class="layout" v-if="current">
+<div id="chatroom" class="layout" v-if="current">
     <section class="content">
         <section class="chat-content" ref="chat-content" @mouseover="$refs['chat-content'].focus()" @mousewheel="chatScroll">
             <ScrollBar v-if="$refs.chatlist && $refs['chat-content']" class="chat-scroll" 

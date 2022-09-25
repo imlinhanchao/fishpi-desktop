@@ -1,5 +1,5 @@
 <template>
-<div class="layout">
+<div id="setting" class="layout">
     <section class="update-card" v-if="update && updateModal">
         <header class="update-header">{{update.name}}</header>
         <section class="update-time">{{new Date(update.created_at).toLocaleString()}}</section>
