@@ -6,6 +6,7 @@ import {
     dialog
 } from 'electron'
 import fs from 'fs'
+import path from 'path'
 
 class Main extends Page
 {
@@ -117,6 +118,15 @@ class Main extends Page
                 } catch (err) {
                     console.error(err)
                 }
+            },
+            openFolder(event, folder, callback) {
+                let filePath = dialog.showOpenDialogSync(this.win.windows, {
+                    title: '打开文件夹',
+                    defaultPath: folder || process.env.HOME || process.env.USERPROFILE,
+                    buttonLabel: '选择文件夹',
+                    properties: [ 'openDirectory' ]
+                })
+                callback(filePath)
             },
             viewCard(event, { user, pos }) {
                 if(!this.card) {

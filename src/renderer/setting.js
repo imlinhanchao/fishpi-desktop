@@ -1,5 +1,5 @@
 import ipc from './ipc'
-
+import path from 'path'
 class Setting {
     constructor() {
         let setting = localStorage.getItem('setting');
@@ -44,6 +44,10 @@ class Setting {
             },
             hotkey: {
                 boss: 'Win+F2'
+            },
+            extensions: {
+                root: path.join(process.env.HOME || process.env.USERPROFILE, '.fishpi'),
+                theme: 'Default',
             }
         }
     }
@@ -83,6 +87,8 @@ class Setting {
     registerHotkey(type, hotkey) {
         ipc.send('win-hotkey-' + type, { hotkey });
     }
+
+
 }
 
 export default Setting;

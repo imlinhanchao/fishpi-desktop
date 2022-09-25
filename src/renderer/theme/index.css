@@ -54,6 +54,10 @@ input, select, textarea, button {
     z-index: 901
 }
 
+.ivu-input::-webkit-input-placeholder {
+    color: var(--global-control-placeholder-color);
+}
+
 a {
     color: inherit
 }
@@ -213,4 +217,8 @@ a {
 
 .ivu-avatar>img {
     object-fit: cover;
+}
+
+.ivu-switch {
+    background-color: var(--global-control-background-color);
 }

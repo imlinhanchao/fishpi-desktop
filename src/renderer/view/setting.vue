@@ -100,7 +100,7 @@
                 </FormItem>
             </Form>
         </section>
-        <section id="setting_2">
+        <section id="setting_3">
             <Divider orientation="left">快捷键</Divider>
             <Form class="setting-form" :label-width="80" v-model="setting.message" :show-message="false">
                 <FormItem label="老板键">
@@ -110,6 +110,22 @@
                         :hotkey.sync="setting.hotkey.boss"
                         placeholder="请按下组合按键">
                     </HotKeyInput>
+                </FormItem>
+            </Form>
+        </section>
+        <section id="setting_4">
+            <Divider orientation="left">扩展</Divider>
+            <Form class="setting-form" :label-width="80" v-model="setting.extensions" :show-message="false">
+                <FormItem label="扩展目录">
+                    <Input v-model="setting.extensions.root" @on-change="changeSetting" placeholder="扩展加载根目录" >
+                        <Button slot="append" @click="openFolder"><Icon custom="fa fa-folder-open"/></Button>
+                    </Input>
+                </FormItem>
+                <FormItem label="主题">
+                    <Select v-model="setting.extensions.theme" @on-change="changeSetting('theme')">
+                        <Option value="Default">默认</Option>
+                        <Option v-for="v,t in themes" :value="`${t}`" :key="t">{{ v.description }}</Option>
+                    </Select>
                 </FormItem>
             </Form>
         </section>
@@ -142,6 +158,7 @@
             }, false);
             this.$root.setting.addListener(this.settingListener);
             this.updateCheck();
+            this.$root.extension.loadTheme(this.setting);
         },
         beforeDestroy() {
             this.$root.setting.removeListener(this.settingListener);
@@ -175,14 +192,18 @@
                     { value: 'content', text: '内容(支持正则)' },
                     { value: 'redpacket', text: '红包' },
                 ]
+            },
+            themes() {
+                return this.$root.extension.themes;
             }
         },
         methods: {
             settingListener(setting) {
                 this.setting = setting;
             },
-            changeSetting() {
+            changeSetting(type) {
                 this.$root.setting.update(this.setting);
+                if (type == 'theme') this.$root.extension.loadTheme(this.setting);
             },
             changeHotKey(type, hotkey) {
                 this.$root.setting.registerHotkey(type, hotkey.text || hotkey);
@@ -267,6 +288,15 @@
             tohtml (markdown) {
                 return marked(markdown, { sanitize: true })
             },
+            async openFolder() {
+                let folder = (await this.$ipc.sendSync('main-event', {
+                    call: 'openFolder',
+                    args: this.setting.extensions.root
+                })).data;
+                if (folder[0]) {
+                    this.setting.extensions.root = folder[0]
+                }
+            }
         }
     }
 </script>

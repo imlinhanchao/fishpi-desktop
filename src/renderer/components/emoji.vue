@@ -200,7 +200,7 @@
     background: #515a6e;
 }
 .ivu-tabs.ivu-tabs-card>.ivu-tabs-bar .ivu-tabs-tab-active {
-    background: #131415;
+    background: var(--main-emoji-background-color);
 }
 .emoji-form {
     .ivu-tabs-tabpane {

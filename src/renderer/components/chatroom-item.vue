@@ -430,7 +430,7 @@
 
         .arrow{
             border: 5px solid transparent;
-            border-right: 5px solid var(--main-redpacket-message-color);
+            border-right: 5px solid var(--main-chatroom-message-background-color);
             width: 0;
             margin-top: 15px;
             height: 0;
@@ -443,7 +443,7 @@
         width: 100%;
 
         .msg-content{
-            background-color: var(--main-redpacket-message-color);
+            background-color: var(--main-chatroom-message-background-color);
             border-radius: 5px;
             padding: 8px 15px;
             color: var(--main-chatroom-message-color);

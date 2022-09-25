@@ -3,6 +3,7 @@ import {
 } from 'electron'
 import path from 'path'
 import windows from '../windows'
+import Extensions from '../extension'
 import HotKey from '../lib/hotkeys'
 import TrayModel from './tray'
 import Update from './update'
@@ -10,12 +11,13 @@ import info from '../../../package.json'
 
 let create = (app) => {
     app.setAppUserModelId(info.description);
-    let win = windows.create(app);
-    new TrayModel(app, win).create();
+    let wins = windows.create(app);
+    new TrayModel(app, wins).create();
+    let exts = new Extensions(app, wins);
     ipcMain.on('win-notice', (event, arg) => {
         let notice = new Notification({icon: path.join(__static, 'icon', 'icon@3x.png'), ...arg })
         notice.on('click', () => {
-            if(!arg.url) win.main.show()
+            if(!arg.url) wins.main.show()
             else shell.openExternal(arg.url)
             if(arg.callback) event.sender.send('win-notice-callback-' + arg.callback)
         })
@@ -29,11 +31,11 @@ let create = (app) => {
     ipcMain.on('win-update-app', Update.updateEvent);
     ipcMain.on('win-hotkey-boss', (event, argv) => {
         HotKey.register('boss', argv.hotkey, () => {
-            win.main.isVisible ? win.main.hide() : win.main.show();
+            wins.main.isVisible ? wins.main.hide() : wins.main.show();
         })
     })
 
-    return win;
+    return wins;
 }
 
 

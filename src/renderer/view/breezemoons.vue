@@ -5,6 +5,7 @@
                 type="text"
                 v-model="message"
                 placeholder="清风明月"
+                @on-keyup.enter="send"
             >
                 <Button
                     slot="append"
@@ -15,7 +16,7 @@
                 ></Button>
             </Input>
     </section>
-    <section class="content">
+    <section ref="content" class="content">
         <section class="br-item" v-for="b in contents">
             <Avatar class="msg-avatar user-card" :title="b.breezemoonAuthorName" :data-user="b.breezemoonAuthorName" :src="b.breezemoonAuthorThumbnailURL48" />
             <section class="br-contain">
@@ -83,6 +84,7 @@
                     this.message = '';
                     rsp = await this.$fishpi.breezemoon.list(1);
                     this.contents.unshift(rsp.breezemoons[0]);
+                    this.$refs.content.scrollTo(0, 0);
                 }
                 this.sending = false;
             }
@@ -117,7 +119,7 @@
     .br-item {
         display: flex;
         flex-direction: row;
-        width: 85%;
+        width: 95%;
         padding: 5px 10px;
         .br-contain {
             display: flex;
@@ -139,7 +141,6 @@
                     padding: 8px 15px;
                     color: var(--main-chatroom-message-color);
                     word-break: break-word;
-                    max-width: calc(100% - 45px);
                     overflow: auto;
                 }
             }
