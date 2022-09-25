@@ -34,10 +34,11 @@ class Extensions
             attr = JSON.parse(attr);
             if (!attr.fishpi) return false;
             attr.fishpi.root = folder;
+            attr.fishpi.key = `${attr.publisher || 'unknown'}.${attr.name}`;
             if (attr.fishpi.type == "theme") 
-                this.themes[`${attr.publisher || 'unknown'}.${attr.name}`] = attr;
+                this.themes[attr.fishpi.key] = attr;
             else 
-                this.extensions[`${attr.publisher || 'unknown'}.${attr.name}`] = attr;
+                this.extensions[attr.fishpi.key] = attr;
         } catch (error) {
             console.error(`load ${folder} error: ${error.message}`);
         }
