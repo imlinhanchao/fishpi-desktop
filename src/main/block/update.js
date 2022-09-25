@@ -117,7 +117,7 @@ function updateEvent(event, argv) {
     {
         let data = getDownload(argv);
         let savePath = path.resolve(os.tmpdir(), data.name);
-        data.browser_download_url = data.browser_download_url.replace(/^https:\/\/github.com/, 'https://hub.fastgit.org')
+        data.browser_download_url = data.browser_download_url.replace(/^https:\/\/github.com/, 'https://download.fastgit.org')
         downloadFile(data.browser_download_url, savePath, (state, pro, currPro, total) => {
             if (state == 'data') {
                 if (argv.callback) event.sender.send('win-update-app-callback-' + argv.callback, { state, pro, currPro, total })
