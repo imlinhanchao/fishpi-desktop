@@ -222,3 +222,8 @@ a {
 .ivu-switch {
     background-color: var(--global-control-background-color);
 }
+
+.ivu-switch-checked, .ivu-checkbox-checked .ivu-checkbox-inner
+{
+    background-color: var(--global-active-color);
+}

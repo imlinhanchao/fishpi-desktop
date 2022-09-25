@@ -67,7 +67,7 @@
                 </FormItem>
                 <FormItem label="特别关心">
                     <Tag style="height:30px;line-height:30px;" color="success" v-for="(u, i) in setting.chatroom.careUsers" :key="u" :name="u" closable @on-close="setting.chatroom.careUsers.splice(i, 1) && changeSetting()">{{ u }}</Tag>
-                    <Button style="width:10em;background: #141516" 
+                    <Button style="width:10em;background: var(--global-control-background-color);" 
                         icon="ios-add" type="dashed" size="small" 
                         @click="pushCase">
                         <span @click.stop="$event.stopPropagation()"><Input ref="users" @on-keydown="getUser(careUser, 'care', 0)" @on-keyup.enter="pushCase" v-model="careUser" class="no-border" placeholder="用户名" /></span>

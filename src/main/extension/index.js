@@ -15,6 +15,8 @@ class Extensions
             let root = argv.root;
             try {
                 fs.accessSync(root, fs.constants.R_OK);
+                this.extensions = {};
+                this.themes = {};        
                 let extensionFolders = fs.readdirSync(root);
                 extensionFolders.forEach(x => this.load(path.join(root, x)));
                 if(argv.callback) event.sender.send('fishpi.global.setting-callback-' + argv.callback, { extensions: this.extensions, themes: this.themes })

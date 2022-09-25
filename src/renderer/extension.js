@@ -7,10 +7,7 @@ class Extension {
     }
 
     async loadTheme(setting) {
-        let { themes } = await ipc.sendSync('fishpi.global.setting', { 
-            root: setting.extensions.root 
-        })
-        console.log(themes)
+        let { themes } = await ipc.sendSync('fishpi.global.setting', setting.extensions)
 
         this.themes = themes;
         if (this.lastTheme == setting.extensions.theme) return;
