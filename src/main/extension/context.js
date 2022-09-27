@@ -15,8 +15,8 @@ class Context
         this.wins = wins;
         this.events = new EventEmitter();
         this.events.fishpi = new Fishpi();
-        this.events.setSidebar = (icon, html) => {
-            this.setSidebar(icon, html);
+        this.events.setSidebar = (icon, url) => {
+            this.setSidebar(icon, url);
         }
 
         this.listener();
@@ -46,8 +46,10 @@ class Context
         });
     }
 
-    setSidebar(icon, html) {
-            
+    setSidebar(icon, url) {
+        this.wins.main.webContents.send('fishpi.global.sidebar', {
+            icon, url, id: this.ext.fishpi.key, name: this.ext.description,
+        })
     }
 }
 

@@ -89,6 +89,14 @@ window.$VueApp = new Vue({
         }, false);
         
         this.extension.loadTheme(this.setting.value);
+
+        this.$ipc.listen('fishpi.global.sidebar', (event, args) => {
+            console.dir(event);
+            console.dir(args);
+            let index = this.sidebars.findIndex(s => s.id == args.id);
+            if (index >= 0) this.$set(this.sidebars, index, args);
+            else this.sidebars.push(args);
+        })
     },
     data: {
         token: localStorage.getItem('token') || '',
@@ -112,6 +120,7 @@ window.$VueApp = new Vue({
             role: 'paste',
             accelerator: 'CmdOrCtrl+V',
         }],
+        sidebars: [],
     },
     computed: {
         currentMusic() {

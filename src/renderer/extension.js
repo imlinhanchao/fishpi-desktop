@@ -3,7 +3,7 @@ import path from 'path'
 
 class Extension {
     constructor() {
-        this.themes = {}
+        this.themes = {};
     }
 
     async loadTheme(setting) {

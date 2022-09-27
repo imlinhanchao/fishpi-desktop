@@ -46,6 +46,7 @@ class Extensions
             else 
             {
                 this.extensions[attr.fishpi.key] = attr;
+                if (this.contexts[attr.fishpi.key]) delete this.contexts[attr.fishpi.key];
                 this.contexts[attr.fishpi.key] = new Context(attr, this.app, this.wins);
             }   
         } catch (error) {
