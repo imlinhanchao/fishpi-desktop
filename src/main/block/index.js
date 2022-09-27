@@ -13,8 +13,8 @@ import { notice as Notice } from '../lib/utils';
 let create = (app) => {
     app.setAppUserModelId(info.description);
     let wins = windows.create(app);
-    new TrayModel(app, wins).create();
     let exts = new Extensions(app, wins);
+    new TrayModel(app, wins).create();
     ipcMain.on('win-notice', (event, arg) => {
         let notice = Notice({icon: path.join(__static, 'icon', 'icon@3x.png'), ...arg })
         notice.on('click', () => {

@@ -3,7 +3,7 @@ import RedPacket from './redpacket'
 import Card from './card'
 import Img from './img'
 import {
-    dialog
+    ipcMain, dialog
 } from 'electron'
 import fs from 'fs'
 import path from 'path'
@@ -17,6 +17,7 @@ class Main extends Page
     create(options = {}) {
         options = Object.assign({
             quitEvent: (event) => {
+                ipcMain.emit('fishpi.global.exit')
                 this.app.quit()
             },
             show: true,

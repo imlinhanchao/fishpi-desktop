@@ -127,6 +127,7 @@ window.$VueApp = new Vue({
             this.token = null;
             this.$fishpi.setToken(null);
             localStorage.removeItem('token');
+            this.$ipc.send('fishpi.global.logout');
         },
         async login(account) {
             let rsp = await this.$fishpi.login(account);

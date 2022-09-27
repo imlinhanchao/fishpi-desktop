@@ -44,6 +44,7 @@
             }, 60000);
             this.$root.notice.setAudio(this.$refs.audio);
             this.$root.notice.setApi(this.$fishpi);
+            this.$ipc.send('fishpi.global.login', { token: this.$root.token });
         },
         beforeDestroy() {
             clearInterval(this.timer);

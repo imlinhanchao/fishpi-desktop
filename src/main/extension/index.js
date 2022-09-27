@@ -46,7 +46,7 @@ class Extensions
             else 
             {
                 this.extensions[attr.fishpi.key] = attr;
-                this.contexts[attr.fishpi.key] = new Context(attr);
+                this.contexts[attr.fishpi.key] = new Context(attr, this.app, this.wins);
             }   
         } catch (error) {
             console.error(`load ${folder} error: ${error.message}`);
