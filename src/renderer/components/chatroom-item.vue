@@ -125,6 +125,7 @@
                 .replace(/(<a )/g, '$1target="_blank" ')
                 .replace(/(<iframe[^>]*?src="(https:)*\/\/music.163.com\/outchain\/player\?type=\d&amp;id=(\d+)[^"]*?">\s*<\/iframe>)/, '<div class="netease-music"><div class="netease-cover" data-id="$3"></div>$1</div>')
                 .replace(/(<img )/g, '$1data-action="preview" ')
+                .replace(/<span class="kaibai">([^<]*?)<\/span>/g, '<details><summary>$1</summary><img src="https://sexy.1433.top/$1" class="complate_span" title="神秘代码" alt="你来晚了"/></detail>')
                 .replace(/<em><code># (.*?) #<\/code><\/em>/g, '<em class="discuss-msg" title="跟随话题"><code class="discuss-msg" data-discuss="$1"># $1 #<\/code><\/em>')
 
         },
