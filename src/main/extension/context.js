@@ -44,6 +44,14 @@ class Context
         ipcMain.on('fishpi.global.exit', (event, args) => {
             this.events.emit('quit');
         });
+
+        this.events.send = (command, data) => {
+            this.wins.main.webContents.send(`fishpi.global.listener`, {
+                id: this.ext.fishpi.key,
+                data,
+                command,
+            })
+        }
     }
 
     setSidebar(icon, url) {

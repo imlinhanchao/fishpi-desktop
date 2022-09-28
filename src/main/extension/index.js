@@ -30,6 +30,16 @@ class Extensions
                 console.error(error);
             }
         })
+
+        ipcMain.on('fishpi.global.command', (event, argv) => {
+            let { id, command, data } = argv;
+            if (!this.contexts[id]) return;
+            this.contexts[id].events.emit('command', command, data, (rsp) => {
+                if(argv.callback) event.sender.send(
+                    'fishpi.global.command-callback-' + argv.callback, 
+                    rsp);
+            })
+        })
     }
 
     load(folder) {

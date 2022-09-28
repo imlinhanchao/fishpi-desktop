@@ -1,6 +1,6 @@
 <template>
 <div class="layout" v-if="ext">
-    <iframe ref="iframe" :src="ext.url" @load="loaded"></iframe>
+    <iframe :id="`ext_${ext.id}`" ref="iframe" :src="ext.url" @load="loaded"></iframe>
 </div>
 </template>
 
@@ -14,17 +14,41 @@
             this.ext = this.$root.sidebars.find(s => s.id == this.$route.params.ext);
             if (!this.ext) return;
             this.$root.title = this.ext.name;
+            this.$ipc.listen('fishpi.global.listener', this.listen);
+            window.$webviewIpc = {
+                send: async(command, data) => {
+                    let rsp = (await this.$ipc.sendSync('fishpi.global.command', {
+                        id: this.ext.id,
+                        command,
+                        data,
+                    }));
+                    console.dir(rsp);
+                    return rsp;
+                },
+
+                on: (command, fn) => {
+                    if(!this.listener[command]) this.listener[command] = [];
+                    this.listener[command].push(fn)
+                },
+
+                off: (command, fn) => {
+                    if (!this.listener[command]) return;
+                    let index = this.listener[command].indexOf(fn);
+                    if (index < 0) return;
+                    this.listener[command].splice(index, 1);
+                }
+            }
         },
         beforeDestroy () {
-            
+            this.$ipc.removeListener('fishpi.global.listener', this.listen);
         },
         data () {
             return {
-               ext: null
+               ext: null,
+               listener: {}
             }    
         },
         watch: {
-            
         },
         filters: {
         },
@@ -36,7 +60,26 @@
                 this.$refs.iframe
                     .contentDocument.getElementsByTagName('html')[0]
                     .setAttribute('style', this.$root.extension.getCSSVarList());
-                this.$refs.iframe.contentWindow.ipc = this.$ipc;
+                let style = document.createElement('style');
+                style.appendChild(document.createTextNode(`
+                ::-webkit-scrollbar-corner {
+                        background-color: transparent;
+                    }
+                    ::-webkit-scrollbar {
+                        width: 5px;
+                        height: 5px;
+                    }
+                    ::-webkit-scrollbar-thumb {
+                        background: var(--global-scroll-bar-color);
+                    }
+                `))
+                this.$refs.iframe.contentDocument.head.appendChild(style);
+                this.$refs.iframe.contentWindow.$ipc = window.$webviewIpc;
+            },
+            listen(event, rsp) {
+                if (rsp.data.id != this.ext.id) return;
+                if (!this.listener[command]) return;
+                this.listener[command].forEach(fn => fn(rsp.data.data));
             }
         }
     }
