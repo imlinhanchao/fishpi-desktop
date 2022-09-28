@@ -295,6 +295,7 @@
                 })).data;
                 if (folder[0]) {
                     this.setting.extensions.root = folder[0]
+                    this.changeSetting()
                 }
             }
         }
