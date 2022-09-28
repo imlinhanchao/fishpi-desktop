@@ -44,6 +44,13 @@ export default new Router({
                         },
                         component: () => import('./view/breezemoons')
                     }, {
+                        path: 'context/:ext',
+                        meta: {
+                            title: '',
+                            name: 'context'
+                        },
+                        component: () => import('./view/context')
+                    }, {
                         path: 'chat',
                         meta: {
                             title: '私聊',

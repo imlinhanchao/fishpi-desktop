@@ -28,7 +28,8 @@ app.on('activate', () => {
     blocks.windows.create(app)
   }
 })
-app.commandLine.appendSwitch('ignore-certificate-errors')
+app.commandLine.appendSwitch('ignore-certificate-errors');
+app.commandLine.appendSwitch("disable-site-isolation-trials");
 
 app.on('web-contents-created', (e, contents) => {
   // Check for a webview

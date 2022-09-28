@@ -61,7 +61,10 @@
                 <Badge :offset="[5, -2]" :title="`${chats}条未读私信`" :count="chats" :dot="true"><Icon custom="fa fa-comment"/></Badge>
             </li>
             <li class="feature-item" title="清风明月" :class="{ 'feature-active': $route.meta.name == 'breezemoons' }" @click="$router.push('/breezemoons')"><Icon custom="fa fa-leaf" /></li>
-            <li class="feature-item" :title="s.name" v-for="s in $root.sidebars">
+            <li class="feature-item" :title="s.name" v-bind:key="s.id" v-for="s in $root.sidebars"
+                :class="{ 'feature-active': $root.title == s.name }"
+                @click="$router.push('/context/' + s.id)"
+                >
                 <a class="feature-icon" :style="{ maskImage: `url(file://${s.icon.replace(/\\/g, '/')})` }">
                 </a>
             </li>
