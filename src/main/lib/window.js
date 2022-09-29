@@ -16,6 +16,7 @@ class Windows {
             minHeight: options.height * .7,
             transparent: options.transparent,
             webPreferences: {
+                webviewTag: true,
                 nodeIntegration: true,
                 webSecurity: false,
                 contextIsolation: false,

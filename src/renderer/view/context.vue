@@ -1,20 +1,39 @@
 <template>
 <div class="layout" v-if="ext">
-    <iframe :id="`ext_${ext.id}`" ref="iframe" :src="ext.url" @load="loaded"></iframe>
+    <webview :preload="preloadJs"
+        nodeintegration
+        :id="`ext_${ext.id}`" 
+        ref="webview" 
+        :src="ext.url" 
+        @load="loaded"></webview>
 </div>
 </template>
 
 <script>
+    import path from 'path';
     export default {
         name: 'context',
         components: {
         },
         mounted () {
+            console.log(__static)
             if (!this.$route.params.ext) return;
             this.ext = this.$root.sidebars.find(s => s.id == this.$route.params.ext);
             if (!this.ext) return;
             this.$root.title = this.ext.name;
             this.$ipc.listen('fishpi.global.listener', this.listen);
+            this.$nextTick(() => {
+                this.$refs.webview.addEventListener('dom-ready', () => {
+                    if(!this.$refs.webview.isDevToolsOpened()) this.$refs.webview.openDevTools()
+                })
+                this.$ref.webview.addEventListener(`ipc-message`, (event) => {
+                    let rsp = (await this.$ipc.sendSync('fishpi.global.command', {
+                        id: this.ext.id,
+                        command: event.channel,
+                        data: event.args,
+                    }));
+                })
+            })
             window.$webviewIpc = {
                 send: async(command, data) => {
                     let rsp = (await this.$ipc.sendSync('fishpi.global.command', {
@@ -53,11 +72,13 @@
         filters: {
         },
         computed: {
-           
+            preloadJs() {
+                return path.join(__static, 'webview.js') 
+            }
         },
         methods: {
             loaded() {
-                this.$refs.iframe
+                this.$refs.webview
                     .contentDocument.getElementsByTagName('html')[0]
                     .setAttribute('style', this.$root.extension.getCSSVarList());
                 let style = document.createElement('style');
@@ -73,8 +94,8 @@
                         background: var(--global-scroll-bar-color);
                     }
                 `))
-                this.$refs.iframe.contentDocument.head.appendChild(style);
-                this.$refs.iframe.contentWindow.$ipc = window.$webviewIpc;
+                this.$refs.webview.contentDocument.head.appendChild(style);
+                this.$refs.webview.contentWindow.$ipc = window.$webviewIpc;
             },
             listen(event, rsp) {
                 if (rsp.data.id != this.ext.id) return;
@@ -90,7 +111,7 @@
     height: 100%;
     display: flex;
     background: var(--main-chatroom-background-color);
-    iframe {
+    webview {
         width: 100%;
         height: 100%;
         border: 0;
