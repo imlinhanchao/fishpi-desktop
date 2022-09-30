@@ -1,6 +1,7 @@
 <template>
 <div class="layout" v-if="ext">
     <webview :preload="preloadJs"
+        webpreferences="contextIsolation=no"
         nodeintegration
         :id="`ext_${ext.id}`" 
         ref="webview" 
@@ -23,40 +24,19 @@
             this.$root.title = this.ext.name;
             this.$ipc.listen('fishpi.global.listener', this.listen);
             this.$nextTick(() => {
-                this.$refs.webview.addEventListener('dom-ready', () => {
-                    if(!this.$refs.webview.isDevToolsOpened()) this.$refs.webview.openDevTools()
-                })
-                this.$ref.webview.addEventListener(`ipc-message`, (event) => {
+                this.$refs.webview.addEventListener('dom-ready', this.loaded);
+                this.$refs.webview.addEventListener(`ipc-message`, async (event) => {
+                    let [data, callback] = event.args
                     let rsp = (await this.$ipc.sendSync('fishpi.global.command', {
                         id: this.ext.id,
                         command: event.channel,
-                        data: event.args,
-                    }));
-                })
-            })
-            window.$webviewIpc = {
-                send: async(command, data) => {
-                    let rsp = (await this.$ipc.sendSync('fishpi.global.command', {
-                        id: this.ext.id,
-                        command,
                         data,
                     }));
-                    console.dir(rsp);
-                    return rsp;
-                },
-
-                on: (command, fn) => {
-                    if(!this.listener[command]) this.listener[command] = [];
-                    this.listener[command].push(fn)
-                },
-
-                off: (command, fn) => {
-                    if (!this.listener[command]) return;
-                    let index = this.listener[command].indexOf(fn);
-                    if (index < 0) return;
-                    this.listener[command].splice(index, 1);
-                }
-            }
+                    if (callback) {
+                        this.$refs.webview.send(`${event.channel}.${callback}`, rsp);
+                    }
+                })
+            })
         },
         beforeDestroy () {
             this.$ipc.removeListener('fishpi.global.listener', this.listen);
@@ -64,7 +44,6 @@
         data () {
             return {
                ext: null,
-               listener: {}
             }    
         },
         watch: {
@@ -78,11 +57,12 @@
         },
         methods: {
             loaded() {
-                this.$refs.webview
-                    .contentDocument.getElementsByTagName('html')[0]
-                    .setAttribute('style', this.$root.extension.getCSSVarList());
-                let style = document.createElement('style');
-                style.appendChild(document.createTextNode(`
+                if(!this.$refs.webview.isDevToolsOpened() && process.env.NODE_ENV == 'development') 
+                    this.$refs.webview.openDevTools()
+                this.$refs.webview.insertCSS(`
+                :root {
+                    ${this.$root.extension.getCSSVarList()}
+                }
                 ::-webkit-scrollbar-corner {
                         background-color: transparent;
                     }
@@ -93,13 +73,11 @@
                     ::-webkit-scrollbar-thumb {
                         background: var(--global-scroll-bar-color);
                     }
-                `))
-                this.$refs.webview.contentDocument.head.appendChild(style);
-                this.$refs.webview.contentWindow.$ipc = window.$webviewIpc;
+                `);
             },
             listen(event, rsp) {
                 if (rsp.data.id != this.ext.id) return;
-                if (!this.listener[command]) return;
+                this.$refs.webview.
                 this.listener[command].forEach(fn => fn(rsp.data.data));
             }
         }
