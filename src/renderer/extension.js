@@ -4,12 +4,14 @@ import path from 'path'
 class Extension {
     constructor() {
         this.themes = {};
+        this.extensions = {};
     }
 
     async loadTheme(setting) {
-        let { themes } = await ipc.sendSync('fishpi.global.setting', setting.extensions)
+        let { themes, extensions } = await ipc.sendSync('fishpi.global.setting', setting.extensions)
 
         this.themes = themes;
+        this.extensions = extensions;
         if (this.lastTheme == setting.extensions.theme) return;
         this.lastTheme = setting.extensions.theme;
         let csslink = document.getElementById('theme-link')

@@ -95,6 +95,12 @@ a {
     outline: none;
 }
 
+.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .ivu-btn-text:focus {
     box-shadow: none;
 }
