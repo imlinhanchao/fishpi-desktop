@@ -56,7 +56,7 @@ class Context
 
     setSidebar(icon, url) {
         this.wins.main.webContents.send('fishpi.global.sidebar', {
-            icon, url, id: this.ext.fishpi.key, name: this.ext.description,
+            icon, url, id: this.ext.fishpi.key, name: this.ext.displayName || this.ext.description,
         })
     }
 }
