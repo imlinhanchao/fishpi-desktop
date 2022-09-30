@@ -60,10 +60,10 @@
                 if(!this.$refs.webview.isDevToolsOpened() && process.env.NODE_ENV == 'development') 
                     this.$refs.webview.openDevTools()
                 this.$refs.webview.insertCSS(`
-                :root {
-                    ${this.$root.extension.getCSSVarList()}
-                }
-                ::-webkit-scrollbar-corner {
+                    :root {
+                        ${this.$root.extension.getCSSVarList()}
+                    }
+                    ::-webkit-scrollbar-corner {
                         background-color: transparent;
                     }
                     ::-webkit-scrollbar {

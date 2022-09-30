@@ -8,7 +8,7 @@ import HotKey from '../lib/hotkeys'
 import TrayModel from './tray'
 import Update from './update'
 import info from '../../../package.json'
-import { notice as Notice } from '../lib/utils';
+import { Notice } from '../lib/utils';
 
 let create = (app) => {
     app.setAppUserModelId(info.description);

@@ -4,7 +4,7 @@ import {
     ipcMain, Notification, shell
 } from 'electron'
 import electron from 'electron'
-import { notice as Notice } from '../lib/utils';
+import { Notice } from '../lib/utils';
 import path from 'path';
 
 class Context
