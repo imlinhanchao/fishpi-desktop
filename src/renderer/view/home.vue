@@ -70,7 +70,8 @@
             </li>
         </ul>
         <ul class="feature-list">
-            <li class="feature-item" :class="{ 'feature-active': $route.meta.name == 'setting' }" @click="$router.push('/setting')"><Icon custom="fa fa-cog" /></li>
+            <li class="feature-item" title="扩展" :class="{ 'feature-active': $route.meta.name == 'extension' }" @click="$router.push('/extension')"><Icon type="md-cube" /></li>
+            <li class="feature-item" title="设置" :class="{ 'feature-active': $route.meta.name == 'setting' }" @click="$router.push('/setting')"><Icon type="md-settings" /></li>
         </ul>
     </section>
     <section class="content">
