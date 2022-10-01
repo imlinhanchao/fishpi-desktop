@@ -6,12 +6,14 @@
         :id="`ext_${ext.id}`" 
         ref="webview" 
         :src="ext.url" 
+        allowpopups
         @load="loaded"></webview>
 </div>
 </template>
 
 <script>
     import path from 'path';
+    import { shell } from 'electron'
     export default {
         name: 'context',
         components: {
@@ -35,6 +37,10 @@
                     if (callback) {
                         this.$refs.webview.send(`${event.channel}.${callback}`, rsp);
                     }
+                })
+                this.$refs.webview.addEventListener('new-window', (e) => {
+                    //shell.openExternal(e.url)
+                    e.preventDefault();
                 })
             })
         },
