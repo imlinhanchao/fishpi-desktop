@@ -57,7 +57,7 @@
         },
         methods: {
             loaded() {
-                if(!this.$refs.webview.isDevToolsOpened() && process.env.NODE_ENV == 'development') 
+                if(!this.$refs.webview.isDevToolsOpened() && process.env.EXT_ENV == 'development') 
                     this.$refs.webview.openDevTools()
                 this.$refs.webview.insertCSS(`
                     :root {

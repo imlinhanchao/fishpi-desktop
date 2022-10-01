@@ -21,7 +21,7 @@ require('electron-debug')({ showDevTools: true })
 // Install `vue-devtools`
 require('electron').app.on('ready', () => {
     session.defaultSession.loadExtension(
-      path.resolve(__dirname, '..', '..', 'node_modules/vue-devtools/vender'), 
+      path.resolve(__dirname, '..', '..', 'node_modules/vue-devtools/'), 
       { allowFileAccess: true })
 })
 

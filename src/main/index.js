@@ -10,8 +10,14 @@ let mainWindow
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
+else {
+  process.env.EXT_ENV = "development";
+}
 
-if (process.argv.indexOf('--dev') >= 0) require('electron-debug')({ showDevTools: true })
+if (process.argv.indexOf('--dev') >= 0) {
+  require('electron-debug')({ showDevTools: true });
+  process.env.EXT_ENV = "development";
+}
 
 function create () {
   mainWindow = blocks.create(app)
