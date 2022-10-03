@@ -40,7 +40,10 @@
             if (!this.$route.meta.notitle && this.$route.meta.title) this.$root.title = this.$route.meta.title;
             this.timer = setInterval(async () => {
                 let liveness = await this.$fishpi.account.liveness();
-                if (liveness > 0) this.$root.liveness = liveness;
+                if (liveness > 0) {
+                    this.$root.liveness = liveness;
+                    this.$ipc.send('fishpi.hooks.liveness', { liveness })
+                }
             }, 60000);
             this.$root.notice.setAudio(this.$refs.audio);
             this.$root.notice.setApi(this.$fishpi);

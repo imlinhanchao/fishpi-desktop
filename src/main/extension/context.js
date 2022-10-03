@@ -13,6 +13,7 @@ class Context
         this.ext = ext;
         this.app = app;
         this.wins = wins;
+        this.setting = null;
         this.events = new EventEmitter();
         this.events.fishpi = new Fishpi();
         this.events.setSidebar = (icon, url) => {
@@ -26,6 +27,8 @@ class Context
             let model = __non_webpack_require__(extPath);
             if (!model.activate) throw (new Error('缺少入口函数 activate'));
             model.activate(this.events, electron);
+            if(model.getSettingUrl) this.setting = model.getSettingUrl();
+            if(model.hooks) this.hooks = model.hooks();
         } catch (error) {
             console.error(error);
             Notice({ title: `${ext.fishpi.key}`, body: `载入失败：${error.message}` }).show();

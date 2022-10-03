@@ -160,20 +160,22 @@
         },
         async sendChatroom() {
             if (!this.msg) return;
+            let msg = this.msg;
             if (this.quote) {
                 let raw = this.quote.md || await this.$fishpi.chatroom.raw(this.quote.oId);
                 raw = raw.split("\n").map((r) => `>${r}`).join("\n").trim();
                 let at = this.quote.userName != this.current.userName
                     ? `@${this.quote.userName} `
                     : "";
-                this.msg = `回复${at}：\n\n${raw}\n\n${this.msg}`;
+                msg = `回复${at}：\n\n${raw}\n\n${msg}`;
                 this.$emit('update:quote', null)
             }
             if (this.discussed) {
-                this.msg += `\r\n*\`# ${this.discussed} #\`*`
+                msg += `\r\n*\`# ${this.discussed} #\`*`
                 this.$emit('update:discussed', null)
             }
-            let rsp = await this.$fishpi.chatroom.send(this.msg);
+            msg = await this.$ipc.sendSync('fishpi.hooks.sendMsg', { msg });
+            let rsp = await this.$fishpi.chatroom.send(msg);
             if (!rsp) return;
             if (rsp.code != 0) {
                 this.$Message.error(rsp.msg);

@@ -6,13 +6,19 @@
                 <img :src="iconPath(e)" />
             </div>
             <div class="ext-info">
-                <h2>{{e.displayName || e.name}}<sub>{{e.version}}</sub></h2>
+                <h2><a :href="e.homepage || e.repository || 'javascript:void(0)'">{{e.displayName || e.name}}</a><sub>{{e.version}}</sub></h2>
                 <p class="ext-desc ellipsis">{{e.description}}</p>
-                <p class="ext-author">{{e.author || e.publisher || "神秘开发者"}}</p>
+                <div class="ext-footer">
+                    <p class="ext-author">{{e.author || e.publisher || "神秘开发者"}}</p>
+                    <Button type="primary" 
+                        size="small" 
+                        v-if="e.fishpi.setting"
+                        @click="$router.push(`/context/${e.fishpi.key}`)">设置</Button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="ext-detail" v-if="current">
+    <div class="ext-detail">
         <div class="md-style" v-html="detailHTML"></div>
     </div>
 </div>
@@ -104,7 +110,7 @@
             flex-direction: row;
             padding: 10px;
             border-bottom: 1px dashed var(--global-control-border-color);
-            cursor: pointer;
+            width: 100%;
             &:hover {
                 background: var(--main-chatroom-sidebar-background-color);
             }
@@ -116,6 +122,7 @@
             .ext-info {
                 margin-left: 10px;
                 font-size: .8em;
+                width: 100%;
                 h2 {
                     font-size: 1.4em;
                     font-weight: 700;
@@ -138,6 +145,11 @@
                     font-weight: 400;
                 }
             }
+            .ext-footer {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+            }
         }
     }
     .ext-detail {
@@ -157,6 +169,9 @@
     .ext-list {
         width: 300px;
     }
+    .ext-item {
+        cursor: pointer;
+    }
 }
 
 }
@@ -166,7 +181,7 @@
 .ext-detail {
     .md-style {
         img {
-            background: transparent;
+            background: transparent; 
         }
     }
 }

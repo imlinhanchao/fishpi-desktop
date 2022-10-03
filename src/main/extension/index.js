@@ -40,6 +40,39 @@ class Extensions
                     rsp);
             })
         })
+
+        ipcMain.on('fishpi.hooks.chatroom', async (event, argv) => {
+            for(let c in this.contexts) {
+                let context = this.contexts[c]
+                if (context.hooks && context.hooks.messageEvent) {
+                    argv.msg = await context.hooks.messageEvent(argv.msg)
+                }
+            }
+            if(argv.callback) event.sender.send(
+                'fishpi.hooks.chatroom-callback-' + argv.callback, 
+                argv.msg);
+        })
+
+        ipcMain.on('fishpi.hooks.liveness', async (event, argv) => {
+            for(let c in this.contexts) {
+                let context = this.contexts[c]
+                if (context.hooks && context.hooks.liveness) {
+                    context.hooks.liveness(argv.liveness)
+                }
+            }
+        })
+
+        ipcMain.on('fishpi.hooks.sendMsg', async (event, argv) => {
+            for(let c in this.contexts) {
+                let context = this.contexts[c]
+                if (context.hooks && context.hooks.sendMsgEvent) {
+                    argv.msg = await context.hooks.sendMsgEvent(argv.msg)
+                }
+            }
+            if(argv.callback) event.sender.send(
+                'fishpi.hooks.sendMsg-callback-' + argv.callback, 
+                argv.msg);
+        })
     }
 
     load(folder) {
@@ -58,6 +91,7 @@ class Extensions
                 this.extensions[attr.fishpi.key] = attr;
                 if (this.contexts[attr.fishpi.key]) delete this.contexts[attr.fishpi.key];
                 this.contexts[attr.fishpi.key] = new Context(attr, this.app, this.wins);
+                this.extensions[attr.fishpi.key].fishpi.setting = this.contexts[attr.fishpi.key].setting;
             }   
         } catch (error) {
             console.error(`load ${folder} error: ${error.message}`);

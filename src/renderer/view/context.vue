@@ -21,7 +21,7 @@
         mounted () {
             console.log(__static)
             if (!this.$route.params.ext) return;
-            this.ext = this.$root.sidebars.find(s => s.id == this.$route.params.ext);
+            this.ext = this.getExt()
             if (!this.ext) return;
             this.$root.title = this.ext.name;
             this.$ipc.listen('fishpi.global.listener', this.listen);
@@ -85,6 +85,16 @@
                 if (rsp.data.id != this.ext.id) return;
                 this.$refs.webview.
                 this.listener[command].forEach(fn => fn(rsp.data.data));
+            },
+            getExt() {
+                let sidebar = this.$root.sidebars.find(s => s.id == this.$route.params.ext);
+                if (sidebar) return sidebar;
+                let setting = this.$root.extension.extensions[this.$route.params.ext].fishpi.setting;
+                if (setting) return {
+                    id: this.$route.params.ext,
+                    url: setting,
+                    name: this.$root.extension.extensions[this.$route.params.ext].displayName + "设置"
+                }
             }
         }
     }

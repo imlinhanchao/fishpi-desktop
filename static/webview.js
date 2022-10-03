@@ -3,7 +3,7 @@ const { ipcRenderer } = require('electron')
 window.$ipc = {
   send (event, args, fn) {
     let callback = fn ? parseInt(Math.random() * 10000).toString() : undefined
-    if (fn) this.on(`${event}.${callback}`, fn)
+    if (fn) ipcRenderer.once(`${event}.${callback}`, fn)
     ipcRenderer.sendToHost(event, args, callback)
   },
   invoke (event, argv) {
@@ -18,10 +18,10 @@ window.$ipc = {
     })
   },
   on (event, fn) {
-    ipcRenderer.addListener(event, fn)
+    ipcRenderer.on(event, fn)
   },
   off (event, fn) {
-    ipcRenderer.removeListener(event, fn)
+    ipcRenderer.off(event, fn)
   }
 }
 console.dir(window.$ipc)

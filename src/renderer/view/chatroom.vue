@@ -163,6 +163,7 @@
                 });
             },
             async msgListener({ msg }) {
+                msg = await this.$ipc.sendSync('fishpi.hooks.chatroom', { msg });
                 switch(msg.type) {
                     case 'online':
                         this.$root.onlines = this.onlines = msg.data;
