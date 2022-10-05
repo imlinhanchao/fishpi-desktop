@@ -83,8 +83,7 @@
             },
             listen(event, rsp) {
                 if (rsp.data.id != this.ext.id) return;
-                this.$refs.webview.
-                this.listener[command].forEach(fn => fn(rsp.data.data));
+                this.$refs.webview.send(rsp.data.command, rsp.data.data)
             },
             getExt() {
                 let sidebar = this.$root.sidebars.find(s => s.id == this.$route.params.ext);

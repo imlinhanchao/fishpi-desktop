@@ -163,7 +163,9 @@
                 });
             },
             async msgListener({ msg }) {
-                msg = await this.$ipc.sendSync('fishpi.hooks.chatroom', { msg });
+                let m = await this.$ipc.sendSync('fishpi.hooks.chatroom', { msg });
+                if (m) msg = m === true ? msg : m;
+                else return;
                 switch(msg.type) {
                     case 'online':
                         this.$root.onlines = this.onlines = msg.data;

@@ -6,7 +6,7 @@
                 <img :src="iconPath(e)" />
             </div>
             <div class="ext-info">
-                <h2><a :href="e.homepage || e.repository || 'javascript:void(0)'">{{e.displayName || e.name}}</a><sub>{{e.version}}</sub></h2>
+                <h2><a target="_blank" :href="e.homepage || e.repository || 'javascript:void(0)'">{{e.displayName || e.name}}</a><sub>{{e.version}}</sub></h2>
                 <p class="ext-desc ellipsis">{{e.description}}</p>
                 <div class="ext-footer">
                     <p class="ext-author">{{e.author || e.publisher || "神秘开发者"}}</p>
