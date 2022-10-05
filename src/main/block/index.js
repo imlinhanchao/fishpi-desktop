@@ -8,7 +8,7 @@ import HotKey from '../lib/hotkeys'
 import TrayModel from './tray'
 import Update from './update'
 import info from '../../../package.json'
-import { Notice } from '../lib/utils';
+import Utils from '../lib/utils';
 
 let create = (app) => {
     app.setAppUserModelId(info.description);
@@ -16,7 +16,7 @@ let create = (app) => {
     let exts = new Extensions(app, wins);
     new TrayModel(app, wins).create();
     ipcMain.on('win-notice', (event, arg) => {
-        let notice = Notice({icon: path.join(__static, 'icon', 'icon@3x.png'), ...arg })
+        let notice = Utils.Notice({icon: path.join(__static, 'icon', 'icon@3x.png'), ...arg })
         notice.on('click', () => {
             if(!arg.url) wins.main.show()
             else shell.openExternal(arg.url)

@@ -4,7 +4,7 @@ import {
     ipcMain, Notification, shell
 } from 'electron'
 import electron from 'electron'
-import { Notice } from '../lib/utils';
+import Utils from '../lib/utils';
 import path from 'path';
 
 class Context
@@ -31,7 +31,7 @@ class Context
             if(model.hooks) this.hooks = model.hooks();
         } catch (error) {
             console.error(error);
-            Notice({ title: `${ext.fishpi.key}`, body: `载入失败：${error.message}` }).show();
+            Utils.Notice({ title: `${ext.fishpi.key}`, body: `载入失败：${error.message}` }).show();
         }
     }
 
