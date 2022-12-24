@@ -1,5 +1,5 @@
 <template>
-<div class="layout chat-layout">
+<div class="layout chat-layout" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chat', instance: this}))">
     <section class="content">
         <section class="chat-content" ref="chat-content" @mouseover="$refs['chat-content'].focus()" @mousewheel="chatScroll">
             <ScrollBar v-if="$refs.chatlist && $refs['chat-content']" class="chat-scroll" 

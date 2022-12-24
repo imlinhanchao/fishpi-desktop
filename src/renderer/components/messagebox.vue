@@ -175,14 +175,16 @@
                 this.$emit('update:discussed', null)
             }
             msg = await this.$ipc.sendSync('fishpi.hooks.sendMsg', { msg });
-            let rsp = await this.$fishpi.chatroom.send(msg);
-            if (!rsp) return;
-            if (rsp.code != 0) {
-                this.$Message.error(rsp.msg);
-                return false;
+            if (msg) {
+                let rsp = await this.$fishpi.chatroom.send(msg);
+                if (!rsp) return;
+                if (rsp.code != 0) {
+                    this.$Message.error(rsp.msg);
+                    return false;
+                }
+                window.scrollTo(0, 0);
             }
-            this.msg = "";
-            window.scrollTo(0, 0);
+            if (msg !== false) this.msg = "";
             return true;
         },
         clear() {

@@ -1,10 +1,10 @@
 <template>
-<section class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}">
-    <div class="msg-avatar-box" @contextmenu="userMenuShow">
+<section class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}"  @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chat-item', instance: this}))">
+    <div class="msg-avatar-box" @contextmenu.stop="userMenuShow">
         <Avatar class="msg-avatar user-card" :data-user="item.senderUserName" :src="item.senderAvatar" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
-        <div ref="msg" class="msg-contain" @contextmenu="msgMenuShow">
+        <div ref="msg" class="msg-contain" @contextmenu.stop="msgMenuShow">
             <div class="arrow" v-if="!isImgOnly"/>
             <div class="msg-content md-style" :data-html="item.content" v-html="formatContent" v-if="!isImgOnly"/>
             <span class="msg-img" v-if="isImgOnly" v-html="formatContent"></span>
@@ -69,6 +69,7 @@
                     });
                 }
             });
+            menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chat-item', instance: this}))
             this.$root.popupMenu(menu);
         },
         msgMenuShow(ev) {
@@ -107,8 +108,7 @@
                     });
                 }
             }
-            let selection = window.getSelection();
-            if (selection.rangeCount > 0 && !selection.isCollapsed) menu = menu.concat(this.$root.defaultMenu)
+            menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chat-item', instance: this}))
             this.$root.popupMenu(menu);
         },
     }

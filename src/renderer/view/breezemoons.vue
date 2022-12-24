@@ -1,5 +1,5 @@
 <template>
-<div id="breezemoons" class="layout" v-if="current">
+<div id="breezemoons" class="layout" v-if="current" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'breezemoons', instance: this}))">
     <section class="breezemoons">
         <Input ref="message"
                 type="text"

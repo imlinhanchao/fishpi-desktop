@@ -1,6 +1,6 @@
 <template>
-<section ref="msg-view" class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}" :style="autoVisibleStyle">
-    <div class="msg-avatar-box" @contextmenu="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
+<section ref="msg-view" class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}" :style="autoVisibleStyle" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chatroom-item', instance: this}))">
+    <div class="msg-avatar-box" @contextmenu.stop="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
         <Avatar class="msg-avatar user-card" :data-user="item.userName" :src="item.userAvatarURL" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
@@ -45,7 +45,7 @@
                 <span class="redpacket-word">领取了</span>
             </div>            
         </div>
-        <div ref="msg" class="msg-contain" v-if="!isRedpacket" @contextmenu="msgMenuShow">
+        <div ref="msg" class="msg-contain" v-if="!isRedpacket" @contextmenu.stop="msgMenuShow">
             <div class="arrow" v-if="!isImgOnly"/>
             <div class="msg-content md-style" :data-html="item.content" v-html="formatContent" v-if="!isImgOnly"/>
             <span class="msg-img" v-if="isImgOnly" v-html="formatContent"></span>
@@ -193,6 +193,7 @@
                     });
                 }
             });
+            menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chatroom-item', instance: this}))
             this.$root.popupMenu(menu);
         },
         msgMenuShow(ev) {
@@ -273,8 +274,7 @@
                     }
                 });
             }
-            let selection = window.getSelection();
-            if (selection.rangeCount > 0 && !selection.isCollapsed) menu = menu.concat(this.$root.defaultMenu)
+            menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chatroom-item', instance: this}))
             this.$root.popupMenu(menu);
         },
         open() {

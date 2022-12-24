@@ -54,7 +54,7 @@
 </style>
 
 <template>
-    <span class="music-module no-drag">
+    <span class="music-module no-drag" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'music', instance: this}))">
         <Button class="music-btn" type="text" @click="visible=!visible" v-if="$root.playSongs.length > 0"><Icon class="" custom="fa fa-music"/></Button>
         <span :class="{'music-visible': visible }" class="music-player plyr--audio" v-if="$root.playSongs.length > 0">
             <button title="关闭播放器" class="audio-control-btn audio-close" @click="$root.playSongs = []"><Icon custom="fa fa-times"></Icon></button>

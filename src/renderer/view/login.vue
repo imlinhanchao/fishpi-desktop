@@ -37,7 +37,7 @@
 </style>
 
 <template>
-<div id="login" class="layout">
+<div id="login" class="layout" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'login', instance: this}))">
     <section class="layout-logo">
         <img src="../assets/icon.png" alt="" /><span>摸鱼派·登录</span>
     </section> 
