@@ -1,5 +1,5 @@
 <template>
-<div id="chatroom" class="layout" v-if="current">
+<div id="chatroom" class="layout" v-if="current" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chatroom', instance: this}))">
     <section class="content">
         <section class="chat-content" ref="chat-content" @mouseover="$refs['chat-content'].focus()" @mousewheel="chatScroll">
             <ScrollBar v-if="$refs.chatlist && $refs['chat-content']" class="chat-scroll" 
@@ -40,7 +40,7 @@
     <section class="sidebar">
         <p>当前在线({{onlines.length}})</p>
         <ul class="online-list">
-            <li class="online-item user-card" :data-user="user.userName" v-for="user in onlines" @contextmenu="userMenuShow(user)"  @dblclick="$router.push(`/chat/${user.userName}`)">
+            <li class="online-item user-card" :data-user="user.userName" v-for="user in onlines" @contextmenu.stop="userMenuShow($event, user)"  @dblclick="$router.push(`/chat/${user.userName}`)">
                 <Avatar :src="user.userAvatarURL48" /><span class="online-user">{{user.userName}}</span>
             </li>
         </ul>
@@ -320,7 +320,7 @@
                 }
                 this.chatScrollPos += ev.deltaY;
             },
-            userMenuShow(item) {
+            userMenuShow(ev, item) {
                 if (item.userName == this.current.userName) return;
                 let menu = [];
                 menu.push({
@@ -353,6 +353,7 @@
                         });
                     }
                 });
+                menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chatroom', instance: this}))
                 this.$root.popupMenu(menu);
             },
             gotoMsg(oId) {

@@ -62,6 +62,10 @@ class Context
             icon, url, id: this.ext.fishpi.key, name: this.ext.displayName || this.ext.description,
         })
     }
+
+    setHookJs(file) {
+        this.wins.main.webContents.send('fishpi.global.hookjs', file)
+    }
 }
 
 export default Context;

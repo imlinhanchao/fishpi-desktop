@@ -1,5 +1,5 @@
 <template>
-<section id="redpacket" class="redpacket-window">
+<section id="redpacket" class="redpacket-window" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'redpacket', instance: this}))">
     <section class="redpacket-control">
         <Button type="text" @click="close"><Icon custom="fa fa-times"></Icon></Button>
     </section>

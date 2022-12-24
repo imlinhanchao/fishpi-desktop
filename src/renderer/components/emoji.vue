@@ -1,5 +1,5 @@
 <template>
-<section class="emoji-form">
+<section class="emoji-form"  @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'emoji', instance: this}))">
     <Tabs value="emoji" type="card">
         <TabPane :label="emojiLabel" name="emoji">
             <article class="face-list">
@@ -10,7 +10,7 @@
         </TabPane>
         <TabPane :label="facesLabel" name="faces">
             <article class="face-list face-diy">
-                <section class="face-item" @contextmenu="menu(e)" v-for="e in faces" @click="sendFace(e, 'fav')">
+                <section class="face-item" @contextmenu.stop="menu(e)" v-for="e in faces" @click="sendFace(e, 'fav')">
                     <img :src="e">
                 </section>    
                 <section class="face-add" @click="$refs['facefile'].click()">

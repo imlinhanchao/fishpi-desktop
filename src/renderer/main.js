@@ -58,7 +58,7 @@ window.$VueApp = new Vue({
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             if (e.target.dataset.menu != 'true') return e.stopPropagation();
-            this.popupMenu(this.defaultMenu);
+            this.popupMenu(this.getDefaultMenu(ev, { name: 'root', instance: this}));
         }, false)
 
         document.addEventListener('click', (ev) => {
@@ -97,6 +97,17 @@ window.$VueApp = new Vue({
             if (index >= 0) this.$set(this.sidebars, index, args);
             else this.sidebars.push(args);
         })
+
+        this.$ipc.listen('fishpi.global.hookjs', (event, args) => {
+            console.dir(event);
+            console.dir(args);
+            try {
+                let hook = __non_webpack_require__(args);
+                hook.activate($VueApp);
+            } catch (err) {
+                console.error(err)
+            }
+        })
     },
     data: {
         token: localStorage.getItem('token') || '',
@@ -112,10 +123,12 @@ window.$VueApp = new Vue({
         cardTimer: 0,
         mouse: { x: 0, y: 0 },
         defaultMenu: [{
+            type: 'separator',
+        }, {
             label: '复制',
             role: 'copy',
             accelerator: 'CmdOrCtrl+C',
-        },{
+        }, {
             label: '粘贴',
             role: 'paste',
             accelerator: 'CmdOrCtrl+V',
@@ -128,6 +141,18 @@ window.$VueApp = new Vue({
         }
     },
     methods: {
+        getDefaultMenu(ev, component) {
+            let menu = [... this.defaultMenu];
+            try {
+                if (window.customMenu) {
+                    let custom = window.customMenu(ev, component)
+                    if (custom instanceof Array) menu = menu.concat([{
+                        type: 'separator',
+                    }, ...custom]);
+                }
+            } catch (error) {}
+            return menu;
+        },
         isLogin() {
             return !!this.token;
         },

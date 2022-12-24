@@ -1,5 +1,5 @@
 <template>
-<section class="layout" id="img-form">
+<section class="layout" id="img-form" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'img', instance: this}))">
     <header class="drag header">
         <h1 class="drag"> <img src='../assets/icon.png' />
         <span id="win-title" class="drag" :title="imageName">{{ imageName }}</span></h1>

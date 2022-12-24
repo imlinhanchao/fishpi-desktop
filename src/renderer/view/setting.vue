@@ -1,5 +1,5 @@
 <template>
-<div id="setting" class="layout">
+<div id="setting" class="layout" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'setting', instance: this}))">
     <section class="update-card" v-if="update && updateModal">
         <header class="update-header">{{update.name}}</header>
         <section class="update-time">{{new Date(update.created_at).toLocaleString()}}</section>
@@ -88,7 +88,7 @@
                         <Checkbox v-model="setting.message.notice.at" @on-change="changeSetting" >提及了我</Checkbox>
                         <Checkbox v-model="setting.message.notice.reply" @on-change="changeSetting" >收到回复</Checkbox>
                         <Checkbox v-model="setting.message.notice.sys" @on-change="changeSetting" >系统公告</Checkbox>
-                        <Checkbox v-model="setting.message.notice.talk"@on-change="changeSetting" >聊天室聊到了</Checkbox>
+                        <Checkbox v-model="setting.message.notice.talk" @on-change="changeSetting" >聊天室聊到了</Checkbox>
                         <Input v-model="setting.message.notice.talkmsg" @on-change="changeSetting" size="small" placeholder="内容正则" style="width: auto;margin: 5px;"/>
                     </section>
                 </FormItem>

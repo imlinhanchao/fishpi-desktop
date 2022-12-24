@@ -1,5 +1,5 @@
 <template>
-<div class="layout" v-if="ext">
+<div class="layout" v-if="ext" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'context', instance: this}))">
     <webview :preload="preloadJs"
         webpreferences="contextIsolation=no"
         nodeintegration

@@ -50,7 +50,7 @@
 </style>
 
 <template>
-<div class="layout">
+<div class="layout" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'home', instance: this}))">
     <section id="home-sidebar" class="sidebar">
         <ul class="feature-list">
             <li class="feature-item user-card-click" :data-user="account.userName" :class="{ 'feature-active': $route.meta.name == 'account' }"><Avatar :src="account.userAvatarURL" /></li>

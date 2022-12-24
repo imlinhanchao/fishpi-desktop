@@ -1,5 +1,5 @@
 <template>
-<div class="layout">
+<div class="layout" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'extension', instance: this}))">
     <div class="ext-list">
         <div class="ext-item" :ref="e.fishpi.key" v-bind:key="e.fishpi.key" v-for="e in extensions" @click="viewDetail(e)">
             <div class="ext-icon">
