@@ -21,11 +21,8 @@
                         <div>{{redpacketType[item.content.type]}}</div>
                     </div>
                 </div>
-                <div v-show="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
-                    <div class="gesture-choose" title="猜猜我出什么呢~" @click="gestureOpen=!gestureOpen">
-                        <img src="../assets/gesture.png" alt="">
-                    </div>
-                    <div class="gesture-list" :class="{ 'gesture-open': gestureOpen} ">
+                <div title="猜猜我出什么呢~" v-show="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
+                    <div class="gesture-list">
                         <div class="gesture-item rock" @click="gesture(0)">
                             <img src="../assets/Rock.png" alt="" />
                         </div>
@@ -39,7 +36,7 @@
                 </div>
             </div>
             <div class="redpacket-users" v-if="item.content.who && item.content.who.length">
-                <span :data-user="u.userName" class="redpacket-user user-card" :key="u.userId" v-for="u in item.content.who" :title="u.userName">
+                <span @contextmenu.stop="userMenuShow($event, u.userName)" :data-user="u.userName" class="redpacket-user user-card" :key="u.userId" v-for="u in item.content.who" :title="u.userName">
                     <Avatar class="redpacket-avatar" :src="u.avatar" />
                 </span>
                 <span class="redpacket-word">领取了</span>
@@ -52,7 +49,7 @@
             <span class="plus-one" @click="doubleMsg" v-if="plusone">+1</span>
         </div>
         <div class="db-users" v-if="hasDbUser">
-            <span :data-user="db.userName" class="db-user user-card" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickame || db.userName">
+            <span @contextmenu.stop="userMenuShow($event, db.userName)" :data-user="db.userName" class="db-user user-card" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickame || db.userName">
                 <Avatar class="db-avatar" :src="db.userAvatarURL" />
             </span>
             <span class="db-word">也这么说</span>
@@ -160,25 +157,26 @@
                 this.$refs['msg-view'].style.background = 'transparent'
             }, 700)
         },
-        userMenuShow(ev) {
-            if (this.item.userName == this.current.userName) return;
+        userMenuShow(ev, userName) {
+            userName = userName || this.item.userName;
+            if (userName == this.current.userName) return;
             let menu = [];
             menu.push({
-                label: `@${this.item.userName}`,
+                label: `@${userName}`,
                 click: () => {
-                    this.$emit('msg', `@${this.item.userName} `);
+                    this.$emit('msg', `@${userName} `);
                 }
             });
             menu.push({
                 label: `单独聊聊`,
                 click: () => {
-                    this.$router.push(`/chat/${this.item.userName}`);
+                    this.$router.push(`/chat/${userName}`);
                 }
             });
             menu.push({
                 label: `访问主页`,
                 click: () => {
-                    window.open(`https://fishpi.cn/member/${this.item.userName}`);
+                    window.open(`https://fishpi.cn/member/${userName}`);
                 }
             });
             menu.push({
@@ -188,7 +186,7 @@
                         call: 'openRedpacket',
                         args: {
                             id: 'send',
-                            user: this.item.userName
+                            user: userName
                         }
                     });
                 }
