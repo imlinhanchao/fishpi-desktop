@@ -20,11 +20,7 @@
         components: {
         },
         mounted () {
-            console.log(__static)
-            if (!this.$route.params.ext) return;
-            this.ext = this.getExt()
-            if (!this.ext) return;
-            this.$root.title = this.ext.name;
+            this.init();
             this.$ipc.listen('fishpi.global.listener', this.listen);
             this.$nextTick(() => {
                 this.$refs.webview.addEventListener('dom-ready', this.loaded);
@@ -54,6 +50,10 @@
             }    
         },
         watch: {
+            $route(){
+                this.init();
+                
+            }
         },
         filters: {
         },
@@ -63,6 +63,12 @@
             }
         },
         methods: {
+            init () {
+                if (!this.$route.params.ext) return;
+                this.ext = this.getExt()
+                if (!this.ext) return;
+                this.$root.title = this.ext.name;
+            },
             loaded() {
                 if(!this.$refs.webview.isDevToolsOpened() && process.env.EXT_ENV == 'development') 
                     this.$refs.webview.openDevTools()
