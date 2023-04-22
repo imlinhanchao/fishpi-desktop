@@ -157,7 +157,7 @@
                 this.$refs['msg-view'].style.background = 'transparent'
             }, 700)
         },
-        userMenuShow(ev, userName) {
+        async userMenuShow(ev, userName) {
             userName = userName || this.item.userName;
             if (userName == this.current.userName) return;
             let menu = [];
@@ -191,10 +191,10 @@
                     });
                 }
             });
-            menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chatroom-item', instance: this}))
+            menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'chatroom-item', instance: this}))
             this.$root.popupMenu(menu);
         },
-        msgMenuShow(ev) {
+        async msgMenuShow(ev) {
             let menu = [];
             let target = ev.target;
             if (this.item.userName != this.current.userName) {
@@ -272,7 +272,7 @@
                     }
                 });
             }
-            menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chatroom-item', instance: this}))
+            menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'chatroom-item', instance: this}))
             this.$root.popupMenu(menu);
         },
         open() {

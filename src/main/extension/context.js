@@ -19,6 +19,9 @@ class Context
         this.events.setSidebar = (icon, url) => {
             this.setSidebar(icon, url);
         }
+        this.events.setHookJs = (file) => {
+            this.setHookJs(file);
+        }
 
         this.listener();
         try {
