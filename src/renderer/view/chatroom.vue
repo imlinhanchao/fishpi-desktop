@@ -320,7 +320,7 @@
                 }
                 this.chatScrollPos += ev.deltaY;
             },
-            userMenuShow(ev, item) {
+            async userMenuShow(ev, item) {
                 if (item.userName == this.current.userName) return;
                 let menu = [];
                 menu.push({
@@ -353,7 +353,7 @@
                         });
                     }
                 });
-                menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chatroom', instance: this}))
+                menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'chatroom', instance: this}))
                 this.$root.popupMenu(menu);
             },
             gotoMsg(oId) {

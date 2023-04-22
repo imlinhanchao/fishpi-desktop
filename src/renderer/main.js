@@ -58,7 +58,7 @@ window.$VueApp = new Vue({
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             if (e.target.dataset.menu != 'true') return e.stopPropagation();
-            this.popupMenu(this.getDefaultMenu(ev, { name: 'root', instance: this}));
+            this.popupMenu(this.getDefaultMenu(e, { name: 'root', instance: this }), true);
         }, false)
 
         document.addEventListener('click', (ev) => {
@@ -121,6 +121,7 @@ window.$VueApp = new Vue({
         playSongs:[],
         playIndex: 0,
         cardTimer: 0,
+        customMenu: [],
         mouse: { x: 0, y: 0 },
         defaultMenu: [{
             type: 'separator',
@@ -141,12 +142,17 @@ window.$VueApp = new Vue({
         }
     },
     methods: {
-        getDefaultMenu(ev, component) {
+        async setCustomMenu(name, call) {
+            let index = this.customMenu.findIndex(c => c.name == name);
+            if (index >= 0) this.customMenu.splice(index, 1, { name, call });
+            else this.customMenu.push({ name, call });
+        },
+        async getDefaultMenu(ev, component) {
             let menu = [... this.defaultMenu];
             try {
-                if (window.customMenu) {
-                    let custom = window.customMenu(ev, component)
-                    if (custom instanceof Array) menu = menu.concat([{
+                for( let c of this.customMenu) {
+                    let custom = await c.call(ev, component)
+                    if (custom instanceof Array && custom.length) menu = menu.concat([{
                         type: 'separator',
                     }, ...custom]);
                 }
@@ -203,7 +209,9 @@ window.$VueApp = new Vue({
                 y: actualTop,
             }
         },
-        popupMenu(menu) {
+        async popupMenu(menuGenerate, popup=false) {
+            const menu = await menuGenerate;
+            if (menu.length <= 3 && !popup) return;
             Menu.buildFromTemplate(menu).popup({ window: getCurrentWindow() })
         },
         prevSong() {

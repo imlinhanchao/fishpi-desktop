@@ -3,6 +3,7 @@
     <webview :preload="preloadJs"
         webpreferences="contextIsolation=no"
         nodeintegration
+        disablewebsecurity
         :id="`ext_${ext.id}`" 
         ref="webview" 
         :src="ext.url" 
