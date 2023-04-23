@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div title="猜猜我出什么呢~" v-show="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
-                    <div class="gesture-list">
+                    <div class="gesture-list gesture-open">
                         <div class="gesture-item rock" @click="gesture(0)">
                             <img src="../assets/Rock.png" alt="" />
                         </div>
