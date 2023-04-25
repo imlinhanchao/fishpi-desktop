@@ -18,7 +18,11 @@
                 <Button v-if="!update" type="success" size="small" @click="updateCheck" :loading="checking">{{updateBtn}}</Button>
                 <Button v-if="update" type="success" size="small" @click="updateBegin" :loading="updating">{{updateBtn}}</Button>
             </p>
-        </section>
+          </section>
+          <p class="app-version">
+            <label for="update-mirror">更新镜像：</label>
+            <Input id="update-mirror" v-model="setting.global.updateMirror" @on-change="changeSetting" placeholder="更新镜像域名" />
+          </p>
         <section id="setting_0">
             <Divider orientation="left">通用</Divider>
             <Form class="setting-form" :label-width="80" v-model="setting.global" :show-message="false">
@@ -265,6 +269,7 @@
                 if (this.updating) return;
                 this.updating = true;
                 let that = this;
+                this.update.mirror = this.setting.global.updateMirror;
                 this.$ipc.send('win-update-app', this.update, 
                     (ev, data) => {
                         console.dir(data);
@@ -351,6 +356,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin: 5px 0;
+    * {
+      white-space: nowrap;
+    }
 }
 .update-card {
     overflow: hidden;
