@@ -129,7 +129,7 @@ class Notice {
         data.forEach(d => {
             this.noticed.reply.push(d.oId);
             this.sysNotice(d.commentArticleTitle, 
-            `${d.userName}回复你 ${this.toText(d.content)}`, `https://fishpi.cn${d.commentSharpURL}`)
+            `${d.commentAuthorName}回复你 ${this.toText(d.commentContent)}`, `https://fishpi.cn${d.commentSharpURL}`)
         })
     }
 

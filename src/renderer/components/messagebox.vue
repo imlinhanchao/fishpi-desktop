@@ -141,9 +141,10 @@
     },
     methods: {
         async sendMsg() {
+            if (this.sending) return;
             this.msg = this.toMusicBox(this.msg);
             if (this.chatroom) {
-                return this.sendChatroom();
+                return await this.sendChatroom();
             }
             else {
                 if (this.quote) {
@@ -152,7 +153,9 @@
                     this.msg = `回复：\n\n${raw}\n\n${this.msg}`;
                     this.$emit('update:quote', null)
                 }
+                this.sending = true;
                 this.$emit('send', this.msg, (error) => {
+                    this.sending = false;
                     if (error) this.$Message.error(rsp.msg);
                     else this.msg = '';
                 });
@@ -174,17 +177,22 @@
                 msg += `\r\n*\`# ${this.discussed} #\`*`
                 this.$emit('update:discussed', null)
             }
+            msg += `<span class="client-${process.platform}-message"/>`;
             msg = await this.$ipc.sendSync('fishpi.hooks.sendMsg', { msg });
             if (msg) {
+                let src_msg = this.msg;
+                this.msg = "";
+                this.sending = true;
                 let rsp = await this.$fishpi.chatroom.send(msg);
+                this.sending = false;
                 if (!rsp) return;
                 if (rsp.code != 0) {
                     this.$Message.error(rsp.msg);
+                    this.msg = src_msg;
                     return false;
                 }
                 window.scrollTo(0, 0);
             }
-            if (msg !== false) this.msg = "";
             return true;
         },
         clear() {

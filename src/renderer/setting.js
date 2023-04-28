@@ -28,6 +28,7 @@ class Setting {
                 topWindow: false,
                 autoReward: false,
                 music: 0,
+                updateMirror: '',
             },
             chatroom: {
                 shield: [],
