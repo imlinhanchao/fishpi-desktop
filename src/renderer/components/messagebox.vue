@@ -13,12 +13,25 @@
             <Button type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
                 @click="emojiForm = !emojiForm" 
                 title="发表情"><Icon custom="fa fa-smile-o"/></Button>
+            <Button type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
+                @click="modalBarrage = true" title="发弹幕"><Icon custom="fa fa-bullhorn"/></Button>
             <Button v-if="chatroom" type="text" class="msg-redpacket msg-control" title="发红包" @click="sendRedpacket">
                 <svg class="redpacket-icon">
                     <use xlink:href="#redPacketIcon"></use>
                 </svg>
             </Button>
             <Emoji ref="emoji" v-show="emojiForm" @emoji="pushEmoji" />
+            <Modal
+                v-model="modalBarrage"
+                title="发个弹幕"
+                :loading="sending"
+                @on-ok="sendBarrage">
+                <p>发送弹幕每次将花费 <b>{{ barragePay.cost }}</b> <span>{{ barragePay.unit }}</span>；最大长度32字符。</p>
+                <section class="barrage-form">
+                    <ColorPicker v-model="barrage.color" />
+                    <Input v-model="barrage.word" placeholder="弹幕" max-length="32" />
+                </section>
+            </Modal>
         </section>
         <section class="chat-sender-resize" @mousedown="resizeBegin"><hr></section>
         <section class="chat-sender">
@@ -45,7 +58,7 @@
                 @click="sendMsg"
                 :loading="sending"
             >
-                <Icon custom="fa fa-paper-plane" />
+                <Icon v-if="!sending" custom="fa fa-paper-plane" />
             </Button>
             <section class="msg-more">
                 <Tooltip placement="top-start" v-if="quote" :max-width="innerWidth * .8">
@@ -87,6 +100,9 @@
                 case 'emoji': this.addEmoji(data.value); break;
             }
         }, false);
+        if (this.chatroom) {
+            this.$fishpi.chatroom.barragePay().then(data => this.barragePay = data);
+        }
         document.addEventListener('paste', this.onPaste);
         document.addEventListener('mousemove', this.resizeMove);
         document.addEventListener('mouseup', this.resizeEnd);
@@ -107,7 +123,16 @@
             uploading: false,
             resize: false,
             msgHeight: localStorage.getItem('message-height') || 80,
-            autocompleteBroad: new BroadcastChannel('autocomplete-choose')
+            autocompleteBroad: new BroadcastChannel('autocomplete-choose'),
+            modalBarrage: false,
+            barragePay: {
+                cost: 20,
+                unit: '积分'
+            },
+            barrage: {
+                word: '',
+                color: '#FFFFFF',
+            }
         }
     },
     watch: {
@@ -140,6 +165,18 @@
         }
     },
     methods: {
+        async sendBarrage() {
+            if (!this.barrage.word) return;
+            this.sending = true;
+            let rsp = await this.$fishpi.chatroom.barrage(this.barrage.word, this.barrage.color);
+            this.sending = false;
+            if (rsp.error) this.$Message.error(rsp.msg);
+            else {
+                this.modalBarrage = false;
+                this.barrage.word = '';
+                this.$Message.success(rsp.msg);
+            }
+        },
         async sendMsg() {
             if (this.sending) return;
             this.msg = this.toMusicBox(this.msg);
@@ -411,6 +448,9 @@
             resize: none;
         }
     }
+}
+.barrage-form {
+    display: flex;
 }
 </style>
 <style lang="less">

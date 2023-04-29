@@ -32,7 +32,7 @@
                 title="编辑话题"
                 @on-ok="editDiscusse">
                 <p>修改话题需要16积分，将自动从账户中扣除；最大长度16字符，不合法字符将被自动过滤。</p>
-                <Input v-model="newDiscusse" placeholder="话题" />
+                <Input max-length="16" v-model="newDiscusse" placeholder="话题" />
             </Modal>
         </section>
         <MessageBox ref="msgbox" @clear="reload" :quote.sync="quote" :discussed.sync="discussed"/>

@@ -54,8 +54,9 @@ export default {
 </script>
 <style lang="less" scoped>
 .via {
-    font-size: 60%;
+    font-size: 40%;
     margin: 0 3px 0;
+    opacity: .3;
     .vscode {
         margin-top: 5px;
         background-color: currentColor;
