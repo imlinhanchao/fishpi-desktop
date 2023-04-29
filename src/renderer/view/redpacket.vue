@@ -69,7 +69,7 @@
                     </span>
                 </section>
             </FormItem>
-            <FormItem label="积分"><InputNumber v-model="redpacket.money" :min="32" :max="20000" placeholder="积分" /></FormItem>
+            <FormItem label="积分"><InputNumber v-model="redpacket.money" placeholder="积分" /></FormItem>
             <FormItem v-if="!isRockPaperScissors && !isSpecify && !isSpecifySend" label="个数"><InputNumber v-model="redpacket.count" :min="1" :max="1000" placeholder="个数" /></FormItem>
             <FormItem label="留言"><Input class="redpacket-msg" type="textarea" :rows="3" v-model="redpacket.msg" :placeholder="defaultRedpackWord[redpacket.type]" /></FormItem>
         </Form>
