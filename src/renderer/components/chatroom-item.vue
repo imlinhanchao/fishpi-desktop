@@ -1,8 +1,8 @@
 <template>
 <section ref="msg-view" class="msg-item" 
-    :title="item.barragerColor ? `${item.userNickname || item.userName}: ${item.content}` : item.time"
+    :title="isBaggager ? `${item.userNickname || item.userName}: ${item.content}` : item.time"
     v-if="item.content" 
-    :class="{ barrager: !!item.barragerColor, 'msg-current': isCurrent}" 
+    :class="{ barrager: isBaggager, 'msg-current': isCurrent}" 
     :style="autoVisibleStyle" 
     @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chatroom-item', instance: this}))"
 >
@@ -86,7 +86,7 @@
     },
     mounted () {
         this.$nextTick(() => {
-            if (this.item.barragerColor) {
+            if (isBaggager) {
                 setTimeout(() => {
                     this.$refs['msg-view'].classList.add('barrager-show');
                 }, 100);
@@ -129,6 +129,9 @@
         readRedpacket() {
             return this.readed || (this.item.content.who && this.item.content.who.find(w => w.userName == this.current.userName))
         },
+        isBaggager() {
+            return !!this.item.barragerColor
+        },
         isRedpacket() {
             return this.item.content.msgType == 'redPacket'
         },
@@ -141,7 +144,7 @@
 
         },
         isImgOnly() {
-            return !this.item.barragerColor && (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
+            return !isBaggager && (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
         },
         current() {
             return this.$root.current;
