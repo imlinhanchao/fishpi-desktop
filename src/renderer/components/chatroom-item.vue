@@ -1,5 +1,11 @@
 <template>
-<section ref="msg-view" class="msg-item" v-if="item.content" :class="{'msg-current': isCurrent}" :style="autoVisibleStyle" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chatroom-item', instance: this}))">
+<section ref="msg-view" class="msg-item" 
+    :title="item.barragerColor ? `${item.userNickname || item.userName}: ${item.content}` : item.time"
+    v-if="item.content" 
+    :class="{ barrager: !!item.barragerColor, 'msg-current': isCurrent}" 
+    :style="autoVisibleStyle" 
+    @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chatroom-item', instance: this}))"
+>
     <div class="msg-avatar-box" @contextmenu.stop="userMenuShow" @dblclick="$router.push(`/chat/${item.userName}`)">
         <Avatar class="msg-avatar user-card" :data-user="item.userName" :src="item.userAvatarURL" />
     </div>
@@ -44,7 +50,9 @@
         </div>
         <div ref="msg" class="msg-contain" v-if="!isRedpacket" @contextmenu.stop="msgMenuShow">
             <div class="arrow" v-if="!isImgOnly"/>
-            <div class="msg-content md-style" :data-html="item.content" v-html="formatContent" v-if="!isImgOnly"/>
+            <div class="msg-content md-style" :style="{
+                color: item.barragerColor, 
+            }" :data-html="item.content" v-html="formatContent" v-if="!isImgOnly"/>
             <span class="msg-img" v-if="isImgOnly" v-html="formatContent"></span>
             <span class="plus-one" @click="doubleMsg" v-if="plusone">+1</span>
         </div>
@@ -77,6 +85,13 @@
         }
     },
     mounted () {
+        this.$nextTick(() => {
+            if (this.item.barragerColor) {
+                setTimeout(() => {
+                    this.$refs['msg-view'].classList.add('barrager-show');
+                }, 100);
+            }
+        })
     },
     updated() {
         if (this.autoHide) return;
@@ -126,7 +141,7 @@
 
         },
         isImgOnly() {
-            return (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
+            return !this.item.barragerColor && (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
         },
         current() {
             return this.$root.current;
@@ -535,5 +550,72 @@
             justify-content: flex-end;
         }
     }
+
+    &.barrager {
+        background-color: var(--main-chatroom-barrager-background-color);
+        border-radius: 45px;
+        margin: 10px 5px;
+        font-weight: bold;
+        box-shadow: 0 0 5px 1px var(--main-chatroom-barrager-background-color);
+        overflow: hidden;
+        transition: all .5s;
+        height: 0;
+        opacity: 0;
+        width: 0%;
+        max-width: calc(95%);
+        display: inline-flex;
+        &.barrager-show {
+            opacity: 1;
+            height: 45px;
+            animation: shake 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both 0.2s;
+            width: auto;
+        }
+        .msg-content {
+            background-color: transparent;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: calc(100%);
+        }
+        .msg-user, .arrow {
+            display: none;
+        }
+        .msg-avatar-box .msg-avatar {
+            width: 45px;
+            height: 45px;
+            margin: 0;
+        }
+        .msg-item-contain, .msg-contain {
+            display: inline-flex;
+            width: auto;
+            max-width: calc(100%);
+        }
+        &.msg-current {
+            flex-direction: row;
+            .msg-contain {
+                flex-direction: row;
+            }
+        }
+    }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-8px);
+  }
+  40% {
+    transform: translateY(0);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+  80% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-2px);
+  }
 }
 </style>

@@ -6,6 +6,9 @@ import {
 import electron from 'electron'
 import Utils from '../lib/utils';
 import path from 'path';
+import fetch from 'node-fetch';
+
+globalThis.fetch = fetch;
 
 class Context
 {

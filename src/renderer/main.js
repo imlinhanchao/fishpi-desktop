@@ -171,6 +171,7 @@ window.$VueApp = new Vue({
         },
         async login(account) {
             let rsp = await this.$fishpi.login(account);
+            console.log(rsp);
             if (!rsp) return;
             if (rsp.code != 0) {
                 throw(new Error(rsp.msg));

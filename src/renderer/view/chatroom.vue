@@ -190,6 +190,15 @@
                             }
                         }
                         break;
+                    case 'barrager': {
+                        msg.data = {
+                            content: msg.data.barragerContent,
+                            userName: msg.data.userName,
+                            userNickname: msg.data.userNickname,
+                            userAvatarURL: msg.data.userAvatarURL,
+                            barragerColor: msg.data.barragerColor,
+                        }
+                    }
                     case 'msg':
                     case 'redPacket':
                         this.toBottom = false;
