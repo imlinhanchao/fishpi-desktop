@@ -10,7 +10,10 @@
         <Avatar class="msg-avatar user-card" :data-user="item.userName" :src="item.userAvatarURL" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
-        <div class="msg-user" :title="item.userName">{{item.userNickname || item.userName}}</div>
+        <div class="msg-user" :title="item.userName">
+            <span>{{item.userNickname || item.userName}}</span>
+            <Via :content="item.content" />
+        </div>
         <div class="redpacket-item"
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"
             v-if="isRedpacket">
@@ -67,9 +70,11 @@
 </template>
 
 <script>
+  import Via from './via';
   export default {
     name: 'chatroom-item',
     components: {
+        Via
     },
     props: {
         item: {
@@ -86,7 +91,7 @@
     },
     mounted () {
         this.$nextTick(() => {
-            if (isBaggager) {
+            if (this.isBaggager) {
                 setTimeout(() => {
                     this.$refs['msg-view'].classList.add('barrager-show');
                 }, 100);
@@ -144,7 +149,7 @@
 
         },
         isImgOnly() {
-            return !isBaggager && (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
+            return !this.isBaggager && (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
         },
         current() {
             return this.$root.current;
@@ -442,6 +447,12 @@
         .msg-user{
             margin-left: 1em;
             font-size: .8em;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            * {
+                vertical-align: text-top;
+            }
         }
 
         .arrow{
@@ -520,7 +531,7 @@
             color: var(--main-chatroom-user-message-color);
         }
         .msg-user {
-            text-align: right;
+            justify-content: flex-end;
             margin-right: 1em;
         }
         .plus-one {

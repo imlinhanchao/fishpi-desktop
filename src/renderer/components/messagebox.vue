@@ -177,6 +177,7 @@
                 msg += `\r\n*\`# ${this.discussed} #\`*`
                 this.$emit('update:discussed', null)
             }
+            msg = msg.replace(/<span class="[^"]+-message"\/>/g, '')
             msg += `<span class="client-${process.platform}-message"/>`;
             msg = await this.$ipc.sendSync('fishpi.hooks.sendMsg', { msg });
             if (msg) {
