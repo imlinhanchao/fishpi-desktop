@@ -37,13 +37,25 @@
         </section>
         <MessageBox ref="msgbox" @clear="reload" :quote.sync="quote" :discussed.sync="discussed"/>
     </section>
-    <section class="sidebar">
-        <p>当前在线({{onlines.length}})</p>
-        <ul class="online-list">
-            <li class="online-item user-card" :data-user="user.userName" v-for="user in onlines" @contextmenu.stop="userMenuShow($event, user)"  @dblclick="$router.push(`/chat/${user.userName}`)">
-                <Avatar :src="user.userAvatarURL48" /><span class="online-user">{{user.userName}}</span>
-            </li>
-        </ul>
+    <section class="sidebar-box">
+        <!-- 折叠按钮 -->
+        <div class="sidebar-toggle" @click="showSidebar = !showSidebar">
+            <Icon custom="fa fa-angle-right" v-if="showSidebar"/>
+            <Icon custom="fa fa-angle-left" v-else />
+        </div>
+        <section class="sidebar" :class="{ 'sidebar-hide': !showSidebar }">
+            <p>当前在线({{onlines.length}})</p>
+            <p><Input v-model="onlineSearch" placeholder="搜索" /></p>
+            <ul class="online-list">
+                <li 
+                    class="online-item user-card" 
+                    :data-user="user.userName" 
+                    v-for="user in onlines.filter(o => !onlineSearch || o.userName.includes(onlineSearch))" @contextmenu.stop="userMenuShow($event, user)"  
+                    @dblclick="$router.push(`/chat/${user.userName}`)">
+                    <Avatar :src="user.userAvatarURL48" /><span class="online-user">{{user.userName}}</span>
+                </li>
+            </ul>
+        </section>
     </section>
 </div>
 </template>
@@ -82,7 +94,9 @@
                 chatScrollPos: 0,
                 chatScrollTotal: 0,
                 newMessage: 0,
-                setting: this.$root.setting.value.chatroom
+                setting: this.$root.setting.value.chatroom,
+                onlineSearch: '',
+                showSidebar: !localStorage.getItem('showSidebar') || localStorage.getItem('showSidebar') == 'true',
             }    
         },
         watch: {
@@ -92,7 +106,10 @@
                         this.focusMsg(this.$route.query.id);
                     }, 1000)
                 }
-            }
+            },
+            showSidebar(val) {
+                localStorage.setItem('showSidebar', val);
+            },
         },
         filters: {
         },
@@ -434,20 +451,50 @@
             }
         }
     }
+    .sidebar-box {
+        position: relative;
+        .sidebar-toggle {
+            position: absolute;
+            top: 50%;
+            bottom: 50%;
+            border-radius: 50% 0 0 50%;
+            left: -1em;
+            width: 1em;
+            height: 5em;
+            margin: auto;
+            line-height: 1.5em;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--main-chatroom-sidebar-background-color);
+            &:hover {
+                color: var(--global-active-color);
+            }
+        }
+    }
     .sidebar {
+        &.sidebar-hide {
+            width: 0;
+            padding: 0;
+        }
+        transition: all .5s;
         background-color: var(--main-chatroom-sidebar-background-color);
         width: 10em;
         padding: 0.5em;
         display: flex;
         flex-direction: column;
         flex: initial;
+        overflow: hidden;
         .online-list {
+            margin-top: 5px;
             list-style: none;
             padding: 0;
             overflow-x: hidden;
             overflow-y: auto;
             height: 100%;
-            width: 100%;
+            width: 10em;
             .online-item {
                 display: flex;
                 align-items: center;
