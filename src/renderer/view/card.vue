@@ -30,6 +30,9 @@
                     <section class="info-city" v-if="info.userCity" :title="info.userCity">
                         <Icon custom="fa fa-map-marker"/>
                     </section>
+                    <section class="info-no" :title="info.userCity">
+                        #{{ info.userNo }}
+                    </section>
                 </section>
                 <section class="info-state">
                     <Tag class="info-online" :color="info.userOnlineFlag ? 'error': 'default'">{{onlineMsg}}</Tag>
@@ -201,6 +204,16 @@
                     vertical-align: middle;
                     line-height: .5em;
                     color: #3fd814
+                }
+
+                .info-no {
+                    line-height: 1.5;
+                    font-weight: bold;
+                    border: 1px solid var(--global-control-border-color);
+                    font-family: mononoki,Consolas,"Liberation Mono",Menlo,Courier,monospace;
+                    border-radius: 5px;
+                    padding: 0 5px;
+                    background-color: var(--global-alpha-background-color);
                 }
             }
         }
