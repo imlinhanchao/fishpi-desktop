@@ -13,7 +13,7 @@
             <Button type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
                 @click="emojiForm = !emojiForm" 
                 title="发表情"><Icon custom="fa fa-smile-o"/></Button>
-            <Button type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
+            <Button v-if="chatroom" type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
                 @click="modalBarrage = true" title="发弹幕"><Icon custom="fa fa-bullhorn"/></Button>
             <Button v-if="chatroom" type="text" class="msg-redpacket msg-control" title="发红包" @click="sendRedpacket">
                 <svg class="redpacket-icon">

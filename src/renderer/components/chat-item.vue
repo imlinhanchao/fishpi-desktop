@@ -54,8 +54,8 @@
         emojiCode(target) {
             return `:${target.src.match(/\/([^\/.]*?)(.gif|.png)/)[1]}:`;
         },
-        userMenuShow(ev) {
-            if (this.item.userName == this.current.userName) return;
+        async userMenuShow(ev) {
+            if (this.item.senderUserName == this.current.userName) return;
             let menu = [];
             menu.push({
                 label: `发个专属红包`,
@@ -64,22 +64,30 @@
                         call: 'openRedpacket',
                         args: {
                             id: 'send',
-                            user: this.item.userName
+                            user: this.item.senderUserName
                         }
                     });
                 }
             });
-            menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chat-item', instance: this}))
+            menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'chat-item', instance: this}))
             this.$root.popupMenu(menu);
         },
-        msgMenuShow(ev) {
+        async msgMenuShow(ev) {
             let menu = [];
             let target = ev.target;
-            if (this.item.userName != this.current.userName) {
+            if (this.item.senderUserName != this.current.userName) {
                 menu.push({
-                    label: `@${this.item.userName}`,
+                    label: `@${this.item.senderUserName}`,
                     click: () => {
-                        this.$emit('msg', `@${this.item.userName} `);
+                        this.$emit('msg', `@${this.item.senderUserName} `);
+                    }
+                });
+            }
+            else {
+                menu.push({
+                    label: '撤回',
+                    click: () => {
+                        this.$fishpi.chat.revoke(this.item.oId);
                     }
                 });
             }
@@ -108,7 +116,7 @@
                     });
                 }
             }
-            menu = menu.concat(this.$root.getDefaultMenu(ev, { name: 'chat-item', instance: this}))
+            menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'chat-item', instance: this}))
             this.$root.popupMenu(menu);
         },
     }

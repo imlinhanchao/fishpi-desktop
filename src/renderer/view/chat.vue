@@ -85,6 +85,10 @@
                 await this.load(this.page + 1);
             },
             async msgListener({ msg }) {
+                if (msg.type == 'revoke') {
+                    this.chats = this.chats.filter(item => item.oId != msg.data);
+                    return;
+                }
                 console.dir(msg);
                 this.chats.push(msg);
                 this.$fishpi.chat.markRead(this.user);
