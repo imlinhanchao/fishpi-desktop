@@ -388,7 +388,7 @@
     .update-note {
         max-height: 40vh;
         overflow: auto;
-        padding: 0 15px;
+        padding: 0 15px 40px;
     }
     .update-progress {
         background: var(--global-active-color);
