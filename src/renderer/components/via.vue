@@ -1,11 +1,9 @@
 <template>
-  <span class="via">
-    <a v-if="isWindows" target="_blank" :href="url.client" title="来自桌面客户端"><Icon custom="fa fa-windows" size="12"></Icon></a>
-    <a v-if="isMac" target="_blank" :href="url.client" title="来自桌面客户端"><Icon custom="fa fa-apple" size="12"></Icon></a>
-    <a v-if="isLinux" target="_blank" :href="url.client" title="来自桌面客户端"><Icon custom="fa fa-linux" size="12"></Icon></a>
-    <a v-if="isChrome" target="_blank" :href="url.chrome" title="来自浏览器扩展"><Icon custom="fa fa-chrome" size="12"></Icon></a>
-    <a v-if="isEdge" target="_blank" :href="url.edge" title="来自浏览器扩展"><Icon custom="fa fa-edge" size="12"></Icon></a>
-    <a v-if="isVSCode" target="_blank" :href="url.vscode" title="来自 VSCode 扩展"><span class="vscode">&nbsp;</span></a>
+  <span class="via" v-if="content.match">
+    <a v-if="via" target="_blank" :href="via.url" :title="via.title">
+      <Icon :custom="via.icon" size="12"></Icon>
+      <span class="version" v-if="version">@{{ version }}</span>
+    </a>
   </span>
 </template>
 <script>
@@ -18,30 +16,46 @@ export default {
   },
   data () {
     return {
+      vias: [
+        { mark: 'client-win32-message', icon: 'fa fa-windows', url: 'https://github.com/imlinhanchao/fishpi-desktop/releases', title: '来自桌面客户端' },
+        { mark: 'client-darwin-message', icon: 'fa fa-apple', url: 'https://github.com/imlinhanchao/fishpi-desktop/releases', title: '来自桌面客户端' },
+        { mark: 'client-linux-message', icon: 'fa fa-linux', url: 'https://github.com/imlinhanchao/fishpi-desktop/releases', title: '来自桌面客户端' },
+        { mark: 'chrome-extension-message', icon: 'fa fa-chrome', url: 'https://chrome.google.com/webstore/detail/fkaomdjjdbglkbcmfhhlioejkpacbbpe', title: '来自浏览器扩展' },
+        { mark: 'edge-extension-message', icon: 'fa fa-edge', url: 'https://microsoftedge.microsoft.com/addons/detail/oldbilakhdpiamjbkocdcdnlnakainfm', title: '来自浏览器扩展' },
+        { mark: 'vscode-extension-message', icon: 'vscode', url: 'https://marketplace.visualstudio.com/items?itemName=hancel.pwl-chat', title: '来自 VSCode 扩展' },
+      ]
     }
   },
   computed: {
+    via() {
+      let via = this.vias.find(v => this.content.match && this.content.match(new RegExp(`class="${v.mark}("|\\s)`)) != null);
+      console.log('via', via);
+      return via;
+    },
     isWindows() {
-      return this.content.match && this.content.match(/class="client-win32-message"/) != null;
+      return this.content.match && this.content.match(/class="client-win32-message("|\s)/) != null;
     },
     isMac() {
-      return this.content.match && this.content.match(/class="client-darwin-message"/) != null;
+      return this.content.match && this.content.match(/class="client-darwin-message("|\s)/) != null;
     },
     isLinux() {
-      return this.content.match && this.content.match(/class="client-linux-message"/) != null;
+      return this.content.match && this.content.match(/class="client-linux-message("|\s)/) != null;
     },
     isChrome() {
-      return this.content.match && this.content.match(/class="chrome-extension-message"/) != null;
+      return this.content.match && this.content.match(/class="chrome-extension-message("|\s)/) != null;
     },
     isEdge() {
-      return this.content.match && this.content.match(/class="edge-extension-message"/) != null;
+      return this.content.match && this.content.match(/class="edge-extension-message("|\s)/) != null;
     },
     isVSCode() {
-      return this.content.match && this.content.match(/class="vscode-extension-message"/) != null;
+      return this.content.match && this.content.match(/class="vscode-extension-message("|\s)/) != null;
+    },
+    version() {
+      return this.content.match && (this.content.match(/ver-([^"]+)/)||[null])[1];
     },
     url() {
         return {
-            chrome: 'https://chrome.google.com/webstore/detail/fkaomdjjdbglkbcmfhhlioejkpacbbpe,',
+            chrome: 'https://chrome.google.com/webstore/detail/fkaomdjjdbglkbcmfhhlioejkpacbbpe',
             edge: 'https://microsoftedge.microsoft.com/addons/detail/oldbilakhdpiamjbkocdcdnlnakainfm',
             vscode: 'https://marketplace.visualstudio.com/items?itemName=hancel.pwl-chat',
             client: 'https://github.com/imlinhanchao/fishpi-desktop/releases'
@@ -57,15 +71,24 @@ export default {
     font-size: 40%;
     margin: 0 3px 0;
     opacity: .3;
+    a {
+      display: inline-flex;
+      align-items: center;
+    }
     .vscode {
-        margin-top: 5px;
-        background-color: currentColor;
-        -webkit-mask-image: url(../assets/vscode.svg);
-        -webkit-mask-size: 100% 100%;
-        -webkit-mask-position: center;
-        width: 1.5em;
-        height: 1.5em;
-        display: inline-block;
+      margin-top: 5px;
+      background-color: currentColor;
+      -webkit-mask-image: url(../assets/vscode.svg);
+      -webkit-mask-size: 100% 100%;
+      -webkit-mask-position: center;
+      width: 1.5em;
+      height: 1.5em;
+      display: inline-block;
+    }
+    .version {
+      font-weight: bold;
+      font-size: 12px;
+      margin-left: 2px;
     }
 }
 </style>

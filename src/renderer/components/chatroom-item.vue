@@ -533,6 +533,9 @@
         .msg-user {
             justify-content: flex-end;
             margin-right: 1em;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: end;
         }
         .plus-one {
             left: -1.5em;

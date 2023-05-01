@@ -76,6 +76,7 @@
 <script>
   import { position } from 'caret-pos';
   import Emoji from './emoji.vue';
+  import packageJson from '../../../package.json';
   export default {
     name: 'messagebox',
     components: {
@@ -215,7 +216,7 @@
                 this.$emit('update:discussed', null)
             }
             msg = msg.replace(/<span class="[^"]+-message"\/>/g, '')
-            msg += `<span class="client-${process.platform}-message"/>`;
+            msg += `<span class="client-${process.platform}-message ver-${packageJson.version}"/>`;
             msg = await this.$ipc.sendSync('fishpi.hooks.sendMsg', { msg });
             if (msg) {
                 let src_msg = this.msg;
