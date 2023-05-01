@@ -90,7 +90,7 @@
                     return;
                 }
                 console.dir(msg);
-                this.chats.push(msg);
+                if (!this.chats.some(c => c.oId == msg.oId)) this.chats.push(msg);
                 this.$fishpi.chat.markRead(this.user);
             },
             async load(page) {
