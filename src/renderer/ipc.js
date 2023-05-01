@@ -11,7 +11,7 @@ export default {
     },
     send(event, data, fn) {
         let callback = fn ? parseInt(Math.random() * 10000).toString() : undefined;
-        if (fn) ipcRenderer.once(`${event}-callback-${callback}`, fn);
+        if (fn) ipcRenderer.on(`${event}-callback-${callback}`, fn);
         ipcRenderer.send(event, { ...data, callback })
     },
     sendSync(event, argv) {

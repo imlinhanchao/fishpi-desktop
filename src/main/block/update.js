@@ -100,7 +100,7 @@ ${lanuch}
 }
 
 function getDownload(update) {
-    let data = update.assets.find(f => f.name == 'update-file.zip')
+    let data = update.assets.find(f => f.name == 'update-pack.zip')
     if (data) return data;
     switch(process.platform) {
         case 'win32': {
