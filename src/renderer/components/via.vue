@@ -76,13 +76,12 @@ export default {
       align-items: center;
     }
     .vscode {
-      margin-top: 5px;
       background-color: currentColor;
       -webkit-mask-image: url(../assets/vscode.svg);
       -webkit-mask-size: 100% 100%;
       -webkit-mask-position: center;
-      width: 1.5em;
-      height: 1.5em;
+      width: 1em;
+      height: 1em;
       display: inline-block;
     }
     .version {
