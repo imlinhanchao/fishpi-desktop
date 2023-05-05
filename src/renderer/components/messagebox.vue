@@ -163,6 +163,13 @@
         },
         innerWidth() {
             return window.innerWidth
+        },
+        client() {
+            return {
+                'win32': 'Windows',
+                'darwin': 'MacOS',
+                'linux': 'Linux',
+            }
         }
     },
     methods: {
@@ -216,13 +223,16 @@
                 this.$emit('update:discussed', null)
             }
             msg = msg.replace(/<span class="[^"]+-message"\/>/g, '')
-            msg += `<span class="client-${process.platform}-message ver-${packageJson.version}"/>`;
             msg = await this.$ipc.sendSync('fishpi.hooks.sendMsg', { msg });
             if (msg) {
                 let src_msg = this.msg;
                 this.msg = "";
                 this.sending = true;
-                let rsp = await this.$fishpi.chatroom.send(msg);
+                let rsp = await this.$fishpi.chatroom.send(
+                    msg, 
+                    'Golang',//this.client[process.platform] || 'PC', 
+                    packageJson.version
+                );
                 this.sending = false;
                 if (!rsp) return;
                 if (rsp.code != 0) {
