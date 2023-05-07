@@ -269,7 +269,7 @@
                         file.push(items[i].getAsFile());
                         break;
                     }
-                    if (items[i].type.indexOf('html') !== -1) {
+                    if (items[i].type.indexOf('html') !== -1 && this.htmlGetImg) {
                         let files = await this.htmlGetImg(items[i])
                         files = files || []
                         files = files.map(f => constructFileFromLocalFileData(new LocalFileData(f.replace(/file:\/\/\//g, ''))))
