@@ -487,14 +487,14 @@
         flex-direction: column;
         flex: initial;
         overflow: hidden;
+        height: 100%;
         .online-list {
             margin-top: 5px;
             list-style: none;
             padding: 0;
-            overflow-x: hidden;
+            overflow-x: auto;
             overflow-y: auto;
             height: 100%;
-            width: 10em;
             .online-item {
                 display: flex;
                 align-items: center;
