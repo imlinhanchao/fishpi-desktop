@@ -56,6 +56,14 @@ window.$VueApp = new Vue({
         this.$fishpi.setToken(localStorage.getItem('token'));
         this.notice.updateSetting(this.setting);
 
+        const client =  {
+            'win32': 'Windows',
+            'darwin': 'MacOS',
+            'linux': 'Linux',
+        };
+        this.$fishpi.chatroom.setVia(client[process.platform] || 'PC', packageJson.version)
+
+
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             if (e.target.dataset.menu != 'true') return e.stopPropagation();
@@ -164,16 +172,7 @@ window.$VueApp = new Vue({
             return !!this.token;
         },
         sendMsg(msg) {
-            const client =  {
-                'win32': 'Windows',
-                'darwin': 'MacOS',
-                'linux': 'Linux',
-            };
-            return this.$fishpi.chatroom.send(
-                msg, 
-                client[process.platform] || 'PC', 
-                packageJson.version
-            )
+            return this.$fishpi.chatroom.send(msg)
         },
         async logout() {
             this.current = null;
