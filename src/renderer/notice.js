@@ -60,7 +60,7 @@ class Notice {
             }
 
             case 'msg': {
-                if (this.setting.value.message.notice.chatroom) this.audioNotice();
+                if (this.setting.value.message.notice.chatroom && msg.data.userName != this.current.userName) this.audioNotice();
                 if (!this.setting.value.message.notice.talk) break;
                 if (msg.data.md.match(new RegExp(this.setting.value.message.notice.talkmsg))) {
                     this.sysNotice('关心的消息', `${msg.data.userNickname} 说：“${this.toText(msg.data.content)}”`, null, () => {
@@ -142,6 +142,9 @@ class Notice {
         data.forEach(d => {
             this.noticed.at.push(d.oId+d.dataType);
             if(d.dataType == 38) { // 聊天室 @
+                if (d.userName == this.current.userName) {
+                    return this.fishpi.notice.makeRead('at');
+                }
                 this.sysNotice(`${d.userName}在聊天室 @ 你`, this.toText(d.content), null, async () => {
                     await this.fishpi.notice.makeRead('at');
                     new BroadcastChannel('main-router').postMessage({ url: `/chatroom?id=${d.dataId}` }); 
