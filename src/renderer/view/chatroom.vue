@@ -521,7 +521,7 @@
 }
 @media (max-width: 500px) {
 
-.layout {
+.layout .sidebar-box {
     .sidebar, .sidebar-toggle {
         display: none;
     }
