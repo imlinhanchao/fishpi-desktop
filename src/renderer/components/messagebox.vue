@@ -133,17 +133,23 @@
             barrage: {
                 word: '',
                 color: '#FFFFFF',
-            }
+            },
+            atList: [],
+            msgDebounce: 0,
         }
     },
     watch: {
         msg(val) {
-            let data = val.slice(0, this.msgCursor());
-            let matAt = data.match(/@([^\s]+?)$/);
-            let matEmoji = data.match(/:([^:]+?)$/);
-            if (matAt) this.getAt(matAt[1]);
-            else if (matEmoji) this.getEmoji(matEmoji[1]);
-            else this.sendAutoComplete([], 'at');
+            if (this.msgDebounce) clearTimeout(this.msgDebounce);
+            this.msgDebounce = setTimeout(() => {
+                this.msgDebounce = 0;
+                let data = val.slice(0, this.msgCursor());
+                let matAt = data.match(/@([^\s]+?)$/);
+                let matEmoji = data.match(/:([^:]+?)$/);
+                if (matAt) this.getAt(matAt[1]);
+                else if (matEmoji) this.getEmoji(matEmoji[1]);
+                else this.sendAutoComplete(this.atList = [], 'at');
+            }, 5)
         },
         quote (val) {
             if (val == null) this.msg =  this.msg.replace(/^并说：/, '');
@@ -316,8 +322,8 @@
         async getAt(name) {
             if (!name) return;
             try {
-                let atList = await this.$fishpi.names(name);
-                let autocomplete = atList.map(a => ({ 
+                this.atList = await this.$fishpi.names(name);
+                let autocomplete = this.atList.map(a => ({ 
                     value: a.userName, text: a.userName, img: a.userAvatarURL48
                 }))
                 this.sendAutoComplete(autocomplete, 'at');
@@ -328,8 +334,8 @@
         },
         atUser(value) {
             let data = '@' + value + ' ';
-            this.sendAutoComplete([], 'at');
             this.appendMsg({ regexp: /@([^\s]*?)$/, data })
+            this.$nextTick(() => this.sendAutoComplete([], 'at'));
         },
         getEmoji(name) {
             if (!name || name.length < 1) return;
