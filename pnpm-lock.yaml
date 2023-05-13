@@ -38,7 +38,7 @@ specifiers:
   eslint-plugin-standard: ^3.0.1
   extract-text-webpack-plugin: ^3.0.0
   file-loader: ^0.11.2
-  fishpi: 0.0.29
+  fishpi: 0.0.34
   form-data: ^4.0.0
   get-file-object-from-local-path: ^1.0.2
   html-webpack-plugin: ^2.30.1
@@ -79,7 +79,7 @@ dependencies:
   caret-pos: 2.0.0
   child_process: 1.0.2
   electron-root-path: 1.1.0_eslint@4.19.1
-  fishpi: 0.0.29
+  fishpi: 0.0.34
   form-data: 4.0.0
   get-file-object-from-local-path: 1.0.2
   marked: 4.3.0
@@ -227,6 +227,10 @@ packages:
     dependencies:
       '@types/ms': 0.7.31
     dev: true
+
+  /@types/js-md5/0.7.0:
+    resolution: {integrity: sha512-4mN02EhCni6MlvCUl9bpcbMfu7R3G+ac+J37b7gKCu3tWhZc5/Ya41T+2QNR2aFt6vnMe+uTa5rFQ+nT2kl6cA==}
+    dev: false
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
@@ -4305,11 +4309,13 @@ packages:
       locate-path: 3.0.0
     dev: true
 
-  /fishpi/0.0.29:
-    resolution: {integrity: sha512-SoCjsMW9MCQFvG+3oud77sxYRcrHvm1rb/TtGdm4dXX5HkLxpuPltevHlKx7sLQ0ewiCF/Lbb+4ezqvqgs+k8w==}
+  /fishpi/0.0.34:
+    resolution: {integrity: sha512-UQplBrOl/e3PRsqGVCJJRT3Ge/kO1r9dgvKxM1HDlgI1ssc1EqpDLSP0D0fsZxR9GEgPu92yjCqx/K/HTpWcXg==}
     engines: {node: '>=12.0'}
     dependencies:
+      '@types/js-md5': 0.7.0
       form-data: 4.0.0
+      js-md5: 0.7.3
       reconnecting-websocket: 4.4.0
       ws: 8.13.0
     transitivePeerDependencies:
@@ -5552,6 +5558,10 @@ packages:
 
   /js-calendar/1.2.3:
     resolution: {integrity: sha512-dAA1/Zbp4+c5E+ARCVTIuKepXsNLzSYfzvOimiYD4S5eeP9QuplSHLcdhfqFSwyM1o1u6ku6RRRCyaZ0YAjiBw==}
+    dev: false
+
+  /js-md5/0.7.3:
+    resolution: {integrity: sha512-ZC41vPSTLKGwIRjqDh8DfXoCrdQIyBgspJVPXHBGu4nZlAEvG3nf+jO9avM9RmLiGakg7vz974ms99nEV0tmTQ==}
     dev: false
 
   /js-tokens/3.0.2:

@@ -327,10 +327,10 @@
                     this.$Message.error('话题长度太长');
                     return;
                 }
-                this.$fishpi.chatroom.send(`[setdiscuss]${this.newDiscusse}[/setdiscuss]`)
+                this.$root.sendMsg(`[setdiscuss]${this.newDiscusse}[/setdiscuss]`)
             },
             sendDiscusse() {
-                this.$fishpi.chatroom.send(`*\`# ${this.discusse} #\`*`)
+                this.$root.sendMsg(`*\`# ${this.discusse} #\`*`)
                 this.discussed = null;
             },
             chatScroll(ev) {
@@ -483,6 +483,7 @@
         background-color: var(--main-chatroom-sidebar-background-color);
         width: 10em;
         padding: 0.5em;
+        padding-bottom: 0;
         display: flex;
         flex-direction: column;
         flex: initial;

@@ -234,7 +234,7 @@
             let redpacket = Object.assign({}, this.redpacket);
             if (redpacket.type == 'rockPaperScissors') redpacket.count = 1;
             redpacket.msg = redpacket.msg || this.defaultRedpackWord[redpacket.type];
-            let rsp = await this.$fishpi.chatroom.send(`[redpacket]${JSON.stringify(redpacket)}[/redpacket]`);
+            let rsp = await this.$root.sendMsg(`[redpacket]${JSON.stringify(redpacket)}[/redpacket]`);
             if(rsp.code == 0) this.close();
             else this.$Message.error(rsp.msg);
         },

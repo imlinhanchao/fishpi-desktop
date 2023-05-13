@@ -172,7 +172,7 @@
             return `:${target.src.match(/\/([^\/.]*?)(.gif|.png)/)[1]}:`;
         },
         async doubleMsg() {
-            this.$fishpi.chatroom.send(this.item.md || await await this.$fishpi.chatroom.raw(this.item.oId))
+            this.$root.sendMsg(this.item.md || await await this.$fishpi.chatroom.raw(this.item.oId))
         },
         highlight() {
             this.$refs['msg-view'].style.background = 'rgba(255,255,255,.1)'

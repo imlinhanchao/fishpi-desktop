@@ -1,5 +1,7 @@
 <template>
-    <section class="chat-editor" :class="{'chat-resizing': resize}">
+    <section class="chat-editor" :class="{'chat-resizing': resize}" 
+        @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chatroom-item', instance: this}))"
+    >
         <section class="chat-toolbar">
             <input type="file" name="images" accept="image/*" ref="file" v-show="false" @change="uploadImg">
             <Button type="text" class="msg-control" @click="clear()" title="消息清屏">
@@ -234,11 +236,7 @@
                 let src_msg = this.msg;
                 this.msg = "";
                 this.sending = true;
-                let rsp = await this.$fishpi.chatroom.send(
-                    msg, 
-                    'Golang',//this.client[process.platform] || 'PC', 
-                    packageJson.version
-                );
+                let rsp = await this.$root.sendMsg(msg);
                 this.sending = false;
                 if (!rsp) return;
                 if (rsp.code != 0) {

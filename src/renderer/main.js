@@ -1,4 +1,5 @@
 import { Menu, getCurrentWindow } from '@electron/remote';
+import packageJson from '../../package.json';
 
 import ipc from './ipc'
 import Setting from './setting'
@@ -161,6 +162,18 @@ window.$VueApp = new Vue({
         },
         isLogin() {
             return !!this.token;
+        },
+        sendMsg(msg) {
+            const client =  {
+                'win32': 'Windows',
+                'darwin': 'MacOS',
+                'linux': 'Linux',
+            };
+            return this.$fishpi.chatroom.send(
+                msg, 
+                client[process.platform] || 'PC', 
+                packageJson.version
+            )
         },
         async logout() {
             this.current = null;
