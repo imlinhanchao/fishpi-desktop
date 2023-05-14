@@ -53,14 +53,23 @@
 <div class="layout" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'home', instance: this}))">
     <section id="home-sidebar" class="sidebar">
         <ul class="feature-list">
-            <li class="feature-item user-card-click" :data-user="account.userName" :class="{ 'feature-active': $route.meta.name == 'account' }"><Avatar :src="account.userAvatarURL" /></li>
-            <li class="feature-item" title="聊天室" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')"><Icon custom="fa fa-comments" /></li>
+            <li class="feature-item user-card-click" :data-user="account.userName" :class="{ 'feature-active': $route.meta.name == 'account' }">
+                <Avatar :src="account.userAvatarURL" />
+            </li>
+            <li class="feature-item" title="聊天室" :class="{ 'feature-active': $route.meta.name == 'chatroom' }" @click="$router.push('/chatroom')">
+                <Icon custom="fa-solid fa-comments" />
+            </li>
             <li class="feature-item" title="私聊"
                 :class="{ 'feature-active': $route.meta.name == 'chat' }" 
                 @click="$router.push('/chat')">
-                <Badge :offset="[5, -2]" :title="`${chats}条未读私信`" :count="chats" :dot="true"><Icon custom="fa fa-comment"/></Badge>
+                <Badge :offset="[5, -2]" :title="`${chats}条未读私信`" :count="chats" :dot="true"><Icon custom="fa-solid fa-comment-dots"/></Badge>
             </li>
-            <li class="feature-item" title="清风明月" :class="{ 'feature-active': $route.meta.name == 'breezemoons' }" @click="$router.push('/breezemoons')"><Icon custom="fa fa-leaf" /></li>
+            <li class="feature-item" title="清风明月" :class="{ 'feature-active': $route.meta.name == 'breezemoons' }" @click="$router.push('/breezemoons')">
+                <Icon custom="fa fa-leaf" />
+            </li>
+            <li class="feature-item" title="帖子" :class="{ 'feature-active': $route.meta.name.startsWith('article') }" @click="$router.push('/articles')">
+                <Icon custom="fa-solid fa-pen-clip" />
+            </li>
             <li class="feature-item" :title="s.name" v-bind:key="s.id" v-for="s in $root.sidebars"
                 :class="{ 'feature-active': $root.title == s.name }"
                 @click="$router.push('/context/' + s.id)"

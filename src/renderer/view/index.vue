@@ -133,6 +133,10 @@
         border: 0;
         width: 100%;
     }
+
+    table {
+        max-width: 75vw;
+    }
     
     table tr {
         border-top: 1px solid var(--markdown-table-border-color);
@@ -152,6 +156,7 @@
     }
 
     pre,code {
+        max-width: 75vw;
         width: 100%;
         max-height: 300px;
         overflow: auto;

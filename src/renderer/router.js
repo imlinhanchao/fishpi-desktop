@@ -44,6 +44,20 @@ export default new Router({
                         },
                         component: () => import('./view/breezemoons')
                     }, {
+                        path: 'articles',
+                        meta: {
+                            title: '最新帖子',
+                            name: 'articles'
+                        },
+                        component: () => import('./view/articles')
+                    }, {
+                        path: 'article/:id',
+                        meta: {
+                            title: '帖子详情',
+                            name: 'article'
+                        },
+                        component: () => import('./view/article')
+                    }, {
                         path: 'extension',
                         meta: {
                             title: '扩展插件',

@@ -74,7 +74,7 @@
 <template>
 <header class="drag header"  @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'header', instance: this}))">
     <h1 class="drag"> <img src='../assets/icon.png' />
-    <span id="win-title" class="drag">{{ '摸鱼派 - ' + $root.title || '摸鱼派'}}</span></h1>
+    <span id="win-title" class="drag" :title="$root.title">{{ '摸鱼派 - ' + $root.title || '摸鱼派'}}</span></h1>
     <Music :music="music" />
     <span class="control no-drag" :title="!simple ? '已摸鱼' + liveness + '%' : ''">
         <Button type="text" @click="handleMin"><Icon custom="fa fa-minus"></Icon></Button>
