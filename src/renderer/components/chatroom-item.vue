@@ -12,7 +12,7 @@
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
         <div class="msg-user" :title="item.userName">
             <span>{{item.userNickname || item.userName}}</span>
-            <Via v-if="item.via" :via="item.via" />
+            <Via :via="item.via || {}" />
         </div>
         <div class="redpacket-item"
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"

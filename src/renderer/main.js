@@ -6,7 +6,6 @@ import Setting from './setting'
 import Extension from './extension'
 import Notice from './notice'
 
-import path from 'path'
 import FishPi from 'fishpi';
 import Vue from 'vue'
 import VueWorker from 'vue-worker'
@@ -18,6 +17,7 @@ import axios from 'axios';
 
 import iView from 'view-design'
 import 'view-design/dist/styles/iview.css'
+import './theme/font-awesome/all.min.css'
 import './theme/theme.css'
 import './theme/index.css'
 import './theme/font-awesome.css'
@@ -156,7 +156,7 @@ window.$VueApp = new Vue({
             if (index >= 0) this.customMenu.splice(index, 1, { name, call });
             else this.customMenu.push({ name, call });
         },
-        async getDefaultMenu(ev, component) {
+        async getDefaultMenu(ev, component, stop=false) {
             let menu = [... this.defaultMenu];
             try {
                 for( let c of this.customMenu) {
@@ -166,6 +166,7 @@ window.$VueApp = new Vue({
                     }, ...custom]);
                 }
             } catch (error) {}
+            if(stop) ev.stopPropagation();
             return menu;
         },
         isLogin() {
