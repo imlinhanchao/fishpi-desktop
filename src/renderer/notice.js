@@ -73,6 +73,16 @@ class Notice {
         }
     }
 
+    async checkUpdate() {
+        let rsp = await ipc.sendSync('win-update');
+        if (!rsp) return;
+        const update = rsp.data;
+        console.log(update);
+        if (update) this.sysNotice(update.name, update.body, null, () =>{
+            new BroadcastChannel('main-router').postMessage({ url: `/setting` }); 
+        });
+    }
+
     noticeMsg(notice) {
         switch(notice.command) {
             case 'refreshNotification': {

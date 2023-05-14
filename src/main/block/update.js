@@ -5,6 +5,7 @@ import https from 'https'
 import AdmZip from 'adm-zip'
 import { spawn } from 'child_process'
 import axios from 'axios'
+import fetch from 'node-fetch'
 import { rootPath } from 'electron-root-path';
 
 let CopyPath = '';
@@ -58,12 +59,13 @@ const downloadFile = (url, dest, cb = () =>{}) => {
     })
 }
   
-async function checkUpdate() {
+async function checkUpdate(mirror = 'api.github.com') {
     try {
-        let rsp = await axios.get('https://api.github.com/repos/imlinhanchao/fishpi-desktop/releases/latest');
-        return rsp.data;            
+        let rsp = await fetch(`https://${mirror}/repos/imlinhanchao/fishpi-desktop/releases/latest`).then(res => res.json());
+        return rsp;            
     } catch (error) {
         console.error(error)
+        if (mirror == 'api.github.com') return checkUpdate('gitapi.librejo.cn')
     }
 }
 

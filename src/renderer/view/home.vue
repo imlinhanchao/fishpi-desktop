@@ -121,6 +121,7 @@
             }
         }
         this.$root.notice.setCurrent(this.account);
+        this.$root.notice.checkUpdate();
     },
     beforeDestroy() {
         this.unLoad();
