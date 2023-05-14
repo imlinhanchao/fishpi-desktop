@@ -4,7 +4,6 @@ import fs from 'fs'
 import https from 'https'
 import AdmZip from 'adm-zip'
 import { spawn } from 'child_process'
-import axios from 'axios'
 import fetch from 'node-fetch'
 import { rootPath } from 'electron-root-path';
 
