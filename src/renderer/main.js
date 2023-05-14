@@ -13,7 +13,6 @@ import VueWorker from 'vue-worker'
 import App from './App'
 import router from './router'
 import store from './store'
-import axios from 'axios';
 
 import iView from 'view-design'
 import 'view-design/dist/styles/iview.css'
@@ -33,7 +32,6 @@ Vue.config.devtools = true;
 
 Vue.prototype.$ipc = ipc;
 Vue.prototype.$fishpi = new FishPi();
-Vue.prototype.$http = axios;
 
 router.beforeEach((to, from, next) => {
     if (!to.meta.notitle && to.meta.title) {
@@ -62,7 +60,6 @@ window.$VueApp = new Vue({
             'linux': 'Linux',
         };
         this.$fishpi.chatroom.setVia(client[process.platform] || 'PC', packageJson.version)
-
 
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
@@ -250,8 +247,7 @@ window.$VueApp = new Vue({
         },
         async playMusic(id, push) {
             let infoApi = `http://music.163.com/api/song/detail/?id=${id}&ids=%5B${id}%5D`; 
-            let rsp = await this.$http.get(infoApi);
-            rsp = rsp.data;
+            let rsp = await fetch(infoApi).then(r => r.json());
             if (rsp.code != 200 || !rsp.songs.length) return;
             if(!push) this.playSongs = [{
                 id,

@@ -128,7 +128,7 @@
             async focusMsg(oId) {
                 let ele = this.$refs[`msg-item-${oId}`];
                 if (!ele) return;
-                els = ele[0]
+                ele = ele[0]
                 let top = ele.$el.offsetTop;
                 if (top < this.chatScrollTotal + this.chatScrollPos) {
                     this.chatScrollPos = top - this.chatScrollTotal;
