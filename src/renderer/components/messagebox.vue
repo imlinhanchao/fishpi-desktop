@@ -1,6 +1,6 @@
 <template>
     <section class="chat-editor" :class="{'chat-resizing': resize}" 
-        @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'chatroom-item', instance: this}))"
+        @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'messagebox', instance: this}, true), true)"
     >
         <section class="chat-toolbar">
             <input type="file" name="images" accept="image/*" ref="file" v-show="false" @change="uploadImg">
@@ -12,17 +12,17 @@
                 :loading="uploading">
                 <Icon class="btn-icon" custom="fa fa-picture-o"/>
             </Button>
-            <Button type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
+            <Button type="text" class="msg-control emoji-btn" :class="{ 'active-emoji': emojiForm }"
                 @click="emojiForm = !emojiForm" 
                 title="发表情"><Icon custom="fa fa-smile-o"/></Button>
-            <Button v-if="chatroom" type="text" class="msg-control" :class="{ 'active-emoji': emojiForm }"
+            <Button v-if="chatroom" type="text" class="msg-control"
                 @click="modalBarrage = true" title="发弹幕"><Icon custom="fa fa-bullhorn"/></Button>
             <Button v-if="chatroom" type="text" class="msg-redpacket msg-control" title="发红包" @click="sendRedpacket">
                 <svg class="redpacket-icon">
                     <use xlink:href="#redPacketIcon"></use>
                 </svg>
             </Button>
-            <Emoji ref="emoji" v-show="emojiForm" @emoji="pushEmoji" />
+            <Emoji class="emoji-form" ref="emoji" v-show="emojiForm" @emoji="pushEmoji" />
             <Modal
                 v-model="modalBarrage"
                 title="发个弹幕"
@@ -78,7 +78,6 @@
 <script>
   import { position } from 'caret-pos';
   import Emoji from './emoji.vue';
-  import packageJson from '../../../package.json';
   export default {
     name: 'messagebox',
     components: {
@@ -109,11 +108,13 @@
         document.addEventListener('paste', this.onPaste);
         document.addEventListener('mousemove', this.resizeMove);
         document.addEventListener('mouseup', this.resizeEnd);
+        document.addEventListener('click', this.closeEmoji);
     },
     beforeDestroy() {
         document.removeEventListener('mouseup', this.resizeEnd);
         document.removeEventListener('mousemove', this.resizeMove);
         document.removeEventListener('paste', this.onPaste);
+        document.removeEventListener('click', this.closeEmoji);
         this.autocompleteBroad.close();
     },
     data () {
@@ -181,6 +182,12 @@
         }
     },
     methods: {
+        closeEmoji(ev) {
+            if (!ev.target.closest('.emoji-form') && !ev.target.closest('.emoji-btn')) {
+                this.emojiForm = false;
+                return false;
+            }
+        },
         async sendBarrage() {
             if (!this.barrage.word) return;
             this.sending = true;
