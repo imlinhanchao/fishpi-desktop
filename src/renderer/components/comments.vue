@@ -1,12 +1,16 @@
 <template>
 <div id="comments" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'comments', instance: this}))">
     <ul>
-        <li class="comment-item" v-for="c in comments" :data-id="c.oId">
+        <li :id="`comment-item-${c.oId}`" class="comment-item" v-for="c in comments" :data-id="c.oId">
             <Avatar :src="c.commentAuthorThumbnailURL" />
             <div class="comment-main">
                 <div class="comment-header">
                     <div class="comment-user">
                         <span class="comment-user-name">{{ c.commentAuthorName }}</span>
+                        <span :title="`跳转回复`" class="comment-reply" v-if="c.commentOriginalCommentId" @click="showReply(c.commentOriginalCommentId)">
+                            <i class="fa-solid fa-reply fa-flip-horizontal"></i>
+                            <Avatar :src="c.commentOriginalAuthorThumbnailURL" :size="15" />
+                        </span>
                     </div>
                     <div class="comment-time">{{ c.commentCreateTimeStr || c.commentCreateTime }}</div>
                 </div>
@@ -38,6 +42,9 @@
                         <i v-if="c.commentVote == 1" class="fa-solid fa-thumbs-up fa-rotate-180"></i>
                         <i v-else class="fa-regular fa-thumbs-up fa-rotate-180"></i>
                         <span> {{ c.commentBadCnt }}</span>
+                    </span>
+                    <span class="info-item click" title="回复" @click="reply(c)">
+                        <i class="fa-solid fa-reply"></i>
                     </span>
                 </div>
             </div>
@@ -107,9 +114,18 @@
                     comment.commentVote = rsp.type == 1 ? -1 : 1;
                 }
             },
-            async comment() {
-               
-            }
+            reply(comment) {
+                this.$emit('reply', {
+                    oId: comment.oId,
+                    userName: comment.commentAuthorName,
+                    content: comment.commentContent
+                })
+            },
+            showReply(commentId) {
+                document.querySelector(`#comment-item-${commentId}`).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            },
         }
     }
 </script>
@@ -117,7 +133,8 @@
 #comments {
     font-size: .8em;
     margin: 15px 0 5px;
-    padding: 0 15px;
+    padding: 0 10
+    px;
     ul {
         padding: 10px 0;
         border-top: 1px dashed currentColor;
@@ -137,6 +154,9 @@
         }
         &:hover {
             background-color: var(--global-alpha-background-white);
+        }
+        .comment-reply {
+            cursor: pointer;
         }
     }
     .comment-footer {

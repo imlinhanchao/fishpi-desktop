@@ -35,23 +35,41 @@
                 <i v-else class="fa-regular fa-thumbs-up fa-rotate-180"></i>
                 <span> {{ content.articleBadCnt }}</span>
             </span>
+            <span class="info-item click" title="评论" @click="toComment">
+                <i class="fa-solid fa-message"></i>
+                <span> {{ content.articleComments.length }}</span>
+            </span>
         </p>
     </header>
-    <main>
-        <section class="vditor-reset article-content" v-html="content.articleContent"></section>
-    </main>
-    <footer>
-        <Comment :comments="content.articleComments" />
-    </footer>
+    <section class="container">
+        <main ref="main">
+            <section class="vditor-reset article-content" v-html="articleContent"></section>
+        </main>
+        <footer ref="comment">
+            <MessageBox 
+                @anonymous="$event => comment.commentAnonymous = $event"
+                @visible="$event => comment.commentVisible = $event" 
+                placeholder="说点什么" 
+                class="msg-box" 
+                ref="msgbox" 
+                :comment="comment" 
+                :chatroom="false"
+                :reply.sync="reply"
+                @send="commented"
+            />
+            <Comment :comments="content.articleComments" @reply="replyed"/>
+        </footer>
+    </section>
 </div>
 </template>
 
 <script>
+    import MessageBox from '../components/messagebox.vue';
     import Comment from '../components/comments.vue'
     export default {
         name: 'articleItem',
         components: {
-            Comment,
+            Comment, MessageBox
         },
         mounted () {
             this.load(this.$route.params.id)
@@ -64,6 +82,18 @@
                 content: null,
                 message: '',
                 sending: false,
+                comment: {
+                    articleId: '',
+                    commentAnonymous: false,
+                    commentVisible: false,
+                    commentContent: false,
+                    commentOriginalCommentId: ''
+                },
+                reply: {
+                    oId: '',
+                    content: '',
+                    userName: ''
+                }
             }    
         },
         watch: {
@@ -74,6 +104,11 @@
             current() {
                 return this.$root.current;
             },
+            articleContent() {
+                return this.content && this.content.articleContent.replace(/(<a )/g, '$1target="_blank" ')
+                .replace(/(<iframe[^>]*?src="(https:)*\/\/music.163.com\/outchain\/player\?type=\d&amp;id=(\d+)[^"]*?">\s*<\/iframe>)/, '<div class="netease-music"><div class="netease-cover" data-id="$3"></div>$1</div>')
+                .replace(/(<img )/g, '$1data-action="preview" ')
+            }
         },
         methods: {
             unLoad() {
@@ -86,6 +121,7 @@
                 }
                 this.content = rsp.data.article;
                 this.$root.title = this.content.articleTitleEmoj;
+                this.comment.articleId = id;
             },
             async thank() {
                 if (this.content.thanked) return;
@@ -112,8 +148,28 @@
                     this.content.articleVote = rsp.type == -1 ? 1 : -1;
                 }
             },
-            async comment() {
-               
+            replyed(reply) {
+                this.reply = reply;
+                this.$refs.msgbox.$el.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+               });
+            },
+            async toComment() {
+               this.$refs.comment.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+               });
+            },
+            async commented(commentContent) {
+                let rsp = await this.$fishpi.comment.send({ ...this.comment, commentContent, commentOriginalCommentId: this.reply && this.reply.oId })
+                if (rsp.code) {
+                    this.$Message.error(rsp.msg);
+                    return;
+                }
+                this.$refs.msgbox.clearMsg();
+                await this.load(this.$route.params.id);
+                this.reply = null;
             }
         }
     }
@@ -122,10 +178,10 @@
 .layout {
     flex-direction: column;
     font-size: .8em;
-    overflow: auto;
-    height: 99%;
     background: var(--global-background-color);
     margin-bottom: 5px;
+    position: relative;
+    height: 99%;
     header {
         text-align: center;
         position: sticky;
@@ -148,11 +204,25 @@
             cursor: pointer;
         }
     }
+    .container {
+        overflow: auto;
+        height: 99%;
+        flex-direction: column;
+        display: flex;
+    }
     main {
         padding: 10px 20px;
         line-height: 2;
         max-width: 800px;
         margin: 0 auto;
+    }
+    .msg-box {
+        flex-direction: column-reverse;
+        margin: 0 10px;
+    }
+
+    footer {
+        padding-top: 10px;
     }
 }
 </style>

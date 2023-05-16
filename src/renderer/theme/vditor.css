@@ -163,7 +163,7 @@
 }
 
 .vditor-reset table tr {
-  background-color: #fafbfc;
+  background-color: rgba(250, 251, 252, 0.2);
   border-top: 1px solid #c6cbd1
 }
 
@@ -186,7 +186,7 @@
 }
 
 .vditor-reset table tbody tr:nth-child(2n) {
-  background-color: #fff
+  background-color: rgba(255, 255, 255, 0.1)
 }
 
 .vditor-reset code:not(.hljs):not(.highlight-chroma) {

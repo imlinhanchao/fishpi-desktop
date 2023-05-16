@@ -4,7 +4,7 @@
     >
         <section class="chat-toolbar">
             <input type="file" name="images" accept="image/*" ref="file" v-show="false" @change="uploadImg">
-            <Button type="text" class="msg-control" @click="clear()" title="消息清屏">
+            <Button v-if="!comment" type="text" class="msg-control" @click="clear()" title="消息清屏">
                 <Icon custom="fa fa-refresh"/>
             </Button>
             <Button type="text" class="msg-control" @click="$refs['file'].click()"
@@ -12,7 +12,7 @@
                 :loading="uploading">
                 <Icon class="btn-icon" custom="fa fa-picture-o"/>
             </Button>
-            <Button type="text" class="msg-control emoji-btn" :class="{ 'active-emoji': emojiForm }"
+            <Button type="text" class="msg-control emoji-btn" :class="{ 'active': emojiForm }"
                 @click="emojiForm = !emojiForm" 
                 title="发表情"><Icon custom="fa fa-smile-o"/></Button>
             <Button v-if="chatroom" type="text" class="msg-control"
@@ -34,6 +34,12 @@
                     <Input v-model="barrage.word" placeholder="弹幕" max-length="32" />
                 </section>
             </Modal>
+            <Button v-if="comment" type="text" class="msg-control" :class="{ 'active': comment.commentAnonymous }"
+                @click="$emit('anonymous', !comment.commentAnonymous)" 
+                title="匿名"><Icon custom="fa-solid fa-mask"/></Button>
+            <Button v-if="comment" type="text" class="msg-control" :class="{ 'active': comment.commentVisible }"
+                @click="$emit('visible', !comment.commentVisible)" 
+                title="仅楼主可见"><Icon custom="fa-solid fa-lock"/></Button>
         </section>
         <section class="chat-sender-resize" @mousedown="resizeBegin"><hr></section>
         <section class="chat-sender">
@@ -43,7 +49,7 @@
                     ref="message"
                     v-model="msg" 
                     type="textarea" 
-                    placeholder="简单聊聊"
+                    :placeholder="placeholder"
                     :rows="3"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact="sendMsg"
@@ -56,6 +62,9 @@
                 </textarea>
             </section>
             <Button
+                :style="{
+                    height: msgHeight + 'px'
+                }"
                 class="chat-send"
                 @click="sendMsg"
                 :loading="sending"
@@ -67,6 +76,12 @@
                     <Tag closable @on-close="$emit('update:quote', null)" color="success" v-if="quote">回复：@{{quote.userName}}</Tag>
                     <div slot="content">
                         <div class="msg-quote-tip md-style" v-html="quote.content"></div>
+                    </div>
+                </Tooltip>
+                <Tooltip placement="top-start" v-if="reply && reply.oId" :max-width="innerWidth * .8">
+                    <Tag closable @on-close="$emit('update:reply', null)" color="success">回复：@{{reply.userName}}</Tag>
+                    <div slot="content">
+                        <div class="msg-quote-tip md-style" v-html="reply.content"></div>
                     </div>
                 </Tooltip>
                 <Tag closable @on-close="$emit('update:discussed', null)" color="primary" v-if="discussed">#{{discussed}}#</Tag>
@@ -87,6 +102,9 @@
         quote: {
             type: Object,
         },
+        reply: {
+            type: Object,
+        },
         discussed: {
             type: String,
         },
@@ -94,6 +112,13 @@
             type: Boolean,
             default: true
         },
+        placeholder: {
+            type: String,
+            default: '简单聊聊'
+        },
+        comment: {
+            type: Object,
+        }
     },
     mounted () {
         this.autocompleteBroad.addEventListener("message", ({ data }) => {
@@ -182,6 +207,9 @@
         }
     },
     methods: {
+        clearMsg() {
+            this.msg = '';
+        },
         closeEmoji(ev) {
             if (!ev.target.closest('.emoji-form') && !ev.target.closest('.emoji-btn')) {
                 this.emojiForm = false;
@@ -203,7 +231,10 @@
         async sendMsg() {
             if (this.sending) return;
             this.msg = this.toMusicBox(this.msg);
-            if (this.chatroom) {
+            if (this.comment) {
+                return await this.$emit('send', this.msg);
+            }
+            else if (this.chatroom) {
                 return await this.sendChatroom();
             }
             else {
@@ -429,8 +460,9 @@
                 display: none;
             }
         }
-        .active-emoji {
-            color: var(--global-active-color)
+        .active {
+            color: var(--global-active-color);
+            background-color: transparent;
         }
     }
     .chat-sender-resize {

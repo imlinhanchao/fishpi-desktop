@@ -35,6 +35,10 @@
 .music-module {
     .music-btn {
         display: inline-block;
+        &.active {
+            color: var(--global-active-color);
+            background: transparent;
+        }
     }
     .music-player {
         position: absolute;
@@ -43,7 +47,7 @@
         width: 100vw;
         left: 0;
         top: 2em;
-        z-index: 10;
+        z-index: 1000;
         display: none;
         &.music-visible {
             display: flex;
@@ -55,7 +59,9 @@
 
 <template>
     <span class="music-module no-drag" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'music', instance: this}))">
-        <Button class="music-btn" type="text" @click="visible=!visible" v-if="$root.playSongs.length > 0"><Icon class="" custom="fa fa-music"/></Button>
+        <Button :title="$root.currentMusic.artist" class="music-btn" type="text" :class="{ active: visible }" @click="visible=!visible" v-if="$root.playSongs.length > 0">
+            <Icon class="" custom="fa fa-music"/>
+        </Button>
         <span :class="{'music-visible': visible }" class="music-player plyr--audio" v-if="$root.playSongs.length > 0">
             <button title="关闭播放器" class="audio-control-btn audio-close" @click="$root.playSongs = []"><Icon custom="fa fa-times"></Icon></button>
             <button title="上一首" v-if="$root.playSongs.length > 1" class="plyr__controls__item plyr__control plyr__control--pressed audio-control-btn" @click="$root.prevSong()"><Icon custom="fa fa-backward "></Icon></button>

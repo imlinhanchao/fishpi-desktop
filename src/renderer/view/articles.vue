@@ -56,19 +56,6 @@
                 this.contents = this.contents.concat(rsp.data.articles);
                 this.page = page;
             },
-            async send() {
-                if (!this.message) return;
-                this.sending = true;
-                let rsp = await this.$fishpi.breezemoon.send(this.message);
-                if (rsp.code != 0) this.$Message.error(rsp.msg);
-                else {
-                    this.message = '';
-                    rsp = await this.$fishpi.breezemoon.list(1);
-                    this.contents.unshift(rsp.breezemoons[0]);
-                    this.$refs.content.scrollTo(0, 0);
-                }
-                this.sending = false;
-            }
         }
     }
 </script>

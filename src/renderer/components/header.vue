@@ -4,12 +4,15 @@
     flex-wrap: wrap;
     justify-content: space-between;
     height: 40px;
+    flex-wrap: nowrap;
     h1 {
         font-size: 1em;
         padding: 0 5px;
         font-weight: normal;
         user-select: none;
         -webkit-app-region: drag;
+        display: flex;
+        align-items: center;
         img {
             height: 1.5em;
             vertical-align: middle;
@@ -25,9 +28,15 @@
             -webkit-app-region: drag;
         }
     }
+    .music-module {
+        display: flex;
+        align-items: center;
+    }
     .control {
         -webkit-app-region: no-drag;
         padding-right: 5px;
+        display: flex;
+        align-items: center;
         i {
             font-size: 1em;
         }

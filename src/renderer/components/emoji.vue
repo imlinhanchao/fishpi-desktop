@@ -132,6 +132,7 @@
     position: absolute;
     width: calc(100% - 10px);
     bottom: 2em;
+    z-index: 100;
     .face-list {
         display: flex;
         flex-direction: row;
