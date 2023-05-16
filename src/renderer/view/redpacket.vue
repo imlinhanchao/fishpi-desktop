@@ -1,7 +1,7 @@
 <template>
 <section id="redpacket" class="redpacket-window" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'redpacket', instance: this}))">
     <section class="redpacket-control">
-        <Button type="text" @click="close"><Icon custom="fa fa-times"></Icon></Button>
+        <Button type="text" @click="close"><Icon custom="fa-solid fa-xmark"></Icon></Button>
     </section>
     <section class="redpacket" v-if="redpacketData != null">
         <section class="redpacket-bg"></section>
@@ -33,6 +33,14 @@
                     </li>
                 </ul>
             </section>
+        </main>
+    </section>
+    <section class="redpacket" v-if="!isSend && !redpacketData">
+        <section class="redpacket-bg"></section>
+        <main class="redpacket-content">
+            <p class="redpacket-current">
+                {{error}}
+            </p>
         </main>
     </section>
     <section class="redpacket redpacket-form" v-if="isSend">
@@ -112,7 +120,8 @@
                 recivers: [],
                 gesture: 0
             },
-            onlineList: []
+            onlineList: [],
+            error: ''
         }    
     },
     watch: {
@@ -215,7 +224,10 @@
         async load({ id, gesture }) {
             await this.$root.getInfo();
             let rsp = await this.$fishpi.chatroom.redpacket.open(id, gesture);
-            if (!rsp) return;
+            if (rsp.code) {
+                this.error = rsp.msg;
+                return;
+            }
             this.redpacket.type = '';
             this.redpacketData = rsp;
             this.redpacketData.recivers = this.redpacketData.recivers || [];
