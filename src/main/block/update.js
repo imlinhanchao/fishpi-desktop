@@ -6,7 +6,7 @@ import AdmZip from 'adm-zip'
 import { spawn } from 'child_process'
 import fetch from 'node-fetch'
 import { rootPath } from 'electron-root-path';
-import windows from '../windows'
+import index from '../windows'
 
 let CopyPath = '';
 
@@ -122,7 +122,7 @@ function updateEvent(event, argv) {
         data.browser_download_url = data.browser_download_url.replace(/^https:\/\/github.com/, argv.mirror ||'https://dgm.librejo.cn')
         downloadFile(data.browser_download_url, savePath, (state, pro, currPro, total) => {
             if (state == 'data') {
-                windows.main.setProgressBar(pro / 100);
+                if (index.windows.main.windows) index.windows.main.windows.setProgressBar(pro / 100);
                 if (argv.callback) event.sender.send('win-update-app-callback-' + argv.callback, { state, pro, currPro, total })
             }
             else if(state == 'finish') {
