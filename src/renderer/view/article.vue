@@ -78,6 +78,25 @@
             Comment, MessageBox
         },
         mounted () {
+            this.$fishpi.article.heat(this.$route.params.id).then(data => {
+              this.heat = data;
+              this.listenRws = this.$fishpi.article.addListener({
+                id: this.content.oId,
+                type: this.content.articleType,
+              }, ({ data }) => {
+                try {
+                  const msg = JSON.parse(data);
+                  if (msg.type == 'articleHeat') {
+                    this.heat += msg.operation == '+' ? 1 : -1;
+                  }
+                  else if (msg.commentOnArticleId == this.content.oId) {
+                    this.content.articleComments.push(msg);
+                  }
+                } catch (error) {
+                  
+                }
+              })
+            });
             this.load(this.$route.params.id)
         },
         beforeDestroy () {
@@ -99,7 +118,9 @@
                     oId: '',
                     content: '',
                     userName: ''
-                }
+                },
+                heat: 0,
+                listenRws: null,
             }    
         },
         watch: {
@@ -118,6 +139,7 @@
         },
         methods: {
             unLoad() {
+              if (this.listenRws) this.listenRws.close();
             },
             async load(id) {
                 let rsp = await this.$fishpi.article.detail(id);
@@ -175,7 +197,7 @@
                 })
                 if (rsp.code) return callback(rsp.msg);
                 callback();
-                await this.load(this.$route.params.id);
+                // await this.load(this.$route.params.id);
                 this.reply = null;
             }
         }
