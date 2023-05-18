@@ -28,6 +28,7 @@
                     </div>
                     <div class="redpacket-type">
                         <div>{{redpacketType[item.content.type]}}</div>
+                        <div><i class="fa-solid fa-coins"></i> {{item.content.money}}</div>
                     </div>
                 </div>
                 <div title="猜猜我出什么呢~" v-show="item.content.type == 'rockPaperScissors' && !isCurrent && !emptyRedpacket && !readRedpacket" class="user-gesture">
@@ -421,7 +422,7 @@
                 flex-direction: column;
                 background: var(--main-redpacket-background-color);
                 border-radius: 5px;
-                padding-right: 10px;
+                padding-right: 5px;
                 cursor: pointer;
                .redpacket-main {
                     display: inline-flex;
@@ -440,6 +441,8 @@
                     padding: 2px;
                     margin: 0 10px;
                     font-size: .5em;
+                    display: flex;
+                    justify-content: space-between;
                 }
             }
         }
@@ -492,6 +495,7 @@
             color: var(--main-chatroom-plusone-color);
             height: 25px;
             width: 25px;
+            min-width: 25px;
             background: var(--main-chatroom-plusone-background-color);
             border-radius: 15px;
             text-align: center;
