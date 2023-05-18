@@ -299,7 +299,7 @@
         toMusicBox(msg) {
             let songRegexp = /http(?:s):\/\/music.163.com\/(?:#\/|)song\?id=(\d+)(&[\w=]+)*/g;
             let listRegexp = /http(?:s):\/\/music.163.com\/(?:#\/|)album\?id=(\d+)(&[\w=]+)*/g;
-            if (msg.match(songRegexp)) msg = msg.replace(songRegexp, `<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=100% height=52 src="//music.163.com/outchain/player?type=2&id=$1&auto=0&height=32"></iframe>`);
+            if (msg.match(songRegexp)) msg = msg.replace(songRegexp, `<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=$1&auto=0&height=66"></iframe>`);
             else if (msg.match(listRegexp)) msg = msg.replace(listRegexp, `<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=100% height=210 src="//music.163.com/outchain/player?type=1&id=$1&auto=0&height=430"></iframe>`)
             return msg;
         },
