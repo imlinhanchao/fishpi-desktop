@@ -1,7 +1,7 @@
 <template>
 <div id="comments" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'comments', instance: this}))">
     <ul>
-        <li :id="`comment-item-${c.oId}`" class="comment-item" v-for="c in comments" :data-id="c.oId">
+        <li :id="`comment-item-${c.oId}`" class="comment-item" v-for="(c, i) in comments" :data-id="c.oId">
             <Avatar :src="c.commentAuthorThumbnailURL" />
             <div class="comment-main">
                 <div class="comment-header">
@@ -16,6 +16,16 @@
                 </div>
                 <div class="comment-content vditor-reset" v-html="formatComment(c.commentContent)"></div>
                 <div class="comment-footer">
+                    <span class="info-item click" title="删除"
+                      v-if="c.commentAuthorName == $root.current.userName">
+                      <Poptip
+                            class="click"
+                            confirm
+                            :title="`你确定要删除这条评论吗？`"
+                            @on-ok="remove(c, i)">
+                            <i class="fa-solid fa-trash"></i>
+                        </Poptip>
+                    </span>
                     <span class="info-item" title="感谢">
                         <Poptip
                             class="click"
@@ -125,6 +135,14 @@
                     userName: comment.commentAuthorName,
                     content: comment.commentContent
                 })
+            },
+            async remove(comment, index) {
+                let rsp = await this.$fishpi.comment.remove(comment.oId);
+                if (rsp.code != 0) {
+                    this.$Message.error(rsp.msg);
+                    return;
+                }
+                this.comments.splice(index, 1);
             },
             showReply(commentId) {
                 document.querySelector(`#comment-item-${commentId}`).scrollIntoView({
