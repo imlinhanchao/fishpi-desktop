@@ -14,7 +14,7 @@
                     </div>
                     <div class="comment-time">{{ c.commentCreateTimeStr || c.commentCreateTime }}</div>
                 </div>
-                <div class="comment-content vditor-reset" v-html="c.commentContent"></div>
+                <div class="comment-content vditor-reset" v-html="formatComment(c.commentContent)"></div>
                 <div class="comment-footer">
                     <span class="info-item" title="感谢">
                         <Poptip
@@ -86,6 +86,11 @@
         },
         methods: {
             unLoad() {
+            },
+            formatComment(comment) {
+              return comment.replace(/(<a )/g, '$1target="_blank" ')
+                .replace(/(<iframe[^>]*?src="(https:)*\/\/music.163.com\/outchain\/player\?type=\d&amp;id=(\d+)[^"]*?">\s*<\/iframe>)/, '<div class="netease-music"><div class="netease-cover" data-id="$3"></div>$1</div>')
+                .replace(/(<img )/g, '$1data-action="preview" ')
             },
             async thank(comment) {
                 if (comment.rewarded) return;
