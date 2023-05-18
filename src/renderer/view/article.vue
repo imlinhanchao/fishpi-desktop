@@ -1,5 +1,5 @@
 <template>
-<div id="article" class="layout vditor--dark" v-if="content" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'article', instance: this}))">
+<div id="article" class="layout" v-if="content" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'article', instance: this}))">
     <header>
         <router-link title="返回" class="back-btn" to="/articles"><i class="fa-solid fa-caret-left"></i></router-link>
         <h1>{{ content.articleTitleEmoj }}</h1>

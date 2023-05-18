@@ -1,5 +1,6 @@
 <template>
 <section ref="msg-view" class="msg-item" 
+    :data-height="contentHeight"
     :title="isBaggager ? `${item.userNickname || item.userName}: ${item.content}` : item.time"
     v-if="item.content" 
     :class="{ barrager: isBaggager, 'msg-current': isCurrent}" 
@@ -54,9 +55,16 @@
         </div>
         <div ref="msg" class="msg-contain" v-if="!isRedpacket" @contextmenu.stop="msgMenuShow">
             <div class="arrow" v-if="!isImgOnly"/>
-            <div class="msg-content md-style" :style="{
+            <div class="msg-content" :style="{
                 color: item.barragerColor, 
-            }" :data-html="item.content" v-html="formatContent" v-if="!isImgOnly"/>
+            }" :data-html="item.content" v-if="!isImgOnly">
+              <div class="msg-view" :class="{ 'msg-overflow': overflow && !expend }">
+                <div ref="msgView" class="md-style" v-html="formatContent"></div>
+              </div>
+              <div @click="expend = !expend" v-if="overflow" class="msg-more">
+                <i :class="{ 'fa-rotate-180': expend }" class="fa-solid fa-caret-down"></i>
+              </div>
+            </div>
             <span class="msg-img" v-if="isImgOnly" v-html="formatContent"></span>
             <span class="plus-one" @click="doubleMsg" v-if="plusone">+1</span>
         </div>
@@ -97,6 +105,7 @@
                     this.$refs['msg-view'].classList.add('barrager-show');
                 }, 100);
             }
+            if (this.$refs.msgView) this.overflow = this.$refs.msgView.offsetHeight > 200;
         })
     },
     updated() {
@@ -110,6 +119,8 @@
             readed: false,
             contentHeight: 0,
             autoHide: false,
+            overflow: false,
+            expend: false,
         }
     },
     watch: {
@@ -475,11 +486,23 @@
         .msg-content{
             background-color: var(--main-chatroom-message-background-color);
             border-radius: 5px;
-            padding: 8px 15px;
             color: var(--main-chatroom-message-color);
             word-break: break-word;
             max-width: calc(100% - 45px);
-            overflow: auto;
+            overflow: hidden;
+            position: relative;
+            .msg-view {
+              padding: 8px 15px;
+              width: 100%;
+              &.msg-overflow {
+                max-height: 150px;
+              }
+            }
+            .msg-more {
+              cursor: pointer;
+              text-align: center;
+              background: linear-gradient(to bottom, transparent 0%, var(--main-chatroom-message-background-color-darken) 100%);
+            }
         }
 
         .msg-img {
