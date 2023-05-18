@@ -44,6 +44,12 @@
     <section class="container">
         <main ref="main">
             <section class="vditor-reset article-content" v-html="articleContent"></section>
+            <section class="article-time" v-if="content.articleUpdateTime != content.articleCreateTime">
+              更新于 <time>{{ content.articleUpdateTimeStr }}</time> 
+            </section>
+            <section class="article-time" v-else>
+              发表于 <time>{{ content.articleCreateTimeStr }}</time> 
+            </section>
         </main>
         <footer ref="comment">
             <MessageBox 
@@ -161,13 +167,14 @@
                     block: 'nearest',
                });
             },
-            async commented(commentContent) {
-                let rsp = await this.$fishpi.comment.send({ ...this.comment, commentContent, commentOriginalCommentId: this.reply && this.reply.oId })
-                if (rsp.code) {
-                    this.$Message.error(rsp.msg);
-                    return;
-                }
-                this.$refs.msgbox.clearMsg();
+            async commented(commentContent, callback) {
+                let rsp = await this.$fishpi.comment.send({ 
+                  ...this.comment, 
+                  commentContent, 
+                  commentOriginalCommentId: this.reply && this.reply.oId 
+                })
+                if (rsp.code) return callback(rsp.msg);
+                callback();
                 await this.load(this.$route.params.id);
                 this.reply = null;
             }
@@ -223,6 +230,12 @@
 
     footer {
         padding-top: 10px;
+    }
+
+    .article-time {
+        text-align: right;
+        font-style: italic;
+        opacity: .5;
     }
 }
 </style>

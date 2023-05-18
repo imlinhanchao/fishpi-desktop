@@ -87,7 +87,11 @@
                 menu.push({
                     label: '撤回',
                     click: () => {
-                        this.$fishpi.chat.revoke(this.item.oId);
+                        this.$fishpi.chat.revoke(this.item.oId)
+                        .then(rsp => rsp.code ? 
+                            this.$message.error(rsp.msg) : 
+                            this.$message.success('撤回成功')
+                        );
                     }
                 });
             }

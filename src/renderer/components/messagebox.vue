@@ -52,8 +52,8 @@
                     :placeholder="placeholder"
                     :rows="3"
                     @keydown.enter.exact.prevent
-                    @keyup.enter.exact="sendMsg"
-                    @keyup.enter.ctrl.exact="msg += '\n'"
+                    @keyup.enter.exact="onEnter"
+                    @keyup.enter.ctrl.exact="onCtrlEnter"
                     class="ivu-input ivu-input-no-border"
                     :style="{
                         height: msgHeight + 'px'
@@ -207,6 +207,12 @@
         }
     },
     methods: {
+        onEnter(ev) {
+          this.comment ? this.msg += '\n' : this.sendMsg();
+        },
+        onCtrlEnter(ev) {
+          this.comment ? this.sendMsg(): this.msg += '\n';
+        },
         clearMsg() {
             this.msg = '';
         },
@@ -231,25 +237,12 @@
         async sendMsg() {
             if (this.sending) return;
             this.msg = this.toMusicBox(this.msg);
-            if (this.comment) {
-                return await this.$emit('send', this.msg);
-            }
-            else if (this.chatroom) {
+            if (!this.msg) return;
+            if (this.chatroom) {
                 return await this.sendChatroom();
             }
             else {
-                if (this.quote) {
-                    let raw = this.quote.markdown;
-                    raw = raw.split("\n").map((r) => `>${r}`).join("\n").trim();
-                    this.msg = `回复：\n\n${raw}\n\n${this.msg}`;
-                    this.$emit('update:quote', null)
-                }
-                this.sending = true;
-                this.$emit('send', this.msg, (error) => {
-                    this.sending = false;
-                    if (error) this.$Message.error(rsp.msg);
-                    else this.msg = '';
-                });
+                return await this.send();
             }
         },
         async sendChatroom() {
@@ -285,6 +278,20 @@
                 window.scrollTo(0, 0);
             }
             return true;
+        },
+        async send() {
+          if (this.quote) {
+              let raw = this.quote.markdown;
+              raw = raw.split("\n").map((r) => `>${r}`).join("\n").trim();
+              this.msg = `回复：\n\n${raw}\n\n${this.msg}`;
+              this.$emit('update:quote', null)
+          }
+          this.sending = true;
+          this.$emit('send', this.msg, (error) => {
+              this.sending = false;
+              if (error) this.$Message.error(error);
+              else this.msg = '';
+          });
         },
         clear() {
             this.$emit('clear');
