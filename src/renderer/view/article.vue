@@ -1,7 +1,7 @@
 <template>
 <div id="article" class="layout" v-if="content" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'article', instance: this}))">
     <header>
-        <router-link title="返回" class="back-btn" to="/articles"><i class="fa-solid fa-caret-left"></i></router-link>
+        <a title="返回" class="back-btn" @click="goBack"><i class="fa-solid fa-caret-left"></i></a>
         <h1>{{ content.articleTitleEmoj }}</h1>
         <p>
             <Avatar :size="18" class="msg-avatar user-card" :title="content.articleAuthorName" :data-user="content.articleAuthorName" :src="content.articleAuthorThumbnailURL210" />
@@ -79,19 +79,20 @@
         },
         async mounted () {
             await this.load(this.$route.params.id)
-            this.$fishpi.article.heat(this.$route.params.id).then(data => {
+            this.$fishpi.article.heat(this.$route.params.id).then(async data => {
               this.heat = data;
-              this.listenRws = this.$fishpi.article.addListener({
+              this.listenRws = await this.$fishpi.article.addListener({
                 id: this.content.oId,
                 type: this.content.articleType,
               }, ({ data }) => {
                 try {
                   const msg = JSON.parse(data);
                   if (msg.type == 'articleHeat') {
-                    this.heat += msg.operation == '+' ? 1 : -1;
+                      this.heat += msg.operation == '+' ? 1 : -1;
                   }
                   else if (msg.commentOnArticleId == this.content.oId) {
-                    this.content.articleComments.push(msg);
+                    if (!this.content.articleComments.some(c => c.oId == msg.oId)) 
+                        this.content.articleComments.push(msg);
                   }
                 } catch (error) {
                   
@@ -138,6 +139,10 @@
             }
         },
         methods: {
+            goBack() {
+              this.unLoad();
+              this.$router.go(-1);
+            },
             unLoad() {
               if (this.listenRws) this.listenRws.close();
             },
@@ -197,7 +202,7 @@
                 })
                 if (rsp.code) return callback(rsp.msg);
                 callback();
-                // await this.load(this.$route.params.id);
+                await this.load(this.$route.params.id);
                 this.reply = null;
             }
         }
