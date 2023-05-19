@@ -77,7 +77,8 @@
         components: {
             Comment, MessageBox
         },
-        mounted () {
+        async mounted () {
+            await this.load(this.$route.params.id)
             this.$fishpi.article.heat(this.$route.params.id).then(data => {
               this.heat = data;
               this.listenRws = this.$fishpi.article.addListener({
@@ -97,7 +98,6 @@
                 }
               })
             });
-            this.load(this.$route.params.id)
         },
         beforeDestroy () {
             this.unLoad();
