@@ -420,7 +420,10 @@
         },
         resizeMove(ev) {
             if (!this.resize) return;
-            let height = window.innerHeight - ev.clientY - 1;
+            const rect = this.$refs.message.getBoundingClientRect();
+            let top = rect.y;
+            if (!this.comment) top += rect.height;
+            let height = Math.abs(top - ev.clientY);
             console.log(height)
             this.msgHeight = height;
             localStorage.setItem('message-height', height);
