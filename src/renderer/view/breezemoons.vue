@@ -100,8 +100,6 @@
     background: var(--main-chatroom-background-color);
 
     .msg-avatar {
-        width: 41px;
-        height: 35px;
         border-radius: 35px;
         cursor: pointer;
     }

@@ -1,6 +1,9 @@
 <template>
 <div id="article" class="layout" v-if="content" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'article', instance: this}))">
     <header>
+        <div class="view-list" :title="`有 ${ heat } 个人和你一起在看`" ref="heatRef">
+            <div class="view-item" :data-heat="heat" :style="{ width: `${heat * 3}px` }"></div>
+        </div>
         <a title="返回" class="back-btn" @click="goBack"><i class="fa-solid fa-caret-left"></i></a>
         <h1>{{ content.articleTitleEmoj }}</h1>
         <p>
@@ -84,16 +87,16 @@
               this.listenRws = await this.$fishpi.article.addListener({
                 id: this.content.oId,
                 type: this.content.articleType,
-              }, ({ data }) => {
+              }, async ({ data }) => {
                 try {
-                  const msg = JSON.parse(data);
-                  if (msg.type == 'articleHeat') {
-                      this.heat += msg.operation == '+' ? 1 : -1;
-                  }
-                  else if (msg.commentOnArticleId == this.content.oId) {
-                    if (!this.content.articleComments.some(c => c.oId == msg.oId)) 
-                        this.content.articleComments.push(msg);
-                  }
+                    const msg = JSON.parse(data);
+                    if (msg.type == 'articleHeat') {
+                        this.updateHeat(msg.operation == '+' ? 1 : -1);
+                    }
+                    else if (msg.commentOnArticleId == this.content.oId) {
+                        if (!this.content.articleComments.some(c => c.oId == msg.oId)) 
+                            this.content.articleComments.push(msg);
+                    }
                 } catch (error) {
                   
                 }
@@ -122,6 +125,8 @@
                 },
                 heat: 0,
                 listenRws: null,
+                heatIn: false,
+                heatOut: false,
             }    
         },
         watch: {
@@ -139,6 +144,15 @@
             }
         },
         methods: {
+            updateHeat(n) {
+                const heatEle = document.createElement('div');
+                heatEle.className = n > 0 ? 'heat-in' : 'heat-out';
+                this.$refs.heatRef.appendChild(heatEle);
+                setTimeout(() => {
+                    this.$refs.heatRef.removeChild(heatEle);
+                    this.heat += n;
+                }, 2000);
+            },
             goBack() {
               this.unLoad();
               this.$router.go(-1);
@@ -189,7 +203,7 @@
                });
             },
             async toComment() {
-               this.$refs.comment.scrollIntoView({
+               this.$refs.msgbox.$el.scrollIntoView({
                     behavior: 'smooth',
                     block: 'nearest',
                });
@@ -212,7 +226,7 @@
 .layout {
     flex-direction: column;
     font-size: .8em;
-    background: var(--global-background-color);
+    background: var(--article-background-color);
     margin-bottom: 5px;
     position: relative;
     height: 99%;
@@ -221,14 +235,32 @@
         position: sticky;
         top: 0;
         left: 0;
-        background: var(--global-background-color);
+        background: var(--article-header-background-color);
         width: 100%;
         padding-bottom: 5px;
         z-index: 100;
+        .view-list {
+            position: absolute;
+            top: 2px;
+            right: 5px;
+            width: 100%;
+            z-index: 84;
+            height: 3px;
+            cursor: pointer;
+            .view-item {
+                position: absolute;
+                height: 3px;
+                background-color: var(--article-heat-color);
+                z-index: 1;
+                bottom: -3px;
+                right: 0;
+            }
+        }
         .back-btn {
             position: absolute;
             left: 0;
             top: -5px;
+            z-index: 85;
         }
         .info-item {
             display: inline-block;

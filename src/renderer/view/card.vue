@@ -142,6 +142,7 @@
             cursor: pointer;
             .ivu-avatar {
                 height: 100px;
+                min-width: 100px;
                 width: 100px;
             }
         }

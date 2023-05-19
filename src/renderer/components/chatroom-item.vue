@@ -441,6 +441,7 @@
                 border-radius: 5px;
                 padding-right: 5px;
                 cursor: pointer;
+                max-width: 54vw;
                .redpacket-main {
                     display: inline-flex;
                     align-items: center;
@@ -503,9 +504,13 @@
               }
             }
             .msg-more {
-              cursor: pointer;
-              text-align: center;
-              background: linear-gradient(to bottom, transparent 0%, var(--main-chatroom-message-background-color-darken) 100%);
+                cursor: pointer;
+                text-align: center;
+                background: linear-gradient(to bottom, transparent 0%, var(--main-chatroom-message-background-color-darken) 100%);
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
             }
         }
 
@@ -540,6 +545,7 @@
             padding: 2px;
         }
         .db-avatar, .redpacket-avatar {
+            min-width: 25px;
             width: 25px;
             height: 25px;
         }
@@ -628,6 +634,7 @@
             display: none;
         }
         .msg-avatar-box .msg-avatar {
+            min-width: 45px;
             width: 45px;
             height: 45px;
             margin: 0;

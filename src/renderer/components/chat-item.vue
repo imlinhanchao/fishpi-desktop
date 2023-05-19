@@ -305,6 +305,7 @@
             padding: 2px;
         }
         .db-avatar, .redpacket-avatar {
+            min-width: 25px;
             width: 25px;
             height: 25px;
         }
