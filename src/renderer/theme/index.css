@@ -252,6 +252,9 @@ a {
 .ivu-tabs-ink-bar {
     background-color: var(--global-active-color);
 }
+.ivu-avatar {
+    min-width: 32px;
+}
 
 .ivu-avatar>img {
     object-fit: cover;
@@ -264,4 +267,54 @@ a {
 .ivu-switch-checked, .ivu-checkbox-checked .ivu-checkbox-inner
 {
     background-color: var(--global-active-color);
+}
+.heat-in, .heat-out {
+    position: absolute;
+    height: 3px;
+    background-color: var(--article-heat-color);
+    z-index: 1;
+    bottom: -3px;
+    right: 0px;
+    width: 3px;
+    animation-duration: 2s;
+    animation-fill-mode: both;
+    animation-name: slideIn;
+}
+
+.heat-out {
+    animation-name: slideOut;
+}
+@keyframes slideOut {
+    0% {
+        right: 0;
+        opacity: 1;
+    }
+
+    50% {
+        right: 50%;
+        opacity: 0;
+    }
+
+    100% {
+        right: 100%;
+        opacity: 0;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        right: 100%;
+        opacity: 0;
+    }
+
+    
+    50% {
+        right: 50%;
+        opacity: 1;
+    }
+
+    100% {
+        right: 0;
+        opacity: 1;
+    }
 }

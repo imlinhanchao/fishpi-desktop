@@ -68,7 +68,12 @@
 
     --plyr-audio-control-color: var(--global-control-text-color);
     --plyr-audio-controls-background: rgba(35, 36, 37, 0.78);
-    --plyr-color-main: #d23f31;
+    --plyr-color-main: var(--global-active-color);
+
+
+    --article-background-color: var(--global-background-color);
+    --article-header-background-color: var(--article-background-color);
+    --article-heat-color: var(--global-active-color);
 
 }
 

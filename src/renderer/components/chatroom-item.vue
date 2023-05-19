@@ -12,8 +12,8 @@
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
         <div class="msg-user" :title="item.userName">
-            <span>{{item.userNickname || item.userName}}</span>
-            <Via :via="item.via || {}" />
+            <span><span :title="item.userName">{{item.userNickname || item.userName}}</span>
+            <Via :via="item.via || {}" /></span>
         </div>
         <div class="redpacket-item"
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"
@@ -61,7 +61,7 @@
               <div class="msg-view" :class="{ 'msg-overflow': overflow && !expend }">
                 <div ref="msgView" class="md-style" v-html="formatContent"></div>
               </div>
-              <div @click="expend = !expend" v-if="overflow" class="msg-more">
+              <div :title="expend ? '合并' : '展开'" @click="expend = !expend" v-if="overflow" class="msg-more">
                 <i :class="{ 'fa-rotate-180': expend }" class="fa-solid fa-caret-down"></i>
               </div>
             </div>
@@ -270,7 +270,7 @@
                 }
             });
             menu.push({
-                label: '复制直达地址',
+                label: '复制地址',
                 click: () => {
                   navigator.clipboard.writeText(`https://fishpi.cn/cr?oId=${this.item.oId}#chatroom${this.item.oId}`)
                 }
@@ -470,9 +470,7 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            * {
-                vertical-align: text-top;
-            }
+            line-height: 1.5;
         }
 
         .arrow{
