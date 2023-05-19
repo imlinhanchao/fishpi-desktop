@@ -269,6 +269,12 @@
                     this.doubleMsg();
                 }
             });
+            menu.push({
+                label: '复制直达地址',
+                click: () => {
+                  navigator.clipboard.writeText(`https://fishpi.cn/cr?oId=${this.item.oId}#chatroom${this.item.oId}`)
+                }
+            });
             if (target.nodeName.toLowerCase() == 'img') {
                 if (target.className == 'emoji') {
                     menu.push({
