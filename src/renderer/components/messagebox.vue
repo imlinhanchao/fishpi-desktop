@@ -31,7 +31,7 @@
                 <p>发送弹幕每次将花费 <b>{{ barragePay.cost }}</b> <span>{{ barragePay.unit }}</span>；最大长度32字符。</p>
                 <section class="barrage-form">
                     <ColorPicker v-model="barrage.color" />
-                    <Input v-model="barrage.word" placeholder="弹幕" @keydown.enter="sendBarrage" max-length="32" />
+                    <Input v-model="barrage.word" placeholder="弹幕" @on-keydown.enter="sendBarrage" max-length="32" />
                 </section>
             </Modal>
             <Button v-if="comment" type="text" class="msg-control" :class="{ 'active': comment.commentAnonymous }"
