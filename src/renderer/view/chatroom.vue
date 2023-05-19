@@ -6,7 +6,7 @@
             :scroll="-chatScrollPos" :total="chatScrollTotal" @scrollTo="chatScrollPos = -$event"/>
             <section :style="{ bottom: `${chatScrollPos}px`}" class="chat-list" ref="chatlist" v-bind:key="1">
                 <a class="chat-more" @click="loadMore">...</a>
-                <ChatroomItem v-if="!isShield(item)" 
+                <ChatroomItem v-if="item.content && !isShield(item)" 
                     :ref="'msg-item-' + item.oId" 
                     v-for="(item, i) in chats" 
                     :item="item" 
@@ -18,6 +18,7 @@
                     @face="appendFace"
                     @quote="quoteMsg"
                 ></ChatroomItem>
+                <CustomMsg :item="item"  v-else-if="item.type == 'customMessage'"></CustomMsg>
             </section>
             <section v-if="newMessage > 0" class="chat-new" @click="gotoMsg(chats[chats.length - newMessage].oId)">
                 <Icon custom="fa fa-angle-double-down" /> {{newMessage}} 条新消息 
@@ -62,13 +63,17 @@
 
 <script>
     import ChatroomItem from '../components/chatroom-item.vue';
+import CustomMsg from '../components/custom-msg.vue';
     import MessageBox from '../components/messagebox.vue';
     import ScrollBar from '../components/scrollbar.vue';
     export default {
         name: 'chatroom',
         components: {
-            ChatroomItem, MessageBox, ScrollBar,
-        },
+    ChatroomItem,
+    MessageBox,
+    ScrollBar,
+    CustomMsg
+},
         async mounted () {
             await this.reload()
             this.onlines = this.$fishpi.chatroom.onlines;
@@ -150,6 +155,7 @@
                 this.setting = setting.chatroom;
             },
             isShield(msg) {
+                if (msg.type != 'msg' && msg.type != 'redpacket') return;
                 return this.setting.shield.find(s => {
                     if (s.value == '' && !s.type.startsWith('redpacket')) return false;
                     switch(s.type)
@@ -207,6 +213,10 @@
                             }
                         }
                         break;
+                    case 'customMessage': {
+                        this.chats.push(msg);
+                        break;
+                    }
                     case 'barrager': {
                         msg.data = {
                             content: msg.data.barragerContent,
