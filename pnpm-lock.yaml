@@ -37,7 +37,7 @@ specifiers:
   eslint-plugin-standard: ^3.0.1
   extract-text-webpack-plugin: ^3.0.0
   file-loader: ^0.11.2
-  fishpi: 0.0.36
+  fishpi: 0.0.45
   form-data: ^4.0.0
   get-file-object-from-local-path: ^1.0.2
   html-webpack-plugin: ^2.30.1
@@ -78,7 +78,7 @@ dependencies:
   caret-pos: 2.0.0
   child_process: 1.0.2
   electron-root-path: 1.1.0_eslint@4.19.1
-  fishpi: 0.0.36
+  fishpi: 0.0.45
   form-data: 4.0.0
   get-file-object-from-local-path: 1.0.2
   js-md5: 0.7.3
@@ -4301,8 +4301,8 @@ packages:
       locate-path: 3.0.0
     dev: true
 
-  /fishpi/0.0.36:
-    resolution: {integrity: sha512-mz7HsOE/Nj4llczP96+U746l+LclUAw+QJHWFAup4YodUE6ah+atbFcd0OxPydH3wA3zvdUcu6enZCpk8RGz2A==}
+  /fishpi/0.0.45:
+    resolution: {integrity: sha512-Dss7fLHhRW/EKeuRuVrO4HygeLu86E4pfCqukX5n+36DwKRVIdz4PwOAFwhCVFtfi5hkiDXpsQwYHB1UR4FbYg==}
     engines: {node: '>=12.0'}
     dependencies:
       '@types/js-md5': 0.7.0
