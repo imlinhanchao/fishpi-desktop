@@ -1,7 +1,7 @@
 <template>
 <div id="comments" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'comments', instance: this}))">
     <ul>
-        <li :id="`comment-item-${c.oId}`" class="comment-item" v-for="(c, i) in comments.reverse()" :data-id="c.oId">
+        <li :id="`comment-item-${c.oId}`" class="comment-item" v-for="(c, i) in commentsR" :data-id="c.oId">
             <Avatar :src="c.commentAuthorThumbnailURL" />
             <div class="comment-main">
                 <div class="comment-header">
@@ -93,6 +93,9 @@
             current() {
                 return this.$root.current;
             },
+            commentsR() {
+                return this.comments.reverse();
+            }
         },
         methods: {
             unLoad() {
