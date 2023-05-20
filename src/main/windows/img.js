@@ -40,7 +40,7 @@ class Img extends Page
             if (size.width < 400) { size.height = size.height * 400 / size.width; size.width = 400; }
             if (size.width > 800) { size.height = size.height * 800 / size.width; size.width = 800; }
         }
-        size.height += 10;
+        size.height += 30;
         this.win.setSize(parseInt(size.width), parseInt(size.height));
         this.win.webContents.send('img-update', `/img/${encodeURIComponent(args.url)}`);
     }

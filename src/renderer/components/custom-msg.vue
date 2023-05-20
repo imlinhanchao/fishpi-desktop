@@ -1,8 +1,8 @@
 <template>
 <section ref="msg-view" class="custom-msg-item" 
     v-if="item.data" 
+    v-html="item.data"
 >
-    {{ item.data }}
 </section>
 </template>
 

@@ -1,5 +1,7 @@
+import { nativeImage, clipboard } from 'electron';
 import { Menu, getCurrentWindow } from '@electron/remote';
 import packageJson from '../../package.json';
+import * as RTF from 'html-to-rtf';
 
 import ipc from './ipc'
 import Setting from './setting'
@@ -43,6 +45,12 @@ router.beforeEach((to, from, next) => {
     }
     next();
 });
+
+const urlToBuffer = url => fetch(url)
+  .then(response => response.arrayBuffer())
+  .then(buffer => new Promise((resolve, reject) => {
+    resolve(Buffer.from(buffer));
+  }))
 
 /* eslint-disable no-new */
 window.$VueApp = new Vue({
@@ -294,6 +302,18 @@ window.$VueApp = new Vue({
                 }
             })
         },
+        async copyImg(img) {
+            const imgBuffer = await urlToBuffer(img.src);
+            const { naturalWidth: width, naturalHeight: height } = img;
+            const htmlContent = `<img src="${img.src}" width="${width}" height="${height}" />`;
+            clipboard.write({
+                html: htmlContent,
+                image: nativeImage.createFromBuffer(imgBuffer, {
+                    width,
+                    height,
+                }),
+            });
+        }
     },
     watch: {
         title(val) {

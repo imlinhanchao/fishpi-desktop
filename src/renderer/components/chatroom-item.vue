@@ -291,6 +291,12 @@
                             this.$emit('face', target.src);
                         }
                     });
+                    menu.push({
+                        label: '复制图片',
+                        click: () => {
+                            this.$root.copyImg(target);
+                        }
+                    });
                 }
             }
             if (this.item.userName == this.current.userName

@@ -93,6 +93,7 @@
 <script>
   import { position } from 'caret-pos';
   import Emoji from './emoji.vue';
+  import {constructFileFromLocalFileData, LocalFileData} from 'get-file-object-from-local-path'
   export default {
     name: 'messagebox',
     components: {
@@ -321,7 +322,7 @@
                     if (items[i].type.indexOf('html') !== -1 && this.htmlGetImg) {
                         let files = await this.htmlGetImg(items[i])
                         files = files || []
-                        files = files.map(f => constructFileFromLocalFileData(new LocalFileData(f.replace(/file:\/\/\//g, ''))))
+                        files = files.map(f => f.startsWith('file:') ? constructFileFromLocalFileData(new LocalFileData(f.replace(/file:\/\/\//g, ''))) : f)
                         file = file.concat(files);
                     }
                 }
@@ -330,20 +331,30 @@
             this.lastCursor = this.msgCursor();
             await this.uploadImg({ target: { files: file}});
         },
-        async uploadImg(ev) {
+        htmlGetImg(item) {
+            return new Promise((resolve) => {
+                item.getAsString((html) => {
+                    resolve(html.match(/(?<=src=")([^"]+)/g))
+                })
+            });
+        },
+        uploadImg(ev) {
             let files = Array.from(ev.target.files);
             this.uploading = true;
-            let rsp = await this.$fishpi.upload(files);
-            this.uploading = false;
-            if (rsp.code != 0) {
-                this.$Message.error(rsp.msg);
-                return;
-            }
-            let fileData = rsp.data.succMap;
-            let filenames = Object.keys(fileData)
-            
-            this.lastCursor = this.msgCursor();
-            this.appendMsg({ regexp: null, data: filenames.map(f => `![${f}](${fileData[f]})`).join('') }); 
+            Promise.all(files.map(async (f) => {
+                if (!(f instanceof File)) return this.appendMsg({ regexp: null, data: `![图片](${f})` });
+                let rsp = await this.$fishpi.upload(files);
+                this.uploading = false;
+                if (rsp.code != 0) {
+                    this.$Message.error(rsp.msg);
+                    return;
+                }
+                let fileData = rsp.data.succMap;
+                let filenames = Object.keys(fileData)
+                
+                this.lastCursor = this.msgCursor();
+                this.appendMsg({ regexp: null, data: filenames.map(f => `![${f}](${fileData[f]})`).join('') }); 
+            })).then(() => this.uploading = false).catch(() => this.uploading = false);
         },
         msgCursor() {
             return this.$refs['message'].selectionStart

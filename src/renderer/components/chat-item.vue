@@ -118,6 +118,12 @@
                             this.$emit('face', target.src);
                         }
                     });
+                    menu.push({
+                        label: '复制图片',
+                        click: () => {
+                            this.$root.copyImg(target);
+                        }
+                    });
                 }
             }
             menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'chat-item', instance: this}))

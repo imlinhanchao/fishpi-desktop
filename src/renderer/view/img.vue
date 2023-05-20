@@ -10,6 +10,7 @@
     </header>
     <Content class="img-content no-drag" ref="content">
         <img draggable="false"
+            @contextmenu.stop="imgMenuShow"
             @load="loadHandle" ref="img" class="img" 
             v-if="image" :src="image" 
             @mousedown="dragStart" @mousemove="dragImg" @mouseup="dragOver"
@@ -128,7 +129,20 @@
         },
         dragOver(ev) {
             this.drag = false
-        }
+        },
+        async imgMenuShow(ev) {
+            let menu = [];
+            let target = ev.target;
+            menu.push({
+                label: '复制图片',
+                click: () => {
+                    this.$root.copyImg(target);
+                }
+            });
+            menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'img', instance: this}))
+            this.$root.popupMenu(menu);
+        },
+
     }
   }
 </script>
