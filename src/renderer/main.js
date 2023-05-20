@@ -1,7 +1,6 @@
 import { nativeImage, clipboard } from 'electron';
 import { Menu, getCurrentWindow } from '@electron/remote';
 import packageJson from '../../package.json';
-import * as RTF from 'html-to-rtf';
 
 import ipc from './ipc'
 import Setting from './setting'
