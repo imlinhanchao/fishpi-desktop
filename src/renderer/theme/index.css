@@ -255,7 +255,9 @@ a {
 .ivu-avatar {
     min-width: 32px;
 }
-
+.ivu-avatar-small {
+    min-width: 24px;
+}
 .ivu-avatar>img {
     object-fit: cover;
 }

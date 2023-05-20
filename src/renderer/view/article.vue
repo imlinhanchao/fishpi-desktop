@@ -7,7 +7,7 @@
         <a title="返回" class="back-btn" @click="goBack"><i class="fa-solid fa-caret-left"></i></a>
         <h1>{{ content.articleTitleEmoj }}</h1>
         <p>
-            <Avatar :size="18" class="msg-avatar user-card" :title="content.articleAuthorName" :data-user="content.articleAuthorName" :src="content.articleAuthorThumbnailURL210" />
+            <Avatar :size="18" style="min-width: 18px;" class="msg-avatar user-card" :title="content.articleAuthorName" :data-user="content.articleAuthorName" :src="content.articleAuthorThumbnailURL210" />
             <span>{{ content.articleAuthorName }}</span>
             <span class="info-item">|</span>
             <span class="info-item"><i class="fa-solid fa-eye"></i> {{ content.articlePostTimeDisplayFormat || content.articleViewCount }}</span>
