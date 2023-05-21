@@ -340,20 +340,27 @@
         uploadImg(ev) {
             let files = Array.from(ev.target.files);
             this.uploading = true;
-            Promise.all(files.map(async (f) => {
-                if (!(f instanceof File)) return this.appendMsg({ regexp: null, data: `![图片](${f})` });
-                let rsp = await this.$fishpi.upload(files);
+            files = [...files.filter(f => !(f instanceof File)), files.filter(f => f instanceof File)]
+            const uploadPromise = files.map(async (f) => {
+                // 如果不是文件
+                if (!Array.isArray(f)) return this.appendMsg({ regexp: null, data: `![图片](${f})` });
+                if (f.length == 0) return;
+                // 上传图片
+                let rsp = await this.$fishpi.upload(f);
                 this.uploading = false;
                 if (rsp.code != 0) {
                     this.$Message.error(rsp.msg);
                     return;
                 }
+
+                // 从鱼排接口解析出图片地址
                 let fileData = rsp.data.succMap;
                 let filenames = Object.keys(fileData)
                 
                 this.lastCursor = this.msgCursor();
-                this.appendMsg({ regexp: null, data: filenames.map(f => `![${f}](${fileData[f]})`).join('') }); 
-            })).then(() => this.uploading = false).catch(() => this.uploading = false);
+                this.appendMsg({ regexp: null, data: filenames.map(f => `![${f}](${fileData[f]})`).join('\n') }); 
+            });
+            Promise.all(uploadPromise).then(() => this.uploading = false).catch(() => this.uploading = false);
         },
         msgCursor() {
             return this.$refs['message'].selectionStart
