@@ -126,6 +126,11 @@
     watch: {
         'item.dbUser'(n, o) {
             if (o.length == 0) this.autoHide = false;
+        },
+        'item.content'() {
+            this.$nextTick(() => {
+                if (this.$refs.msgView) this.overflow = this.$refs.msgView.offsetHeight > 200;
+            });
         }
     },
     filters: {
