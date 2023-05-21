@@ -317,7 +317,6 @@
                 for (var i = 0; i < items.length; i++) {
                     if (items[i].type.indexOf('image') !== -1) {
                         file.push(items[i].getAsFile());
-                        break;
                     }
                     if (items[i].type.indexOf('html') !== -1 && this.htmlGetImg) {
                         let files = await this.htmlGetImg(items[i])
