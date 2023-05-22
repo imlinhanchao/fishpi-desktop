@@ -12,7 +12,7 @@
 
 .vditor-reset {
   font-variant-ligatures: no-common-ligatures;
-  font-family: "Helvetica Neue","Luxi Sans","DejaVu Sans","Hiragino Sans GB","Microsoft Yahei",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";
+  font-family: HarmonyOS, "Helvetica Neue","Luxi Sans","DejaVu Sans","Hiragino Sans GB","Microsoft Yahei",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";
   word-wrap: break-word;
   overflow: auto;
   line-height: 1.5;

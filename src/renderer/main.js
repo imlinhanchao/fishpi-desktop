@@ -83,6 +83,12 @@ window.$VueApp = new Vue({
               this.$router.push(`/chatroom?id=${target.dataset.reply}`);
               return false;
             }
+            if (target.classList.contains('reply-chat')) {
+              ev.preventDefault();
+              ev.stopPropagation();
+              this.$router.push(`/chat/${this.$route.params.user}?id=${target.dataset.reply}`);
+              return false;
+            }
             if (target.closest('.user-card-click')) {
                 clearTimeout(this.cardTimer);
                 this.showCard(ev, target.closest('.user-card-click').dataset.user);

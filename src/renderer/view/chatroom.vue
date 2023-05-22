@@ -105,11 +105,11 @@
             }    
         },
         watch: {
-            $route() {
+            $route(to, from) {
                 if (this.$route.query.id) {
                     setTimeout(() => {
                         this.focusMsg(this.$route.query.id);
-                    }, 1000)
+                    }, to.path == from.path ? 1 : 1000)
                 }
             },
             showSidebar(val) {
