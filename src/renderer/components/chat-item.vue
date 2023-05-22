@@ -39,6 +39,7 @@
                 .replace(/(<a )/g, '$1target="_blank" ')
                 .replace(/(<iframe[^>]*?src="(https:)*\/\/music.163.com\/outchain\/player\?type=\d&amp;id=(\d+)[^"]*?">\s*<\/iframe>)/, '<div class="netease-music"><div class="netease-cover" data-id="$3"></div>$1</div>')
                 .replace(/(<img )/g, '$1data-action="preview" ')
+                .replace(/href="https:\/\/fishpi.cn\/chat#chat(\d+)/g, 'class="reply-chat" data-reply="$1" href="#chat$1"');
         },
         isImgOnly() {
             return (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');

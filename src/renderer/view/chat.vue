@@ -52,6 +52,11 @@
         watch: {
             $route() {
                 this.user = this.$route.params.user;
+                if (this.$route.query.id) {
+                    setTimeout(() => {
+                        this.focusMsg(this.$route.query.id);
+                    }, 1000)
+                }
             },
             user (newUser, oldUser) {
                 this.$fishpi.chat.removeListener(oldUser, this.msgListener)
@@ -135,7 +140,17 @@
                 } catch (error) {
                     callback(error.message)
                 }
-            }
+            },
+            async focusMsg(oId) {
+                let ele = this.$refs[`msg-item-${oId}`];
+                if (!ele) return;
+                ele = ele[0]
+                let top = ele.$el.offsetTop;
+                if (top < this.chatScrollTotal + this.chatScrollPos) {
+                    this.chatScrollPos = top - this.chatScrollTotal;
+                }
+                this.$router.push(this.$route.path);
+            },
         }
     }
 </script>

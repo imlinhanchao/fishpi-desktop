@@ -284,7 +284,7 @@
           if (this.quote) {
               let raw = this.quote.markdown;
               raw = raw.split("\n").map((r) => `>${r}`).join("\n").trim();
-              this.msg = `回复：\n\n${raw}\n\n${this.msg}`;
+              this.msg = `回复 [↩](https://fishpi.cn/chat#chat${this.quote.oId} "跳转至原消息")：\n\n${raw}\n\n${this.msg}`;
               this.$emit('update:quote', null)
           }
           this.sending = true;
