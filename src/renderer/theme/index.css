@@ -37,7 +37,7 @@ html {
 body {
     background: transparent;
     color: var(--global-text-color);
-    font: 1em/1.8 HarmonyOS, PingFang SC, Lantinghei SC, Segoe UI, Microsoft Yahei,Roboto, Helvetica Neue,Helvetica,Arial,sans-serif;
+    font: 1em/1.8 HarmonyOS, PingFang SC, Lantinghei SC, Segoe UI, Microsoft Yahei,Roboto, Helvetica Neue,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";;
     -webkit-app-region: drag;
     overflow: hidden;
 }
