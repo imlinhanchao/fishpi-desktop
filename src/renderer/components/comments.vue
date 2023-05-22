@@ -9,7 +9,7 @@
                         <span class="comment-user-name">{{ c.commentAuthorName }}</span>
                         <span :title="`跳转回复`" class="comment-reply" v-if="c.commentOriginalCommentId" @click="showReply(c.commentOriginalCommentId)">
                             <i class="fa-solid fa-reply fa-flip-horizontal"></i>
-                            <Avatar :src="c.commentOriginalAuthorThumbnailURL" :size="15" />
+                            <Avatar :src="c.commentOriginalAuthorThumbnailURL" :size="15" style="min-width: 15px;" />
                         </span>
                     </div>
                     <div class="comment-time">{{ c.commentCreateTimeStr || c.commentCreateTime }}</div>
