@@ -84,7 +84,7 @@ function updateApp(file, cb) {
         let sleep = isWin32 ? 'timeout /T 3 /NOBREAK' : 'sleep 3s';
         let kill = isWin32 ? 'taskkill /im fishpi.exe /F' : '';
         let copy = isWin32 ? `xcopy "${unzipPath}" "${rootPath}" /s /e /y` : `cp -r "${unzipPath}/" "${path.join(rootPath, CopyPath)}"`
-        let lanuch = isWin32 ? `"${path.resolve(rootPath, 'fishpi.exe')}"` : `open ${rootPath}`;
+        let lanuch = isWin32 ? `start "${path.resolve(rootPath, 'fishpi.exe')}"` : `open ${rootPath}`;
         fs.writeFileSync(updateShell, `${isWin32 ? '@echo off' : ''}
 echo '更新中...'
 ${sleep}
