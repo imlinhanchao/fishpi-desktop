@@ -362,7 +362,7 @@ import CustomMsg from '../components/custom-msg.vue';
                 menu.push({
                     label: `@${item.userName}`,
                     click: () => {
-                        this.$emit('msg', `@${item.userName} `);
+                        this.appendMsg(`@${item.userName} `);
                     }
                 });
                 menu.push({
