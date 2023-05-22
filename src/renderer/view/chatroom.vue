@@ -510,6 +510,7 @@ import CustomMsg from '../components/custom-msg.vue';
                 display: flex;
                 align-items: center;
                 .ivu-avatar {
+                    min-width: 1.2em;
                     width: 1.2em;
                     height: 1.2em;
                     line-height: 1.2em;
