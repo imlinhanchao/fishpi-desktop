@@ -255,7 +255,7 @@
                 let at = this.quote.userName != this.current.userName
                     ? `@${this.quote.userName} `
                     : "";
-                msg = `回复${at}：\n\n${raw}\n\n${msg}`;
+                msg = `回复${at}[↩](https://fishpi.cn/cr#chatroom${this.quote.oId})：\n\n${raw}\n\n${msg}`;
                 this.$emit('update:quote', null)
             }
             if (this.discussed) {

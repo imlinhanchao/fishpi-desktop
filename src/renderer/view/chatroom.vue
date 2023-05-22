@@ -63,17 +63,17 @@
 
 <script>
     import ChatroomItem from '../components/chatroom-item.vue';
-import CustomMsg from '../components/custom-msg.vue';
+    import CustomMsg from '../components/custom-msg.vue';
     import MessageBox from '../components/messagebox.vue';
     import ScrollBar from '../components/scrollbar.vue';
     export default {
         name: 'chatroom',
         components: {
-    ChatroomItem,
-    MessageBox,
-    ScrollBar,
-    CustomMsg
-},
+            ChatroomItem,
+            MessageBox,
+            ScrollBar,
+            CustomMsg
+        },
         async mounted () {
             await this.reload()
             this.onlines = this.$fishpi.chatroom.onlines;
@@ -139,6 +139,7 @@ import CustomMsg from '../components/custom-msg.vue';
                     this.chatScrollPos = top - this.chatScrollTotal;
                 }
                 ele.highlight();
+                this.$router.push(`/chatroom`);
             },
             async reload() {
                 this.chats = [];

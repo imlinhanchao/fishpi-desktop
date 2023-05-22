@@ -163,7 +163,7 @@
                 .replace(/(<iframe[^>]*?src="(https:)*\/\/music.163.com\/outchain\/player\?type=\d&amp;id=(\d+)[^"]*?">\s*<\/iframe>)/, '<div class="netease-music"><div class="netease-cover" data-id="$3"></div>$1</div>')
                 .replace(/(<img )/g, '$1data-action="preview" ')
                 .replace(/<em><code># (.*?) #<\/code><\/em>/g, '<em class="discuss-msg" title="跟随话题"><code class="discuss-msg" data-discuss="$1"># $1 #<\/code><\/em>')
-
+                .replace(/href="https:\/\/fishpi.cn\/cr#chatroom(\d+)/g, 'class="reply" data-reply="$1" href="#chatroom$1"');
         },
         isImgOnly() {
             return !this.isBaggager && (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');

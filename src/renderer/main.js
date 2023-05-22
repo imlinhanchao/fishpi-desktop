@@ -77,6 +77,12 @@ window.$VueApp = new Vue({
 
         document.addEventListener('click', (ev) => {
             let target = ev.target;
+            if (target.classList.contains('reply')) {
+              ev.preventDefault();
+              ev.stopPropagation();
+              this.$router.push(`/chatroom?id=${target.dataset.reply}`);
+              return false;
+            }
             if (target.closest('.user-card-click')) {
                 clearTimeout(this.cardTimer);
                 this.showCard(ev, target.closest('.user-card-click').dataset.user);
