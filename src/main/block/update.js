@@ -84,14 +84,14 @@ function updateApp(file, cb) {
         let updateShell = path.resolve(os.tmpdir(), `fishpi-update.${isWin32 ? 'bat' : 'sh'}`);
         let sleep = isWin32 ? 'timeout /T 3 /NOBREAK' : 'sleep 3s';
         let kill = isWin32 ? 'taskkill /im fishpi.exe /F' : '';
-        let copy = isWin32 ? `xcopy "${unzipPath}" "${rootPath}" /s /e /y` : `cp -r "${unzipPath}/" "${path.join(rootPath, CopyPath)}"`
-        let lanuch = isWin32 ? `start fishpi.exe` : `${isLinux ? 'xdg-open' : 'open'} ${rootPath}${isLinux ? '/fishpi' : ''}`;
+        let copy = isWin32 ? `xcopy "${unzipPath}" "${rootPath}" /s /e /y` : `cp -r "${unzipPath}/*" "${path.join(rootPath, CopyPath)}"`
+        let lanuch = isWin32 ? `cd ${rootPath}
+start fishpi.exe` : `${isLinux ? 'xdg-open' : 'open'} ${rootPath}${isLinux ? '/fishpi' : ''}`;
         fs.writeFileSync(updateShell, `${isWin32 ? '@echo off' : ''}
 echo '更新中...'
 ${sleep}
 ${kill}
 ${copy}
-cd ${rootPath}
 ${lanuch}
         `)
         argv.push(updateShell);
