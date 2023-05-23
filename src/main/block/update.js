@@ -78,18 +78,20 @@ function updateApp(file, cb) {
         unzipPath = path.resolve(unzipPath, folder);
         cb('done');
         let isWin32 = process.platform == 'win32'
+        let isLinux = process.platform == 'linux'
         let execute = isWin32 ? 'cmd' : 'bash'
         let argv = isWin32 ? [ '/k' ] : [];
         let updateShell = path.resolve(os.tmpdir(), `fishpi-update.${isWin32 ? 'bat' : 'sh'}`);
         let sleep = isWin32 ? 'timeout /T 3 /NOBREAK' : 'sleep 3s';
         let kill = isWin32 ? 'taskkill /im fishpi.exe /F' : '';
         let copy = isWin32 ? `xcopy "${unzipPath}" "${rootPath}" /s /e /y` : `cp -r "${unzipPath}/" "${path.join(rootPath, CopyPath)}"`
-        let lanuch = isWin32 ? `start "${path.resolve(rootPath, 'fishpi.exe')}"` : `open ${rootPath}`;
+        let lanuch = isWin32 ? `start fishpi.exe` : `${isLinux ? 'xdg-open' : 'open'} ${rootPath}${isLinux ? '/fishpi' : ''}`;
         fs.writeFileSync(updateShell, `${isWin32 ? '@echo off' : ''}
 echo '更新中...'
 ${sleep}
 ${kill}
 ${copy}
+cd ${rootPath}
 ${lanuch}
         `)
         argv.push(updateShell);
@@ -121,6 +123,7 @@ function updateEvent(event, argv) {
         let savePath = path.resolve(os.tmpdir(), data.name);
         data.browser_download_url = data.browser_download_url.replace(/^https:\/\/github.com/, argv.mirror ||'https://dgm.librejo.cn')
         downloadFile(data.browser_download_url, savePath, (state, pro, currPro, total) => {
+          try {
             if (state == 'data') {
                 if (index.windows.main.windows) index.windows.main.windows.setProgressBar(pro / 100);
                 if (argv.callback) event.sender.send('win-update-app-callback-' + argv.callback, { state, pro, currPro, total })
@@ -133,6 +136,9 @@ function updateEvent(event, argv) {
                     event.sender.send('win-update-app-callback-' + argv.callback, { state })
                 });
             }
+          } catch (error) {
+            console.error(error);
+          }
         })
     } catch (err) {
         event.sender.send('update-app-callback-' + argv.callback, { state: 'fail' })
