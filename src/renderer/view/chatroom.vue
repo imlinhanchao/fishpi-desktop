@@ -36,7 +36,7 @@
                 <Input max-length="16" v-model="newDiscusse" placeholder="话题" />
             </Modal>
         </section>
-        <MessageBox ref="msgbox" @clear="reload" :quote.sync="quote" :discussed.sync="discussed"/>
+        <MessageBox ref="msgbox" @clear="reload(true)" :quote.sync="quote" :discussed.sync="discussed"/>
     </section>
     <section class="sidebar-box">
         <!-- 折叠按钮 -->
@@ -141,8 +141,9 @@
                 ele.highlight();
                 this.$router.push(`/chatroom`);
             },
-            async reload() {
+            async reload(reconnect=false) {
                 this.chats = [];
+                if (reconnect) await this.$fishpi.chatroom.reconnect();
                 await this.load(1);
                 await this.load(2);
                 this.chatScrollTotal = this.$refs.chatlist.offsetHeight - this.$refs['chat-content'].offsetHeight;
