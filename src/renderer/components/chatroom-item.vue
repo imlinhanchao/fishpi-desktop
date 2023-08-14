@@ -189,7 +189,10 @@
             return `:${target.src.match(/\/([^\/.]*?)(.gif|.png)/)[1]}:`;
         },
         async doubleMsg() {
-            this.$root.sendMsg(this.item.md || await await this.$fishpi.chatroom.raw(this.item.oId))
+          if (!this.isBaggager)
+            this.$root.sendMsg(this.item.md || await this.$fishpi.chatroom.raw(this.item.oId))
+          else            
+            this.$fishpi.chatroom.barrage(this.item.content, this.item.barragerColor)
         },
         highlight() {
             this.$refs['msg-view'].style.background = 'rgba(255,255,255,.1)'
