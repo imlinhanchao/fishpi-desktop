@@ -17,7 +17,7 @@
         </div>
         <div class="redpacket-item"
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"
-            v-if="isRedpacket" @contextmenu.stop="redPacketAddr">
+            v-if="isRedpacket" @contextmenu.stop="redPacketMenuShow">
             <div class="redpacket-contain">
                 <div class="arrow"></div>
                 <div class="redpacket-content" @click="open" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'">
@@ -239,7 +239,7 @@
         },
         
         //添加红包复制地址
-        redPacketAddr() {
+        redPacketMenuShow() {
             let menu = []
             if (this.item.content.msgType == 'redPacket') {
                 menu.push({
