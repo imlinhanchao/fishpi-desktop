@@ -17,7 +17,7 @@
         </div>
         <div class="redpacket-item"
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"
-            v-if="isRedpacket">
+            v-if="isRedpacket" @contextmenu.stop="redPacketAddr">
             <div class="redpacket-contain">
                 <div class="arrow"></div>
                 <div class="redpacket-content" @click="open" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'">
@@ -237,6 +237,21 @@
             menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'chatroom-item', instance: this}))
             this.$root.popupMenu(menu);
         },
+        
+        //添加红包复制地址
+        redPacketAddr() {
+            let menu = []
+            if (this.item.content.msgType == 'redPacket') {
+                menu.push({
+                    label: '复制红包地址',
+                    click: () => {
+                        navigator.clipboard.writeText(`https://fishpi.cn/cr?oId=${this.item.oId}#chatroom${this.item.oId}`)
+                    }
+                });
+            }
+            this.$root.popupMenu(menu,true);
+        },
+        
         async msgMenuShow(ev) {
             let menu = [];
             let target = ev.target;
