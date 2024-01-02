@@ -54,6 +54,23 @@
               发表于 <time>{{ content.articleCreateTimeStr }}</time> 
             </section>
         </main>
+        <article class="rewarded" v-if="content.articleRewardPoint">
+          <Poptip
+            class="rewarded-click"
+            v-if="!content.rewarded"
+            confirm
+            :title="`确定要打赏 ${content.articleRewardPoint} 积分给该帖子作者？`"
+            @on-ok="reward">
+            <section class="rewarded-click">
+              <span class="rewarded-text"><a href="javascript:void(0)">打赏</a> {{ content.articleRewardPoint }} 积分后可见</span>
+              <span class="rewarded-count">{{ content.rewardedCnt }} 打赏</span>
+            </section>
+          </Poptip>
+          <section class="rewarded-content" v-else>
+            <span class="rewarded-text vditor-reset" v-html="content.articleRewardContent"></span>
+            <span class="rewarded-count">{{ content.rewardedCnt }} 打赏</span>
+          </section>
+        </article>
         <footer ref="comment">
             <MessageBox 
                 @anonymous="$event => comment.commentAnonymous = $event"
@@ -66,7 +83,7 @@
                 :reply.sync="reply"
                 @send="commented"
             />
-            <Comment :comments="content.articleComments" @reply="replyed"/>
+            <Comment :comments="content.articleComments" :pagination="pagination" @reply="replyed"/>
         </footer>
     </section>
 </div>
@@ -109,6 +126,7 @@
         data () {
             return {
                 content: null,
+                pagination: null,
                 message: '',
                 sending: false,
                 comment: {
@@ -167,6 +185,7 @@
                     return;
                 }
                 this.content = rsp.data.article;
+                this.pagination = rsp.data.pagination;
                 this.$root.title = this.content.articleTitleEmoj;
                 this.comment.articleId = id;
             },
@@ -181,6 +200,18 @@
                 this.content.thanked = true;
                 this.content.articleThankCnt += 1;
             },
+            async reward() {
+                if (this.content.rewarded) return;
+                let rsp = await this.$fishpi.article.reward(this.content.oId);
+                console.log(rsp)
+                if (rsp.code != 0) {
+                    this.$Message.error(rsp.msg);
+                    return;
+                }
+                this.content.rewarded = true;
+                this.content.rewardedCnt += 1;
+                this.content.articleRewardContent = rsp.articleRewardContent;
+            },            
             async vote(type) {
                 let rsp = await this.$fishpi.article.vote(this.content.oId, type);
                 if (rsp.code != 0) {
@@ -230,6 +261,7 @@
     margin-bottom: 5px;
     position: relative;
     height: 99%;
+    padding-right: 5px;
     header {
         text-align: center;
         position: sticky;
@@ -295,6 +327,37 @@
         text-align: right;
         font-style: italic;
         opacity: .5;
+    }
+
+    .rewarded {
+      padding: 5px 10px;
+      margin: 5px 10px;
+      border-radius: 5px;
+      background-size: 45px 45px;
+      background-color: var(--global-control-focus-color);
+      background-image: linear-gradient(-45deg, var(--global-control-focus-color) 25%, transparent 25%, transparent 50%, var(--global-control-focus-color) 50%, var(--global-control-focus-color) 75%, transparent 75%, transparent);
+      .rewarded-click {
+        width: 100%;
+        cursor: pointer;
+        position: relative;
+        user-select: none;
+        height: 50px;
+        /deep/ .ivu-poptip-rel {
+          width: 100%;
+        }
+        .rewarded-count {
+          bottom: 0;
+        }
+      }
+      .rewarded-count {
+        position: absolute;
+        bottom: -1em;
+        right: 0;
+      }
+      .rewarded-content {
+        position: relative;
+        margin-bottom: 1em;
+      }
     }
 }
 </style>

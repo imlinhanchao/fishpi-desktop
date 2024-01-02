@@ -157,7 +157,7 @@
                 this.setting = setting.chatroom;
             },
             isShield(msg) {
-                if (msg.type != 'msg' && msg.type != 'redpacket') return;
+                if (!msg.content) return;
                 return this.setting.shield.find(s => {
                     if (s.value == '' && !s.type.startsWith('redpacket')) return false;
                     switch(s.type)

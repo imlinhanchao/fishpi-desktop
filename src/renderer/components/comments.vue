@@ -1,5 +1,10 @@
 <template>
 <div id="comments" @contextmenu="$root.popupMenu($root.getDefaultMenu($event, { name: 'comments', instance: this}))">
+    <section title="更多评论" v-if="page > 1" class="comment-more">
+        <Button type="text" @click="load(page-1)">
+            <Icon custom="fa fa-caret-up" />
+        </Button>
+    </section>
     <ul>
         <li :id="`comment-item-${c.oId}`" class="comment-item" v-for="(c, i) in commentsR" :data-id="c.oId">
             <Avatar :src="c.commentAuthorThumbnailURL" />
@@ -72,17 +77,25 @@
                 default: () => {
                     return {}
                 }
+            },
+            pagination: {
+                type: Object,
+                default: () => {
+                    return {}
+                }
             }
         },
         components: {
         },
         mounted () {
+          console.dir(this.pagination)
         },
         beforeDestroy () {
             this.unLoad();
         },
         data () {
             return {
+              page: this.pagination.paginationPageCount,
             }    
         },
         watch: {
@@ -99,6 +112,15 @@
         },
         methods: {
             unLoad() {
+            },
+            async load(page) {
+                this.page = page;
+                let rsp = await this.$fishpi.article.detail(this.comments[0].commentOnArticleId, page);
+                if (rsp.code != 0) {
+                    this.$Message.error(rsp.msg);
+                    return;
+                }
+                this.comments.push(...rsp.data.article.articleComments.filter(c => !this.comments.some(comment => comment.oId == c.oId)));
             },
             formatComment(comment) {
               return comment.replace(/(<a )/g, '$1target="_blank" ')
@@ -185,6 +207,11 @@
             cursor: pointer;
         }
     }
+    .comment-content {
+      /deep/ img {
+        max-width: 70vw;
+      }
+    }
     .comment-footer {
         display: flex;
         justify-content: flex-end;
@@ -195,6 +222,9 @@
         .click {
             cursor: pointer;
         }
+    }
+    .comment-more {
+        text-align: center;
     }
 }
 </style>

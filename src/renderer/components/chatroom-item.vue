@@ -17,7 +17,7 @@
         </div>
         <div class="redpacket-item"
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"
-            v-if="isRedpacket">
+            v-if="isRedpacket" @contextmenu.stop="redPacketMenuShow">
             <div class="redpacket-contain">
                 <div class="arrow"></div>
                 <div class="redpacket-content" @click="open" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'">
@@ -189,7 +189,10 @@
             return `:${target.src.match(/\/([^\/.]*?)(.gif|.png)/)[1]}:`;
         },
         async doubleMsg() {
-            this.$root.sendMsg(this.item.md || await await this.$fishpi.chatroom.raw(this.item.oId))
+          if (!this.isBaggager)
+            this.$root.sendMsg(this.item.md || await this.$fishpi.chatroom.raw(this.item.oId))
+          else            
+            this.$fishpi.chatroom.barrage(this.item.content, this.item.barragerColor)
         },
         highlight() {
             this.$refs['msg-view'].style.background = 'rgba(255,255,255,.1)'
@@ -234,6 +237,21 @@
             menu = menu.concat(await this.$root.getDefaultMenu(ev, { name: 'chatroom-item', instance: this}))
             this.$root.popupMenu(menu);
         },
+        
+        //添加红包复制地址
+        redPacketMenuShow() {
+            let menu = []
+            if (this.item.content.msgType == 'redPacket') {
+                menu.push({
+                    label: '复制红包地址',
+                    click: () => {
+                        navigator.clipboard.writeText(`https://fishpi.cn/cr?oId=${this.item.oId}#chatroom${this.item.oId}`)
+                    }
+                });
+            }
+            this.$root.popupMenu(menu,true);
+        },
+        
         async msgMenuShow(ev) {
             let menu = [];
             let target = ev.target;

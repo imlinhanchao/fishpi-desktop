@@ -232,7 +232,6 @@
             else {
                 this.modalBarrage = false;
                 this.barrage.word = '';
-                this.$Message.success(rsp.msg);
             }
         },
         async sendMsg() {

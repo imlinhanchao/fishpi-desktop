@@ -21,7 +21,7 @@
             <Avatar class="msg-avatar user-card" :title="b.breezemoonAuthorName" :data-user="b.breezemoonAuthorName" :src="b.breezemoonAuthorThumbnailURL48" />
             <section class="br-contain">
                 <section class="br-data">
-                    <div class="arrow"></div><p class="br-content" v-html="b.breezemoonContent"></p>
+                    <div class="arrow"></div><p class="br-content" v-html="formatContent(b.breezemoonContent)"></p>
                 </section>
                 <section class="br-time"><span>发自 {{b.breezemoonCity}}</span> <Time :time="b.breezemoonCreated" /></section>
             </section>
@@ -61,6 +61,11 @@
         computed: {
             current() {
                 return this.$root.current;
+            },
+            formatContent() {
+                return (content) => {
+                    return content.replace(/<a\s+(.*?)>/g, '<a $1 target="_blank">');
+                };
             },
         },
         methods: {
