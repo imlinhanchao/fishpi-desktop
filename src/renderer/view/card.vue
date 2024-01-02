@@ -34,7 +34,7 @@
                     <section class="info-no" :title="info.userCity">
                         #{{ info.userNo }}
                     </section>
-                    <a v-if="info.mbti" target="_blank" :href="`https://www.16personalities.com/ch/${info.mbti.split('-')[0]}-%E4%BA%BA%E6%A0%BC`" :title="`TA是 ${info.mbti}`">
+                    <a v-if="info.mbti" target="_blank" :href="`${info.mbti.split('-')[0]}-%E4%BA%BA%E6%A0%BC`" :title="`TA是${mbtiType[info.mbti.split('-')[0]]}`">
                       <span class="mbti">
                         <svg style="vertical-align: -3px"><use xlink:href="#mbti"></use></svg> {{ info.mbti }}
                       </span>
@@ -101,6 +101,18 @@
                 '成员': 'https://pwl.stackoverflow.wiki/vipRole.png',
                 '新手': 'https://pwl.stackoverflow.wiki/newRole.png'
             }
+        },
+        mbtiType() {
+          return {
+            INTJ: '建筑师',
+            INTP: '逻辑学家',
+            ENTJ: '指挥官',
+            ENTP: '辩论家',
+            INFJ: '提倡者',
+            INFP: '调停者',
+            ENFJ: '主人公', 
+            ENFP: '竞选者',
+          }
         },
         onlineMsg() {
             return this.info.userOnlineFlag ? '在线' : '离线'
