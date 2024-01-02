@@ -155,6 +155,7 @@
                 this.sendAutoComplete([], 'user');
                 if (index < 0) {
                     let data = await this.$fishpi.user(user);
+                    if (data.code) return this.$Message.error('用户不存在');
                     let userItem = {
                         senderUserName: user,
                         receiverUserName: this.current.userName,
