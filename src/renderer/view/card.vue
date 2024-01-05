@@ -34,7 +34,7 @@
                     <section class="info-no" :title="info.userCity">
                         #{{ info.userNo }}
                     </section>
-                    <a v-if="info.mbti" target="_blank" :href="`${info.mbti.split('-')[0]}-%E4%BA%BA%E6%A0%BC`" :title="`TA是${mbtiType[info.mbti.split('-')[0]]}`">
+                    <a v-if="info.mbti" target="_blank" :href="`https://www.16personalities.com/ch/${info.mbti.split('-')[0]}-%E4%BA%BA%E6%A0%BC`" :title="`TA是${mbtiType[info.mbti.split('-')[0]]}`">
                       <span class="mbti">
                         <svg style="vertical-align: -3px"><use xlink:href="#mbti"></use></svg> {{ info.mbti }}
                       </span>
