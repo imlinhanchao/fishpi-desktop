@@ -163,7 +163,7 @@
                     switch(s.type)
                     {
                         case 'username': return msg.userName == s.value;
-                        case 'content': return !msg.content.match || (msg.content || '').match(new RegExp(s.value)) != null;
+                        case 'content': return msg.content.match && (msg.content || '').match(new RegExp(s.value)) != null;
                         case 'redpacket': return msg.content.msgType == 'redPacket';
                     }
                     return false;
