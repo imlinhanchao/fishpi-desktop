@@ -298,6 +298,18 @@
                   navigator.clipboard.writeText(`https://fishpi.cn/cr?oId=${this.item.oId}#chatroom${this.item.oId}`)
                 }
             });
+            menu.push({
+                label: `发个专属红包给 ${this.item.userNickname || userName}`,
+                click: () => {
+                    this.$ipc.send('main-event', {
+                        call: 'openRedpacket',
+                        args: {
+                            id: 'send',
+                            user: this.item.userName
+                        }
+                    });
+                }
+                });
             if (target.nodeName.toLowerCase() == 'img') {
                 if (target.className == 'emoji') {
                     menu.push({
