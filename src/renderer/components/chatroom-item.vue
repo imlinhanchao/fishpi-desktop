@@ -11,7 +11,7 @@
         <Avatar class="msg-avatar user-card" :data-user="item.userName" :src="item.userAvatarURL" />
     </div>
     <div :ref="`msg-${item.oId}`" :data-id="item.oId" class="msg-item-contain">
-        <div class="msg-user" :title="item.userName">
+        <div class="msg-user" @contextmenu.stop="userMenuShow" :title="item.userName">
             <span><span :title="item.userName">{{item.userNickname || item.userName}}</span>
             <Via :via="item.via || {}" /></span>
         </div>
@@ -69,7 +69,7 @@
             <span class="plus-one" @click="doubleMsg" v-if="plusone">+1</span>
         </div>
         <div class="db-users" v-if="hasDbUser">
-            <span @contextmenu.stop="userMenuShow($event, db.userName)" :data-user="db.userName" class="db-user user-card" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickame || db.userName">
+            <span @contextmenu.stop="userMenuShow($event, db.userName)" :data-user="db.userName" class="db-user user-card" :key="db.oId" v-for="db in item.dbUser" :title="db.userNickname || db.userName">
                 <Avatar class="db-avatar" :src="db.userAvatarURL" />
             </span>
             <span class="db-word">也这么说</span>
