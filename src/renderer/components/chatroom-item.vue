@@ -333,6 +333,13 @@
                         }
                     });
                 }
+            }else{
+                menu.push({
+                    label: '复制消息',
+                    click: async () => {
+                        navigator.clipboard.writeText(this.item.md || await this.$fishpi.chatroom.raw(this.item.oId))
+                    }
+                });
             }
             if (this.item.userName == this.current.userName
             || ['纪律委员', 'OP', '管理员'].indexOf(this.current.userRole) >= 0) {
