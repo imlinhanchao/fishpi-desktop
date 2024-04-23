@@ -34,8 +34,10 @@
                     <section class="info-no" :title="info.userCity">
                         #{{ info.userNo }}
                     </section>
-                    <a v-if="info.mbti" target="_blank" :href="`https://www.16personalities.com/ch/${info.mbti.split('-')[0]}-%E4%BA%BA%E6%A0%BC`" :title="`TA是${mbtiType[info.mbti.split('-')[0]]}`">
-                      <span class="mbti">
+                    :href="`https://www.16personalities.com/ch/${info.mbti.split('-')[0]}-%E4%BA%BA%E6%A0%BC`" :title="`TA是${mbtiType[info.mbti.split('-')[0]]}`"
+                    :class="info.mbti.split('-')[0] + ' mbti'"
+                    :style="{ backgroundColor: getMbtiColor(info.mbti.split('-')[0]) }">
+                      <span class="mbti" style="white-space: nowrap;">
                         <svg style="vertical-align: -3px"><use xlink:href="#mbti"></use></svg> {{ info.mbti }}
                       </span>
                     </a>
@@ -112,6 +114,14 @@
             INFP: '调停者',
             ENFJ: '主人公', 
             ENFP: '竞选者',
+            ISTP: '鉴赏家',
+            ISTJ: '实干家',
+            ISFJ: '守护者',
+            ISFP: '冒险家',
+            ESTP: '企业家',
+            ESTJ: '统筹者',
+            ESFP: '表演者',
+            ESFJ: '领导者',
           }
         },
         onlineMsg() {
@@ -136,6 +146,27 @@
             this.close();
             this.$root.logout();
             new BroadcastChannel('main-router').postMessage({ url: `/login`, logout: true }); 
+        },
+        getMbtiColor(mbtiType) {
+            const colorMap = {
+                INTJ: '#d1b2ff', // 紫色
+                INTP: '#d1b2ff',
+                ENTJ: '#d1b2ff',
+                ENTP: '#d1b2ff',
+                INFJ: '#98fb98', // 绿色
+                INFP: '#98fb98',
+                ENFJ: '#98fb98',
+                ENFP: '#98fb98',
+                ISTJ: '#add8e6', // 蓝色
+                ISFJ: '#add8e6',
+                ESTJ: '#add8e6',
+                ESFJ: '#add8e6',
+                ISTP: '#ffd700', // 黄色
+                ISFP: '#ffd700',
+                ESTP: '#ffd700',
+                ESFP: '#ffd700',
+            };
+            return colorMap[mbtiType] || '#b2b1ff';
         }
     }
   }
@@ -252,14 +283,14 @@
     }
 }
 .mbti {
-  background-color: #b2b1ff;
+  /*background-color: #b2b1ff;*/
   color: #fff;
   font-size: 12px;
-  line-height: 20px;
+  line-height: 22px;
   border-radius: 3px;
-  height: 20px;
+  height: 22px;
   display: inline-block;
-  padding: 0 5px;
+  padding: 0 3px;
   vertical-align: middle;
   box-sizing: border-box;
   svg {
