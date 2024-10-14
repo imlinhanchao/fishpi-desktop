@@ -15,6 +15,7 @@
             <span><span :title="item.userName">{{item.userNickname || item.userName}}</span>
             <Via :via="item.via || {}" /></span>
         </div>
+        <WeatherCard v-if="isWeatherMsg" :md="item.md"></WeatherCard>
         <div class="redpacket-item"
             :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"
             v-if="isRedpacket" @contextmenu.stop="redPacketMenuShow">
@@ -54,10 +55,10 @@
             </div>            
         </div>
         <div ref="msg" class="msg-contain" v-if="!isRedpacket" @contextmenu.stop="msgMenuShow">
-            <div class="arrow" v-if="!isImgOnly"/>
+            <div class="arrow" v-if="!isImgOnly && !isWeatherMsg"/>
             <div class="msg-content" :style="{
                 color: item.barragerColor, 
-            }" :data-html="item.content" v-if="!isImgOnly">
+            }" :data-html="item.content" v-if="!isImgOnly && !isWeatherMsg">
               <div class="msg-view" :class="{ 'msg-overflow': overflow && !expend }">
                 <div ref="msgView" class="md-style" v-html="formatContent"></div>
               </div>
@@ -80,10 +81,12 @@
 
 <script>
   import Via from './via';
+  import WeatherCard from './WeatherCard.vue';
   export default {
     name: 'chatroom-item',
     components: {
-        Via
+        Via,
+        WeatherCard,
     },
     props: {
         item: {
@@ -136,6 +139,9 @@
     filters: {
     },
     computed: {
+        isWeatherMsg() {
+            return this.item.content.includes('msgType') && this.item.content.includes('weather')
+        },
         autoVisibleStyle() {
             return {
                 containIntrinsicSize: this.contentHeight > 0 ? this.contentHeight + 'px' : 'unset',
