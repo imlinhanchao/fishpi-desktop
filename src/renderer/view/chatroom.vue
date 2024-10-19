@@ -229,6 +229,8 @@
                         }
                     }
                     case 'msg':
+                    case 'weather':
+                    case 'music':
                     case 'redPacket':
                         this.toBottom = false;
                         let ContentHeight = this.$refs.chatlist.offsetHeight;
@@ -286,6 +288,9 @@
                             this.chatScrollPos = 0;
                         break;
                     }
+                    default:
+                        console.log(msg);
+                        break;
                 }
                 this.$nextTick(() => {
                     this.chatScrollTotal = this.$refs.chatlist.offsetHeight - this.$refs['chat-content'].offsetHeight;

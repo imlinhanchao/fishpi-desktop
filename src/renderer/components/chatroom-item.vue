@@ -15,12 +15,9 @@
             <span><span :title="item.userName">{{item.userNickname || item.userName}}</span>
             <Via :via="item.via || {}" /></span>
         </div>
-        <WeatherCard v-if="isWeatherMsg" :md="item.md"></WeatherCard>
-        <div class="redpacket-item"
-            :class="{'redpacket-empty': emptyRedpacket || readRedpacket }"
-            v-if="isRedpacket" @contextmenu.stop="redPacketMenuShow">
-            <div class="redpacket-contain">
-                <div class="arrow"></div>
+        <div class="redpacket-item" :class="{'redpacket-empty': emptyRedpacket || readRedpacket }" v-if="isRedpacket" @contextmenu.stop="redPacketMenuShow">
+        <div class="redpacket-contain">
+            <div class="arrow"></div>
                 <div class="redpacket-content" @click="open" :title="emptyRedpacket ? '红包已领完' : readRedpacket ? '红包已领取' : '快快点击领取红包'">
                     <div class="redpacket-main">
                         <svg class="redpacket-icon">
@@ -55,10 +52,13 @@
             </div>            
         </div>
         <div ref="msg" class="msg-contain" v-if="!isRedpacket" @contextmenu.stop="msgMenuShow">
-            <div class="arrow" v-if="!isImgOnly && !isWeatherMsg"/>
-            <div class="msg-content" :style="{
+            <div class="arrow" v-if="!isImgOnly"/>
+            <WeatherCard v-if="isWeatherMsg" :data="item.content" />
+            <MusicCard v-else-if="isMusicMsg" :data="item.content"/>
+            <span class="msg-img" v-else-if="isImgOnly" v-html="formatContent"></span>
+            <div v-else class="msg-content" :style="{
                 color: item.barragerColor, 
-            }" :data-html="item.content" v-if="!isImgOnly && !isWeatherMsg">
+            }" :data-html="item.content">
               <div class="msg-view" :class="{ 'msg-overflow': overflow && !expend }">
                 <div ref="msgView" class="md-style" v-html="formatContent"></div>
               </div>
@@ -66,7 +66,6 @@
                 <i :class="{ 'fa-rotate-180': expend }" class="fa-solid fa-caret-down"></i>
               </div>
             </div>
-            <span class="msg-img" v-if="isImgOnly" v-html="formatContent"></span>
             <span class="plus-one" @click="doubleMsg" v-if="plusone">+1</span>
         </div>
         <div class="db-users" v-if="hasDbUser">
@@ -81,12 +80,14 @@
 
 <script>
   import Via from './via';
-  import WeatherCard from './WeatherCard.vue';
+  import WeatherCard from './weather-card.vue';
+  import MusicCard from './music-card.vue';
   export default {
     name: 'chatroom-item',
     components: {
         Via,
         WeatherCard,
+        MusicCard,
     },
     props: {
         item: {
@@ -140,7 +141,10 @@
     },
     computed: {
         isWeatherMsg() {
-            return this.item.content.includes('msgType') && this.item.content.includes('weather')
+            return this.item.content.msgType == 'weather'
+        },
+        isMusicMsg() {
+            return this.item.content.msgType == 'music'
         },
         autoVisibleStyle() {
             return {
@@ -172,7 +176,7 @@
                 .replace(/href="https:\/\/fishpi.cn\/cr#chatroom(\d+)/g, 'class="reply" data-reply="$1" href="#chatroom$1"');
         },
         isImgOnly() {
-            return !this.isBaggager && (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
+            return !this.isBaggager && !this.item.content.msgType && (!this.item.content.replace(/\n/g, '').match(/>[^<]+?</g)) && this.item.content.startsWith('<');
         },
         current() {
             return this.$root.current;
@@ -305,7 +309,7 @@
                 }
             });
             menu.push({
-                label: `发个专属红包给 ${this.item.userNickname || userName}`,
+                label: `发个专属红包给 ${this.item.userNickname || this.item.userName}`,
                 click: () => {
                     this.$ipc.send('main-event', {
                         call: 'openRedpacket',
@@ -610,16 +614,14 @@
     }
     &.msg-current {
         flex-direction: row-reverse;
+        --main-chatroom-message-background-color: var(--main-chatroom-user-message-background-color);
+        --main-chatroom-message-color: var(--main-chatroom-user-message-color);
         .msg-contain {
             flex-direction: row-reverse;
         }
         .arrow {
             border-right-color: transparent;
-            border-left-color: var(--main-chatroom-user-message-background-color);
-        }
-        .msg-content {
-            background-color: var(--main-chatroom-user-message-background-color);
-            color: var(--main-chatroom-user-message-color);
+            border-left-color: var(--main-chatroom-message-background-color);
         }
         .msg-user {
             justify-content: flex-end;
