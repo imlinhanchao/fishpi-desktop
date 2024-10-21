@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 192 192">
+<g><path fill="#343536" d="M 51 141 l -26 -26 c -3.1 -3.2 -5 -7.6 -5 -12 c 0 -2 1.1 -5.2 2 -7 l 24 -50 L 51 141 z"></path><path fill="#767778" d="M 140 51 l -26 -26 c -2.3 -2.3 -7 -5 -11 -5 c -3.4 0 -6.8 0.7 -9 2 L 46 46 L 140 51 z"></path><polygon fill="#767778" points="82,172 145,172 145,145 98,130 55,145"></polygon><path fill="#767778" d="M 46 127 c 0 8 1 10 5 14 l 4 4 h 90 l -44 -50 L 46 46 V 127 z"></path><path fill="#343536" d="M 126 46 H 46 l 99 99 h 27 V 83 l -32 -32 C 135.5 46.5 131.5 46 126 46 z"></path></g>
+</svg>

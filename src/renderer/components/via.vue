@@ -35,6 +35,7 @@ export default {
         { mark: 'Golang', icon: 'mask golang', url: 'https://fishpi.cn/article/1641661864119', title: '来自 Golang 客户端@' },
         { mark: 'IceNet', icon: 'mask icenet', url: 'https://github.com/HereIsYui/pwl-xiaoice', title: '来自小冰机器人@' },
         { mark: 'ElvesOnline', icon: 'mask elves', url: 'https://github.com/imufwt/elves2', title: '来自凌机器人@' },
+        { mark: 'Dart', icon: 'mask dart', url: 'https://github.com/imlinhanchao/fishpi-dart', title: '来自 Dart 客户端@' },
         { mark: 'Web', icon: 'mask web', title: '来自' },
         { mark: 'iOS', icon: 'fa fa-apple', title: '来自 iPhone 客户端' },
         { mark: 'Android', icon: 'fa fa-android', title: '来自 Android 客户端'},
@@ -107,6 +108,9 @@ export default {
     }
     .elves {
       -webkit-mask-image: url(../assets/via/elves.svg);
+    }
+    .dart {
+      -webkit-mask-image: url(../assets/via/dart.svg);
     }
     .version {
       font-weight: bold;
