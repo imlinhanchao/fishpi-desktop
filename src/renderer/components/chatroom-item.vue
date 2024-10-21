@@ -196,7 +196,7 @@
      },
     methods: {
         async againRedpacket() {  
-          const { type, msg, money, count, recivers } = this.item.content;
+          let { type, msg, money, count, recivers } = this.item.content;
             
           if (type == 'rockPaperScissors') money = Math.ceil(money / 0.95);
             
