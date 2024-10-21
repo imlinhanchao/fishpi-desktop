@@ -195,6 +195,24 @@
         },
      },
     methods: {
+        async againRedpacket() {  
+          const { type, msg, money, count, recivers } = this.item.content;
+            
+          const minMoney = Math.max(money, 32);
+            
+          const redpacket = {
+                type,
+                msg,
+                money: minMoney,
+                count,
+                recivers: recivers.length ? [`${recivers[0]}`] : []
+            };
+            
+          if (type === 'rockPaperScissors') {
+                redpacket.gesture = Math.floor(Math.random() * 3);
+            }
+            await this.$fishpi.chatroom.redpacket.send(redpacket);
+        },
         emojiCode(target) {
             return `:${target.src.match(/\/([^\/.]*?)(.gif|.png)/)[1]}:`;
         },
@@ -256,6 +274,12 @@
                     label: '复制红包地址',
                     click: () => {
                         navigator.clipboard.writeText(`https://fishpi.cn/cr?oId=${this.item.oId}#chatroom${this.item.oId}`)
+                    }
+                });
+                menu.push({
+                    label: '再发一个',
+                    click: () => {
+                        this.againRedpacket();
                     }
                 });
             }
