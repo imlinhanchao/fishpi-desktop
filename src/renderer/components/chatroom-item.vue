@@ -198,17 +198,17 @@
         async againRedpacket() {  
           const { type, msg, money, count, recivers } = this.item.content;
             
-          const minMoney = Math.max(money, 32);
+          if (type == 'rockPaperScissors') money = Math.ceil(money / 0.95);
             
           const redpacket = {
                 type,
                 msg,
-                money: minMoney,
+                money,
                 count,
-                recivers: recivers.length ? [`${recivers[0]}`] : []
+                recivers,
             };
             
-          if (type === 'rockPaperScissors') {
+           if (type === 'rockPaperScissors') {
                 redpacket.gesture = Math.floor(Math.random() * 3);
             }
             await this.$fishpi.chatroom.redpacket.send(redpacket);
