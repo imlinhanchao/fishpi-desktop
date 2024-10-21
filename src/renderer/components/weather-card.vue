@@ -8,7 +8,7 @@
         <p class="maxtemp">最高温: {{ maxTempArray[index] }}°C</p>
         <p class="mintemp">最低温: {{ minTempArray[index] }}°C</p>
         <img 
-          :src="`../assets/weather/${weatherDescriptionArray[index]}.svg`" 
+          :src="`./static/images/weather/${weatherDescriptionArray[index]}.svg`" 
           alt="Weather Icon"
         />
       </div>
